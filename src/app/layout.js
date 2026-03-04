@@ -14,7 +14,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="bg-gradient-to-l from-[#333333] to-[#4B4B4B] min-h-screen flex flex-col">
+      <body className="bg-gradient-to-l from-[#4B4B4B] to-[#4B4B4B] min-h-screen flex flex-col">
         <NextAuthProvider>
           <Header />
           <main className="flex-grow container mx-auto px-1 py-1">

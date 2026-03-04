@@ -21,32 +21,14 @@ const CreatePost = () => {
   }, [session]);
 
   const handleSubmitt = async (e) => {
-<<<<<<< HEAD
- e.preventDefault();
-
-  // if (!input.title || !input.desc || !input.date || !input.location || !input.game || !input.imageUrl) {
-  //   console.error("All fields are required.");
-  //   return;
-  // }
-
-  try {
-    await setDoc(doc(db, "posts", Date.now().toString()), input);
-    alert("Document successfully written!");
-    window.location.reload()
-  } catch (error) {
-    console.error("Error writing document: ", error);
-  }
-}
-=======
     e.preventDefault();
->>>>>>> 90bba14 (changes ui and add some features)
 
     try {
-      await setDoc(doc(db, "posts", Date.now().toString()), input);
-      alert("Post created successfully!");
+      await setDoc(doc(db, 'posts', Date.now().toString()), input);
+      alert('Post created successfully!');
       window.location.reload();
     } catch (error) {
-      console.error("Error writing document: ", error);
+      console.error('Error writing document: ', error);
     }
   };
 
@@ -57,31 +39,28 @@ const CreatePost = () => {
   };
 
   return (
-    <div className="md:w-[50%] lg:w-[40%] p-6 mt-8 lg:mx-auto bg-yellow-200 border-2 border-yellow-500 rounded-xl shadow-md">
-      <p className="py-3 mb-6 text-center text-[28px] text-[#1a1a1a] font-extrabold border-b border-yellow-600">
-        Create Post
-      </p>
+    <div className="mt-10 px-4">
+      <div className="mx-auto w-full max-w-xl rounded-2xl border border-white/10 bg-black/40 p-6 text-slate-50 shadow-[0_18px_60px_rgba(0,0,0,0.75)] backdrop-blur md:p-8">
+        <p className="mb-6 border-b border-white/10 pb-3 text-center text-xl font-semibold tracking-tight md:text-2xl">
+          Create a new post
+        </p>
 
-<<<<<<< HEAD
-    
-    <div className='md:w-[50%] lg:w-[40%] p-6 mt-8 lg:m-auto'>
-    <p className='py-3 mb-4 text-center text-[30px] text-gray-200 font-bold'>Create Post</p>
-      <div className="mt-4">
-        <form className='flex flex-col text-center' onSubmit={handleSubmitt}>
+        <form className="flex flex-col gap-4 text-sm md:text-base" onSubmit={handleSubmitt}>
           <input
             type="text"
             name="title"
             placeholder="Title"
             required
             onChange={handleChange}
-            className="w-auto text-black mb-4 border-[1px] p-2 rounded-md"
+            className="rounded-lg border border-white/10 bg-black/40 p-3 text-slate-50 placeholder-slate-400 outline-none transition focus:border-amber-400/70 focus:ring-2 focus:ring-amber-400/30"
           />
+
           <textarea
             name="desc"
-            className="w-auto text-black mb-4 outline-blue-400 border-[1px] p-2 rounded-md"
+            placeholder="Write a short description"
             required
             onChange={handleChange}
-            placeholder="Write Description here"
+            className="min-h-[100px] rounded-lg border border-white/10 bg-black/40 p-3 text-slate-50 placeholder-slate-400 outline-none transition focus:border-amber-400/70 focus:ring-2 focus:ring-amber-400/30"
           />
 
           <input
@@ -89,112 +68,49 @@ const CreatePost = () => {
             name="date"
             required
             onChange={handleChange}
-            className="w-auto text-black mb-4 border-[1px] p-2 rounded-md"
+            className="rounded-lg border border-white/10 bg-black/40 p-3 text-slate-50 outline-none transition focus:border-amber-400/70 focus:ring-2 focus:ring-amber-400/30"
           />
+
           <input
             type="text"
-            placeholder="Location"
             name="location"
+            placeholder="Location"
             required
             onChange={handleChange}
-            className="w-auto text-black mb-4 border-[1px] p-2 rounded-md"
+            className="rounded-lg border border-white/10 bg-black/40 p-3 text-slate-50 placeholder-slate-400 outline-none transition focus:border-amber-400/70 focus:ring-2 focus:ring-amber-400/30"
           />
+
           <select
             name="game"
             required
             onChange={handleChange}
-            className="w-auto text-black mb-4 border-[1px] p-2 rounded-md"
+            className="rounded-lg border border-white/10 bg-black/40 p-3 text-slate-50 outline-none transition focus:border-amber-400/70 focus:ring-2 focus:ring-amber-400/30"
           >
-            <option disabled defaultValue>
-              Select Game
+            <option disabled selected>
+              Select game
             </option>
             {Data.GameData.map((item) => (
               <option key={item.id}>{item.name}</option>
             ))}
           </select>
+
           <input
             type="text"
-            placeholder='Image Url'
-            required
             name="imageUrl"
-            className="mb-4 p-2 text-black rounded-md border-[1px] w-auto"
+            placeholder="Image URL"
+            required
             onChange={handleChange}
+            className="rounded-lg border border-white/10 bg-black/40 p-3 text-slate-50 placeholder-slate-400 outline-none transition focus:border-amber-400/70 focus:ring-2 focus:ring-amber-400/30"
           />
+
           <button
             type="submit"
-            className="bg-blue-950 hover:bg-blue-900 w-auto p-2 rounded-md text-white"
+            className="mt-2 rounded-full bg-amber-400 py-3 text-sm font-semibold text-slate-950 shadow-md transition hover:bg-amber-300"
           >
-            Submit
+            Publish post
           </button>
         </form>
       </div>
-=======
-      <form className="flex flex-col text-[#1a1a1a]" onSubmit={handleSubmitt}>
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          required
-          onChange={handleChange}
-          className="mb-4 p-3 rounded-md border border-yellow-600 focus:outline-yellow-700"
-        />
-
-        <textarea
-          name="desc"
-          placeholder="Write Description here"
-          required
-          onChange={handleChange}
-          className="mb-4 p-3 rounded-md border border-yellow-600 focus:outline-yellow-700"
-        />
->>>>>>> 90bba14 (changes ui and add some features)
-
-        <input
-          type="date"
-          name="date"
-          required
-          onChange={handleChange}
-          className="mb-4 p-3 rounded-md border border-yellow-600 focus:outline-yellow-700"
-        />
-
-        <input
-          type="text"
-          name="location"
-          placeholder="Location"
-          required
-          onChange={handleChange}
-          className="mb-4 p-3 rounded-md border border-yellow-600 focus:outline-yellow-700"
-        />
-
-        <select
-          name="game"
-          required
-          onChange={handleChange}
-          className="mb-4 p-3 rounded-md border border-yellow-600 text-[#1a1a1a] bg-white"
-        >
-          <option disabled selected>
-            Select Game
-          </option>
-          {Data.GameData.map((item) => (
-            <option key={item.id}>{item.name}</option>
-          ))}
-        </select>
-
-        <input
-          type="text"
-          name="imageUrl"
-          placeholder="Image URL"
-          required
-          onChange={handleChange}
-          className="mb-6 p-3 rounded-md border border-yellow-600 focus:outline-yellow-700"
-        />
-
-        <button
-          type="submit"
-          className="bg-[#1a1a1a] text-yellow-300 font-bold py-3 rounded-md hover:bg-yellow-300 hover:text-[#1a1a1a] transition-colors"
-        >
-          Submit
-        </button>
-      </form>
     </div>
   );
 };

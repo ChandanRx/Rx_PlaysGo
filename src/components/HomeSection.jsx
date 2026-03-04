@@ -40,13 +40,14 @@ const HomeSection = () => {
   };
 
   return (
-    <div className='px-5 sm:px-7 md:px-10 mt-9'>
-      <Hero />
-      {/* Pass the handleSearch function to the Search component */}
-      <Search onSearch={handleSearch} />
-      <GameList />
-      <Posts posts={posts} />
-    </div>
+    <main className="mt-10 px-3 sm:px-4">
+      <div className="mx-auto max-w-6xl space-y-10">
+        <Hero />
+        <Search onSearch={handleSearch} />
+        <GameList />
+        <Posts posts={posts} />
+      </div>
+    </main>
   );
 };
 

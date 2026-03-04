@@ -12,45 +12,51 @@ const PostItems = ({ post }) => {
         <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-            whileHover={{ scale: 1.03 }} 
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+            whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
-            className="max-w-sm w-full rounded-xl cursor-pointer overflow-hidden border border-yellow-500 bg-gray-900 shadow-md hover:shadow-yellow-400/40 transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
+            className="w-full max-w-sm cursor-pointer overflow-hidden rounded-md border 
+            border-gray-900 bg-black/40 shadow-[0_18px_60px_rgba(0,0,0,0.65)] backdrop-blur 
+            transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/70"
         >
             <img
-                className="w-full h-[180px] object-cover border-b border-yellow-500"
+                className="h-[180px] w-full border-b border-white/5 object-cover"
                 src={post?.imageUrl}
                 alt="poster"
             />
 
-            <div className="p-5 text-gray-100">
-                <h5 className="mb-2 text-2xl font-semibold text-yellow-400">{post?.title}</h5>
+            <div className="p-4 text-slate-50 md:p-5">
+                <h5 className="mb-2 text-lg font-semibold tracking-tight text-slate-50 md:text-xl">
+                    {post?.title}
+                </h5>
 
-                <div className="flex items-center gap-2 mb-3 text-yellow-300 text-sm">
-                    <HiOutlineCalendar className="text-lg" />
+                <div className="mb-2 flex items-center gap-2 text-xs text-slate-300 md:text-sm">
+                    <HiOutlineCalendar className="text-base text-amber-300" />
                     <span>{post?.date}</span>
                 </div>
 
-                <div className="flex items-center gap-2 mb-3 text-gray-300 text-sm">
-                    <HiLocationMarker className="text-lg" />
+                <div className="mb-3 flex items-center gap-2 text-xs text-slate-300 md:text-sm">
+                    <HiLocationMarker className="text-base text-emerald-300" />
                     <span>{post?.location}</span>
                 </div>
 
-                <p className="mb-4 text-gray-400 text-sm leading-relaxed">{post?.desc}</p>
+                <p className="mb-4 line-clamp-3 text-xs leading-relaxed text-slate-300 md:text-sm">
+                    {post?.desc}
+                </p>
 
-                <div>
-                    <p className="font-semibold text-yellow-300 mb-2 text-sm">Posted By:</p>
-                    <div className="flex items-center gap-3">
-                        <Image
-                            src={post?.userImage}
-                            alt="user-image"
-                            width={40}
-                            height={40}
-                            className="rounded-full border border-yellow-400"
-                        />
-                        <div>
-                            <h2 className="text-[14px] font-medium text-gray-100">{post?.userName}</h2>
-                        </div>
+                <div className="flex items-center gap-3 border-t border-white/5 pt-3">
+                    <Image
+                        src={post?.userImage}
+                        alt="user-image"
+                        width={36}
+                        height={36}
+                        className="h-9 w-9 rounded-full border border-white/15 object-cover"
+                    />
+                    <div>
+                        <p className="text-xs font-medium text-slate-200 md:text-sm">
+                            {post?.userName}
+                        </p>
+                        <p className="text-[11px] text-slate-400">Post owner</p>
                     </div>
                 </div>
             </div>

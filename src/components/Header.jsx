@@ -10,70 +10,81 @@ import { useRouter } from 'next/navigation';
 
 const Header = () => {
   const router = useRouter();
-  const { data: session } = useSession()
+  const { data: session } = useSession();
   return (
-<div className="sticky top-0 z-[999] bg-[#333333] flex justify-between p-3 border-b border-[#FBBF24] shadow-md">
+<header className="sticky top-0 z-[999]">
+  <div className="mx-auto flex w-[76%] items-center justify-between overflow-hidden rounded-2xl border border-white/10 bg-black/40 px-4 py-3 shadow-[0_18px_60px_rgba(0,0,0,0.55)] backdrop-blur md:px-6">
 
 {/* Logo */}
-<div className="rounded-lg font-bold text-[#FFD700] ml-2 mt-3 text-[22px] tracking-wide">
-  <h1 onClick={() => router.push('/')} className="cursor-pointer transition-all hover:scale-105">
-    PLAYS<span className="text-black bg-[#FFD700] px-1 py-0.5 rounded">GO</span>
-  </h1>
-</div>
+<button
+  onClick={() => router.push('/')}
+  className="flex items-center gap-2 rounded-lg px-1 py-1 text-left outline-none transition hover:opacity-90"
+>
+  <span className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-300">
+    Plays
+  </span>
+  <span className="rounded-md bg-amber-400 px-2 py-1 text-xs font-bold tracking-wide text-slate-950 shadow-sm">
+    GO
+  </span>
+</button>
 
 {/* Right Side Buttons */}
-<div className="flex gap-4 p-1">
+<div className="flex items-center gap-3">
 
-  {/* Create Post Button */}
+  {/* Create Post Button - desktop */}
   <button
-    className="bg-[#1c1c1c] text-[#FFD700] hover:text-black hover:bg-[#FFD700]  px-4 py-2 rounded-md shadow-md 
-               hover:scale-105 
-               transition-all duration-300 ease-in-out
-               flex items-center gap-2"
+    className="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/10 bg-transparent px-4 py-2 text-sm font-medium text-slate-100 shadow-sm transition hover:border-amber-400/60 hover:bg-white/5"
     onClick={() => router.push('/createpost')}
   >
-    <span className="hidden sm:block">Create Post</span>
-    <HiOutlinePencilAlt className="sm:hidden text-[20px]" />
+    <HiOutlinePencilAlt className="text-[18px]" />
+    <span>Create post</span>
+  </button>
+
+  {/* Create Post - mobile icon */}
+  <button
+    className="inline-flex sm:hidden items-center justify-center rounded-full border border-white/10 bg-transparent p-2 text-slate-100 shadow-sm transition hover:border-amber-400/60 hover:bg-white/5"
+    onClick={() => router.push('/createpost')}
+  >
+    <HiOutlinePencilAlt className="text-[18px]" />
   </button>
 
   {/* Sign In / Sign Out Button */}
   {!session ? (
     <button
-      className="px-4 py-2 rounded-md shadow-md hover:shadow-lg
-                  text-[#1c1c1c] bg-[#FFD700] hover:text-[#FFD700] hover:bg-[#1c1c1c] hover:scale-105
-                 transition-all duration-300 ease-in-out
-                 flex items-center gap-2"
+      className="inline-flex items-center gap-2 rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 shadow-md transition hover:bg-amber-300"
       onClick={() => signIn("google")}
     >
-      <span className="hidden sm:block">Sign In</span>
-      <HiArrowLeftOnRectangle className="sm:hidden text-[20px]" />
+      <span className="hidden sm:block">Sign in</span>
+      <HiArrowLeftOnRectangle className="sm:hidden text-[18px]" />
     </button>
   ) : (
     <button
-   className="px-4 py-2 rounded-md shadow-md hover:shadow-lg
-                 text-[#1c1c1c] bg-yellow-600 hover:text-yellow-300 hover:bg-[#1c1c1c] hover:scale-105
-                 transition-all duration-300 ease-in-out
-                 flex items-center gap-2"
+   className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-transparent px-4 py-2 text-sm font-medium text-slate-100 shadow-sm transition hover:border-red-400/70 hover:bg-white/5 hover:text-red-200"
       onClick={() => signOut()}
     >
-      <span className="hidden sm:block">Sign Out</span>
-      <HiArrowLeftOnRectangle className="sm:hidden text-[20px]" />
+      <span className="hidden sm:block">Sign out</span>
+      <HiArrowLeftOnRectangle className="sm:hidden text-[18px]" />
     </button>
   )}
 
   {/* User Image */}
   {session && (
-    <Image
-      src={session?.user?.image || USER_IMG}
-      alt="user image"
-      className="rounded-full cursor-pointer border-2 border-[#FBBF24]"
-      width={40}
-      height={40}
+    <button
       onClick={() => router.push('/profile')}
-    />
+      className="ml-1 inline-flex items-center justify-center rounded-full border border-white/10 p-[2px] transition hover:border-amber-400/70"
+    >
+      <Image
+        src={session?.user?.image || USER_IMG}
+        alt="user image"
+        className="h-9 w-9 rounded-full object-cover"
+        width={36}
+        height={36}
+      />
+    </button>
   )}
 </div>
 </div>
+</header>
 
   )
 }

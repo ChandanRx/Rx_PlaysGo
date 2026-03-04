@@ -6,18 +6,24 @@ import PostModal from './PostModal'
 const Posts = ({ posts }) => {
     const [post,setPost] = useState()
     return (
-        <div>
+        <section className="mt-8">
             <PostModal post={post}/>
-            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-5 px-4 mb-4'>
-                {
-                    posts.map((item) => (
-                        <div onClick={()=>{document.getElementById('my_modal_1').showModal();setPost(item)}} key={item.title}>
-                            <PostItems post={item} />
-                        </div>
-                    ))
-                }
+            <div className="grid grid-cols-1 gap-6 px-1 pb-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:px-0">
+                {posts.map((item) => (
+                    <button
+                        type="button"
+                        key={item.title}
+                        onClick={() => {
+                            document.getElementById('my_modal_1').showModal();
+                            setPost(item);
+                        }}
+                        className="text-left"
+                    >
+                        <PostItems post={item} />
+                    </button>
+                ))}
             </div>
-        </div>
+        </section>
     )
 }
 

@@ -16,9 +16,9 @@ const Search = ({ onSearch }) => {
         Search
       </label>
       <div className="relative">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           <svg
-            className="w-5 h-5 text-yellow-500"
+            className="h-5 w-5 text-slate-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -37,12 +37,12 @@ const Search = ({ onSearch }) => {
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           placeholder="Search games nearby..."
-          className="w-full p-4 pl-10 text-sm rounded-xl text-[#1c1c1c] bg-yellow-100 placeholder-yellow-700 border border-yellow-300 focus:ring-yellow-500 focus:border-yellow-600 transition-all duration-300"
+          className="w-full rounded-full border border-white/10 bg-black/40 p-3 pl-10 text-sm text-slate-50 placeholder-slate-400 shadow-sm outline-none transition focus:border-amber-400/70 focus:ring-2 focus:ring-amber-400/30"
         />
         <button
           onClick={searchButtonOnClick}
           type="button"
-          className="absolute right-2.5 bottom-2.5 bg-[#1c1c1c] text-[#FFD700] hover:text-black hover:bg-[#FFD700] font-medium rounded-lg text-sm px-4 py-2 transition-all duration-300"
+          className="absolute bottom-1.5 right-1.5 rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 shadow-md transition hover:bg-amber-300"
         >
           Search
         </button>
