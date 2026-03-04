@@ -22,15 +22,6 @@ const CreatePost = () => {
 
   const handleSubmitt = async (e) => {
     e.preventDefault();
-<<<<<<< HEAD
-=======
-
-    // Uncomment to enable field validation:
-    // if (!input.title || !input.desc || !input.date || !input.location || !input.game || !input.imageUrl) {
-    //   console.error("All fields are required.");
-    //   return;
-    // }
->>>>>>> 163a8e8ea09507454af996e6007eb24db7f464c2
 
     try {
       await setDoc(doc(db, 'posts', Date.now().toString()), input);
@@ -54,7 +45,6 @@ const CreatePost = () => {
           Create a new post
         </p>
 
-<<<<<<< HEAD
         <form className="flex flex-col gap-4 text-sm md:text-base" onSubmit={handleSubmitt}>
           <input
             type="text"
@@ -95,8 +85,9 @@ const CreatePost = () => {
             required
             onChange={handleChange}
             className="rounded-lg border border-white/10 bg-black/40 p-3 text-slate-50 outline-none transition focus:border-amber-400/70 focus:ring-2 focus:ring-amber-400/30"
+            defaultValue=""
           >
-            <option disabled selected>
+            <option value="" disabled>
               Select game
             </option>
             {Data.GameData.map((item) => (
@@ -121,73 +112,6 @@ const CreatePost = () => {
           </button>
         </form>
       </div>
-=======
-      <form className="flex flex-col text-[#1a1a1a]" onSubmit={handleSubmitt}>
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          required
-          onChange={handleChange}
-          className="mb-4 p-3 rounded-md border border-yellow-600 focus:outline-yellow-700"
-        />
-
-        <textarea
-          name="desc"
-          placeholder="Write Description here"
-          required
-          onChange={handleChange}
-          className="mb-4 p-3 rounded-md border border-yellow-600 focus:outline-yellow-700"
-        />
-
-        <input
-          type="date"
-          name="date"
-          required
-          onChange={handleChange}
-          className="mb-4 p-3 rounded-md border border-yellow-600 focus:outline-yellow-700"
-        />
-
-        <input
-          type="text"
-          name="location"
-          placeholder="Location"
-          required
-          onChange={handleChange}
-          className="mb-4 p-3 rounded-md border border-yellow-600 focus:outline-yellow-700"
-        />
-
-        <select
-          name="game"
-          required
-          onChange={handleChange}
-          className="mb-4 p-3 rounded-md border border-yellow-600 text-[#1a1a1a] bg-white"
-        >
-          <option disabled selected>
-            Select Game
-          </option>
-          {Data.GameData.map((item) => (
-            <option key={item.id}>{item.name}</option>
-          ))}
-        </select>
-
-        <input
-          type="text"
-          name="imageUrl"
-          placeholder="Image URL"
-          required
-          onChange={handleChange}
-          className="mb-6 p-3 rounded-md border border-yellow-600 focus:outline-yellow-700"
-        />
-
-        <button
-          type="submit"
-          className="bg-[#1a1a1a] text-yellow-300 font-bold py-3 rounded-md hover:bg-yellow-300 hover:text-[#1a1a1a] transition-colors"
-        >
-          Submit
-        </button>
-      </form>
->>>>>>> 163a8e8ea09507454af996e6007eb24db7f464c2
     </div>
   );
 };
