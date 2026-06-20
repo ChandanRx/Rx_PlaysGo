@@ -4,60 +4,32 @@
 @tailwind components;
 @tailwind utilities;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255; /* White for text */
-    --background-start-rgb: 33, 37, 41; /* Dark blue for dark mode start */
-    --background-end-rgb: 19, 24, 33;   /* Dark blue for dark mode end */
-    --button-bg: 178, 34, 34;         /* Firebrick red for buttons */
-    --button-hover-bg: 139, 0, 0;     /* Darker red for button hover */
-    --accent-color: 255, 69, 0;       /* Orange-red accent */
-  }
+:root {
+  --foreground-rgb: 24, 24, 27;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 245, 255, 230;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --foreground-rgb: 0, 0, 0;         /* Black for text in light mode */
-    --background-start-rgb: 220, 20, 60; /* Firebrick red for light mode start */
-    --background-end-rgb: 0, 33, 67;   /* Dark blue for light mode end */
-    --button-bg: 178, 34, 34;         /* Firebrick red for buttons */
-    --button-hover-bg: 139, 0, 0;     /* Darker red for button hover */
-    --accent-color: 255, 69, 0;       /* Orange-red accent */
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
 }
 
 body {
+  min-height: 100vh;
+  margin: 0;
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      rgb(var(--background-start-rgb)),
-      rgb(var(--background-end-rgb))
-    );
+  background:
+    radial-gradient(circle at top left, rgba(137, 243, 54, 0.28), transparent 32rem),
+    radial-gradient(circle at top right, rgba(250, 204, 21, 0.28), transparent 30rem),
+    linear-gradient(to bottom, rgb(var(--background-start-rgb)), rgb(var(--background-end-rgb)));
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
-  }
-  
-  /* Button style for dark mode and light mode */
-  .btn-primary {
-    background-color: rgb(var(--button-bg));
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease, transform 0.3s ease;
-  }
-  
-  .btn-primary:hover {
-    background-color: rgb(var(--button-hover-bg));
-    transform: scale(1.05);
-  }
-  
-  /* Accent color for highlights */
-  .text-accent {
-    color: rgb(var(--accent-color));
   }
 }

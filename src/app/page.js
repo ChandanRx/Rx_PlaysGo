@@ -1,4 +1,3 @@
-import Header from "../components/Header";
 import HomeSection from "../components/HomeSection";
 
 

@@ -1,10 +1,11 @@
 import Image from 'next/image';
 import React from 'react';
+import Card from '../../components/ui/Card';
 
 const About = () => {
   return (
     <div className="min-h-screen px-4 py-10">
-      <div className="mx-auto max-w-4xl rounded-2xl border border-white/10 bg-black/40 p-6 text-slate-50 shadow-[0_18px_60px_rgba(0,0,0,0.75)] backdrop-blur md:p-10">
+      <Card className="mx-auto max-w-4xl p-6 md:p-10">
           
           <h2 className="mb-6 text-center text-3xl font-semibold tracking-tight text-slate-50 md:text-4xl">
             About the creator
@@ -35,7 +36,7 @@ const About = () => {
             </p>
 
             <p className="mb-4 text-sm leading-relaxed text-slate-300 md:text-lg">
-              Building <strong>Plays Go</strong> was a challenging yet exciting experience. It allowed me to apply everything I had learned and also gave me the opportunity to explore new tools like Firebase and NextAuth for user authentication.
+              Building <strong>Plays Go</strong> was a challenging yet exciting experience. It allowed me to apply everything I had learned while creating a simple demo experience with local dummy data.
             </p>
           </section>
 
@@ -52,8 +53,7 @@ const About = () => {
               <li>React.js for building the user interface</li>
               <li>Next.js for server-side rendering and routing</li>
               <li>Tailwind CSS for styling and responsive design</li>
-              <li>Firebase for database management and authentication</li>
-              <li>NextAuth for managing user sessions</li>
+              <li>Local dummy data for demo posts and profile actions</li>
             </ul>
           </section>
 
@@ -128,7 +128,7 @@ const About = () => {
 
           </section>
 
-      </div>
+      </Card>
     </div>
   );
 };

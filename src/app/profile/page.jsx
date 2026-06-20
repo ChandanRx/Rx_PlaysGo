@@ -1,63 +1,36 @@
 "use client";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  getFirestore,
-  query,
-  where,
-} from "firebase/firestore";
-import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
-import app from "../../../firebaseConfig";
 import PostItems from "../../components/PostItems";
+import { deletePost, dummyUser, getUserPosts } from "../../shared/dummyPosts";
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
 
 const Profile = () => {
-  const { data: session } = useSession();
-  const db = getFirestore(app);
   const [userPost, setUserPost] = useState([]);
 
   useEffect(() => {
-    if (session?.user?.email) {
-      getUserPost();
-    }
-  }, [session]);
+    setUserPost(getUserPosts(dummyUser.email));
+  }, []);
 
-  const getUserPost = async () => {
-    const q = query(
-      collection(db, "posts"),
-      where("email", "==", session?.user?.email)
-    );
-    const querySnapshot = await getDocs(q);
-    const posts = [];
-    querySnapshot.forEach((doc) => {
-      let data = doc.data();
-      data.id = doc.id;
-      posts.push(data);
-    });
-    setUserPost(posts);
-  };
-
-  const onDeletePost = async (id) => {
-    await deleteDoc(doc(db, "posts", id));
-    setUserPost((prevPosts) => prevPosts.filter((post) => post.id !== id));
+  const onDeletePost = (id) => {
+    deletePost(id);
+    setUserPost(getUserPosts(dummyUser.email));
   };
 
   return (
     <div className="mt-10 px-4">
-      <div className="mx-auto max-w-6xl rounded-2xl border border-white/10 bg-black/40 p-5 text-slate-50 shadow-[0_18px_60px_rgba(0,0,0,0.75)] backdrop-blur md:p-8">
+      <Card className="mx-auto max-w-6xl p-5 md:p-8">
         <div className="mb-6 text-center">
           <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
             Your profile
           </h2>
-          <p className="mt-1 text-sm text-slate-300">
+          <p className="mt-1 text-sm text-zinc-700">
             Manage and review your game posts.
           </p>
         </div>
 
         {userPost?.length === 0 ? (
-          <p className="mt-6 text-center text-sm text-slate-300">
+          <p className="mt-6 text-center text-sm text-zinc-700">
             No posts found yet. Create your first match to get started.
           </p>
         ) : (
@@ -65,17 +38,18 @@ const Profile = () => {
             {userPost.map((item) => (
               <div key={item.id} className="space-y-2">
                 <PostItems post={item} />
-                <button
-                  className="w-full rounded-full border border-red-500/60 bg-red-500/10 px-3 py-2 text-sm font-medium text-red-200 transition hover:bg-red-500/20"
+                <Button
+                  variant="danger"
+                  className="w-full"
                   onClick={() => onDeletePost(item.id)}
                 >
                   Delete post
-                </button>
+                </Button>
               </div>
             ))}
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 };

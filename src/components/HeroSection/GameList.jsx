@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Data from "../../shared/data";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Card from "../ui/Card";
 
 const GameList = () => {
   const [games, setGames] = useState([]);
@@ -22,15 +23,17 @@ const GameList = () => {
           transition={{ delay: index * 0.05, duration: 0.4, ease: "easeOut" }}
           whileHover={{ scale: 1.05, rotate: 1 }}
         >
-          <Image
-            className="cursor-pointer rounded-2xl border border-white/10 bg-black/40 p-2 shadow-sm transition-all duration-300 group-hover:border-amber-400/70 group-hover:shadow-[0_12px_30px_rgba(0,0,0,0.6)]"
-            src={item.image}
-            alt={item.name}
-            width={60}
-            height={60}
-          />
+          <Card className="p-2 shadow-sm transition-all duration-300 group-hover:border-[#89f336] group-hover:shadow-[0_12px_30px_rgba(137,243,54,0.22)]">
+            <Image
+              className="h-[60px] w-[60px] cursor-pointer object-contain"
+              src={item.image}
+              alt={item.name}
+              width={60}
+              height={60}
+            />
+          </Card>
           <motion.h2
-            className="text-[13px] text-center font-medium text-slate-200 transition-colors duration-300 group-hover:text-amber-300"
+            className="text-[13px] text-center font-medium text-zinc-700 transition-colors duration-300 group-hover:text-zinc-950"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: index * 0.08 + 0.2 }}
