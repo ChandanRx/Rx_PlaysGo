@@ -1,0 +1,382 @@
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+
+:root {
+  /* =========================
+     Backgrounds
+  ========================= */
+  --bg-page: #F7F3E8;
+  --bg-card: #FFFDF8;
+  --bg-input: #FAF7EF;
+  --border-subtle: #E7DDCB;
+
+  /* =========================
+     Typography
+  ========================= */
+  --text-heading: #1D1D1D;
+  --text-body: #4A4A4A;
+  --text-muted: #7B7B7B;
+  --text-faint: #B2B2B2;
+
+  /* =========================
+     Brand
+  ========================= */
+  --brand: #F5C84C;
+  --brand-hover: #EAB308;
+  --brand-soft: #FFF7DA;
+  --brand-border: #F4DA8A;
+
+  /* =========================
+     Accent
+  ========================= */
+  --accent-dark: #2C2C2C;
+  --accent-light: #FFFFFF;
+
+  /* =========================
+     Category Colors
+  ========================= */
+  --category-accent: #F5C84C;
+  --category-accent-text: #1D1D1D;
+  --category-accent-soft: #FFF7DA;
+  --category-accent-border: #F4DA8A;
+
+  /* =========================
+     Legacy
+  ========================= */
+  --foreground-rgb: 29,29,29;
+  --background-start-rgb: 247,243,232;
+  --background-end-rgb: 255,253,248;
+  --theme-accent: 245,200,76;
+}
+
+/* ==========================================
+   DARK THEME
+========================================== */
+
+[data-theme="dark"] {
+
+  /* Backgrounds */
+  --bg-page: #141414;
+  --bg-card: #1E1E1E;
+  --bg-input: #252525;
+  --border-subtle: #2F2F2F;
+
+  /* Typography */
+  --text-heading: #F8F6F2;
+  --text-body: #D8D3C7;
+  --text-muted: #A8A39A;
+  --text-faint: #78736B;
+
+  /* Brand */
+  --brand: #F5C84C;
+  --brand-hover: #FFD45A;
+  --brand-soft: rgba(245,200,76,.12);
+  --brand-border: rgba(245,200,76,.28);
+
+  /* Accent */
+  --accent-dark: #2C2C2C;
+  --accent-light: #FFFFFF;
+
+  /* Category */
+  --category-accent: #F5C84C;
+  --category-accent-text: #141414;
+  --category-accent-soft: rgba(245,200,76,.12);
+  --category-accent-border: rgba(245,200,76,.28);
+
+  /* Legacy */
+  --foreground-rgb: 248,246,242;
+  --background-start-rgb: 20,20,20;
+  --background-end-rgb: 30,30,30;
+  --theme-accent: 245,200,76;
+}
+
+/* ==========================================
+   CATEGORY THEMES
+========================================== */
+
+[data-category-theme="players"],
+.category-theme--players {
+  --category-accent: #F5C84C;
+  --category-accent-text: #1D1D1D;
+  --category-accent-soft: #FFF7DA;
+  --category-accent-border: #F4DA8A;
+}
+
+[data-category-theme="local-help"],
+.category-theme--local-help {
+  --category-accent: #EAB308;
+  --category-accent-text: #1D1D1D;
+  --category-accent-soft: #FFF8D8;
+  --category-accent-border: #EFD47A;
+}
+
+[data-category-theme="for-sale"],
+.category-theme--for-sale {
+  --category-accent: #D4A017;
+  --category-accent-text: #1D1D1D;
+  --category-accent-soft: #FFF6D1;
+  --category-accent-border: #E9CF72;
+}
+
+/* ═══════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  scrollbar-gutter: stable;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: var(--font-jakarta), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-body);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+/* ==========================================
+   GLOBAL SCROLLBAR
+========================================== */
+
+/* Firefox */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, .4) transparent;
+}
+
+/* Chrome / Edge / Safari */
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(156,163,175,.45);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(107,114,128,.65);
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Auto Hide */
+
+.scrollbar-auto-hide {
+  scrollbar-width: none;
+}
+
+.scrollbar-auto-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Show scrollbar on hover */
+
+.scrollbar-auto-hide:hover,
+.scrollbar-auto-hide:focus,
+.scrollbar-auto-hide.scrolling {
+  scrollbar-width: thin;
+}
+
+.scrollbar-auto-hide:hover::-webkit-scrollbar,
+.scrollbar-auto-hide:focus::-webkit-scrollbar,
+.scrollbar-auto-hide.scrolling::-webkit-scrollbar {
+  display: block;
+}
+
+/* ═══════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════ */
+
+@layer utilities {
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Hide scrollbar */
+
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ==========================================
+     CARD SURFACE
+  ========================================== */
+
+  .card-surface {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    box-shadow:
+      0 2px 8px rgba(0,0,0,.04),
+      0 10px 24px rgba(0,0,0,.05);
+    transition:
+      transform .25s ease,
+      box-shadow .25s ease,
+      border-color .25s ease;
+  }
+
+  .card-surface:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 10px 30px rgba(0,0,0,.08),
+      0 20px 50px rgba(0,0,0,.06);
+  }
+
+  /* ==========================================
+     DASHBOARD PANELS
+  ========================================== */
+
+  .dash-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    box-shadow:
+      0 2px 10px rgba(0,0,0,.05);
+  }
+
+  .dash-main {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    box-shadow:
+      0 2px 10px rgba(0,0,0,.05);
+  }
+
+  /* ==========================================
+     BRAND
+  ========================================== */
+
+  .theme-accent-fill,
+  .dash-brand {
+    background: var(--brand);
+    color: var(--text-heading);
+  }
+
+  .theme-accent-outline {
+    border: 1px solid var(--brand);
+    color: var(--brand);
+    background: transparent;
+  }
+
+  /* ==========================================
+     GLASS
+  ========================================== */
+
+  .theme-glass {
+    background: rgba(255,255,255,.75);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border-subtle);
+  }
+
+  [data-theme="dark"] .theme-glass {
+    background: rgba(30,30,30,.75);
+  }
+
+  /* ==========================================
+     CHIPS
+  ========================================== */
+
+  .theme-chip {
+    background: var(--bg-input);
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+    border-radius: 999px;
+  }
+
+  .theme-chip-active {
+    background: var(--brand);
+    color: var(--text-heading);
+    border: 1px solid var(--brand);
+  }
+
+  /* ==========================================
+     FLOATING PANEL
+  ========================================== */
+
+  .theme-float {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    box-shadow:
+      0 18px 50px rgba(0,0,0,.10);
+  }
+
+  /* ==========================================
+     SPORTS CARD
+  ========================================== */
+
+  .sports-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    transition:
+      transform .25s ease,
+      box-shadow .25s ease,
+      border-color .25s ease;
+  }
+
+  .sports-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 14px 40px rgba(0,0,0,.10);
+  }
+}
