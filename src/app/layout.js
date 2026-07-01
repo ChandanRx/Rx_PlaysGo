@@ -1,33 +1,32 @@
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
-import NextAuthProvider from "./context/NextAuthProvider";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import AppShell from "../components/AppShell";
+import CategoryThemeSync from "../components/CategoryThemeSync";
+import ScrollbarAutoHide from "../components/ScrollbarAutoHide";
 
-const inter = Inter({ subsets: ["latin"] });
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-jakarta",
+  display: "swap",
+});
 
 export const metadata = {
   title: "Plays Go",
-  description: "Hello Guys! Search, find, and post for your game players",
+  description:
+    "Post, discover, and connect with local opportunities, services, events, and people nearby.",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className="bg-gradient-to-l from-[#4B4B4B] to-[#4B4B4B] min-h-screen flex flex-col">
-        <NextAuthProvider>
-          <Header />
-          <main className="flex-grow container mx-auto px-1 py-1">
-            {/* Main Content */}
-            <div className="flex flex-col space-y-6">
-              {/* Example Children Section */}
-              <div className="bg-[#4B4B4B] p-6 rounded-lg shadow-lg text-white">
-                {children}
-              </div>
-            </div>
-          </main>
-          <Footer />
-        </NextAuthProvider>
+    <html lang="en" className={jakarta.variable}>
+      <body className="min-h-screen flex flex-col font-sans antialiased">
+        <Suspense fallback={null}>
+          <CategoryThemeSync />
+          <ScrollbarAutoHide />
+          <AppShell>{children}</AppShell>
+        </Suspense>
       </body>
     </html>
   );

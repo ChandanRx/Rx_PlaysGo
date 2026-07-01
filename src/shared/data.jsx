@@ -1,55 +1,61 @@
-import cricket from '../../assets/Images/cricket.png'
-import badminton from '../../assets/Images/badminton.png'
-import football from '../../assets/Images/football.png'
-import tennis from '../../assets/Images/tennis.png'
-import basketball from '../../assets/Images/basketball.png'
-import volleyball from '../../assets/Images/volleyball.png'
-import chess from '../../assets/Images/chess.png'
-import carrom from '../../assets/Images/carrom.png'
+const CategoryData = [
+  {
+    id: 1,
+    name: "Players",
+    icon: "Players",
+    description: "Find players, teammates, and local game partners.",
+  },
+  {
+    id: 2,
+    name: "Local Help",
+    icon: "Help",
+    description: "Find tutors, movers, house help, drivers, and freelancers.",
+  },
+  {
+    id: 3,
+    name: "For Sale",
+    icon: "Sale",
+    description: "Sell useful items locally or discover nearby deals.",
+  },
+];
 
-const GameData = [
-    {
-        id:1,
-        name:'Cricket',
-        image:cricket
-    },
-    {
-        id:2,
-        name:'Football',
-        image:football
-    },
-    {
-        id:3,
-        name:'Basketball',
-        image:basketball
-    },
-    {
-        id:4,
-        name:'Badminton',
-        image:badminton
-    },
-    {
-        id:5,
-        name:'Volleyball',
-        image:volleyball
-    },
-    {
-        id:6,
-        name:'Tennis',
-        image:tennis
-    },
-    {
-        id:7,
-        name:'Chess',
-        image:chess
-    },
-    {
-        id:8,
-        name:'Carrom',
-        image:carrom
-    },
-]
+const quickFilters = ["Nearby", "Latest", "Popular", "Featured"];
+
+const subCategoryMap = {
+  Players: [
+    "Cricket",
+    "Football",
+    "Volleyball",
+    "Badminton",
+    "Tennis",
+    "Basketball",
+  ],
+  "Local Help": [
+    "Tutor",
+    "Moving Help",
+    "House Help",
+    "Driver",
+    "Event Volunteer",
+    "Freelancer",
+  ],
+  "For Sale": [
+    "Electronics",
+    "Furniture",
+    "Vehicles",
+    "Books",
+    "Sports Equipment",
+  ],
+  Other: ["General", "Help Needed", "Recommendations"],
+};
+
+const radiusOptions = ["5 KM", "10 KM", "25 KM", "50 KM", "100 KM"];
+
+const contactPreferences = ["WhatsApp", "Call", "Chat Only"];
 
 export default {
-    GameData
-}
+  CategoryData,
+  quickFilters,
+  subCategoryMap,
+  radiusOptions,
+  contactPreferences,
+};

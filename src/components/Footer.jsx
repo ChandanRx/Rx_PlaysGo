@@ -1,63 +1,73 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
+import PlaysGoLogo from "./PlaysGoLogo";
+
+const navItems = [
+  { label: "Home",    href: "/" },
+  { label: "About",   href: "/about" },
+  { label: "Posts",   href: "/posts" },
+  { label: "Profile", href: "/profile" },
+];
+
+const socialItems = [
+  { label: "GitHub",   href: "https://github.com/chandanrx",                        icon: FaGithub },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/chandan-pargi-459272187", icon: FaLinkedin },
+  { label: "Twitter",  href: "https://twitter.com/rxn_13",                          icon: FaTwitter },
+];
 
 const Footer = () => {
+  const pathname = usePathname();
+
   return (
-    <footer className="border-t border-white/5 bg-black/40 px-6 py-8 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 text-center text-slate-300 md:flex-row md:text-left">
-        
-        {/* Branding */}
-        <div>
-          <h1 className="text-2xl font-semibold tracking-[0.2em] text-slate-100">
-            PLAYS<span className="text-amber-300">GO</span>
-          </h1>
-          <p className="mt-1 text-sm text-slate-400">
-            Find your game. Find your people.
+    <footer className="mt-8 border-t border-[#E8EDF5] pt-5">
+      <div className="flex flex-col gap-4 text-center md:flex-row md:items-center md:justify-between md:text-left">
+
+        <div className="flex flex-col items-center gap-2 md:flex-row md:gap-3">
+          <PlaysGoLogo variant="dark" />
+          <p className="text-[12px] text-[#6B7280]">
+            © <span suppressHydrationWarning>{new Date().getFullYear()}</span> Plays Go
           </p>
         </div>
 
-        {/* Navigation */}
-        <div className="flex gap-6 text-sm font-medium text-slate-400">
-          <a href="/" className="transition-colors duration-200 hover:text-amber-300">
-            Home
-          </a>
-          <a href="/about" className="transition-colors duration-200 hover:text-amber-300">
-            About
-          </a>
-          <a href="/createpost" className="transition-colors duration-200 hover:text-amber-300">
-            Post
-          </a>
-          <a href="/profile" className="transition-colors duration-200 hover:text-amber-300">
-            Profile
-          </a>
-        </div>
+        <div className="flex flex-col gap-2 md:items-end">
+          <div className="flex flex-wrap items-center justify-center gap-1 md:justify-end">
+            {navItems.map(({ label, href }) => {
+              const active = pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`rounded-full px-3 py-1.5 text-[12.5px] font-medium transition ${
+                    active
+                      ? "bg-[#0F1623] text-white"
+                      : "text-[#6B7280] hover:bg-[#F0F4FF] hover:text-[#0F1623]"
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+          </div>
 
-        {/* Social Icons */}
-        <div className="flex gap-4 text-xl text-slate-400">
-          <a
-            href="https://github.com/chandanrx"
-            className="transition-all duration-200 hover:text-amber-300"
-          >
-            <FaGithub />
-          </a>
-          <a
-            href="https://www.linkedin.com/in/yourusername/chandan-pargi-459272187"
-            className="transition-all duration-200 hover:text-amber-300"
-          >
-            <FaLinkedin />
-          </a>
-          <a
-            href="https://twitter.com/rxn_13"
-            className="transition-all duration-200 hover:text-amber-300"
-          >
-            <FaTwitter />
-          </a>
+          <div className="flex items-center justify-center gap-1.5 md:justify-end">
+            {socialItems.map(({ label, href, icon: Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={label}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#E8EDF5] bg-[#F8FAFC] text-[#6B7280] transition hover:border-[#FF7A00] hover:bg-[#FFF3E8] hover:text-[#FF7A00]"
+              >
+                <Icon className="text-[13px]" />
+              </a>
+            ))}
+          </div>
         </div>
-      </div>
-
-      {/* Bottom Text */}
-      <div className="mt-6 border-t border-white/5 pt-4 text-center text-xs text-slate-500">
-        © {new Date().getFullYear()} PlaysGo. All rights reserved.
       </div>
     </footer>
   );

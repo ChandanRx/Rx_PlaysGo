@@ -6,7 +6,7 @@ import Posts from "./HeroSection/Posts";
 import CategoryModePrompt from "./CategoryModePrompt";
 import { useClientSearchPosts, useStoredAppCategory } from "../hooks/useClientData";
 
-const HomeSection = () => {
+const PostsPageSection = () => {
   const searchParams = useSearchParams();
   const searchText = searchParams.get("q") || "";
   const filter = searchParams.get("filter") || "Nearby";
@@ -35,4 +35,4 @@ const HomeSection = () => {
   );
 };
 
-export default HomeSection;
+export default PostsPageSection;
