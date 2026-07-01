@@ -1,39 +1,22 @@
-# PlaysGo 🎮
+# PlaysGo
 
-**PlaysGo** is a web application that helps users find and connect with other players for their favorite games. Whether you're looking for a quick match or need teammates for a tournament, PlaysGo makes it easy to post or respond to player requests.
+PlaysGo is a web application that helps users find and connect with other players for their favorite games. It now runs entirely with local dummy data, so there is no API, auth provider, Firebase project, or external backend required.
 
-🌐 **Live Demo**: [https://playsgo.netlify.app/](https://playsgo.netlify.app/)
+## Features
 
-## 🔍 Features
+- Post requests to find players for various games
+- Browse public demo game requests
+- Search posts by game
+- Create and delete demo posts locally
+- Fully responsive UI built with Next.js and Tailwind CSS
 
-- 🎯 Post requests to find players for various games  
-- 📋 Browse a list of public game requests  
-- 🕹️ Each post contains:
-  - Game name
-  - Platform (PC, Console, Mobile, etc.)
-  - Description or player requirement
-  - Username/contact info
-- 📱 Fully responsive design  
-- 🧩 Clean and intuitive UI built with Next.js  
-- 🔐 Firebase used for real-time database and storage
+## Tech Stack
 
----
+- **Frontend**: Next.js, React, Tailwind CSS
+- **Demo data**: Local JavaScript data with browser localStorage
 
-## 🛠️ Tech Stack
+## How It Works
 
-- **Frontend**: Next.js, Tailwind CSS  
-- **Backend**: Firebase Firestore  
-- **Deployment**: Vercel
-
----
-
-## 🧪 How It Works
-
-1. Users can browse all player requests from the homepage.
-2. To create a new request, users can fill in details such as game name, platform, and description.
-3. Data is stored and retrieved using Firebase Firestore.
-
----
-📸 **Screenshots**:  
-![screencapture-playsgo-vercel-app-2025-04-25-16_16_42](https://github.com/user-attachments/assets/daf50389-df3f-46b0-abdf-b13fcf36c2a8)
-
+1. Users browse demo game requests from the homepage.
+2. Users create a new request with game, date, location, image, and description.
+3. Posts are saved in localStorage for the current browser.

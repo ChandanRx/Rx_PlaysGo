@@ -1,45 +1,61 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import Data from "../../shared/data";
-import Image from "next/image";
+
+import React from "react";
 import { motion } from "framer-motion";
+import Data from "../../shared/data";
 
-const GameList = () => {
-  const [games, setGames] = useState([]);
-
-  useEffect(() => {
-    setGames(Data.GameData);
-  }, []);
-
+const GameList = ({ activeCategory, onSelectCategory }) => {
   return (
-    <div className="mt-6 grid grid-cols-3 gap-5 px-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 md:px-0">
-      {games.map((item, index) => (
-        <motion.div
-          key={item.name}
-          className="group flex flex-col items-center space-y-2"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.05, duration: 0.4, ease: "easeOut" }}
-          whileHover={{ scale: 1.05, rotate: 1 }}
-        >
-          <Image
-            className="cursor-pointer rounded-2xl border border-white/10 bg-black/40 p-2 shadow-sm transition-all duration-300 group-hover:border-amber-400/70 group-hover:shadow-[0_12px_30px_rgba(0,0,0,0.6)]"
-            src={item.image}
-            alt={item.name}
-            width={60}
-            height={60}
-          />
-          <motion.h2
-            className="text-[13px] text-center font-medium text-slate-200 transition-colors duration-300 group-hover:text-amber-300"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: index * 0.08 + 0.2 }}
-          >
-            {item.name}
-          </motion.h2>
-        </motion.div>
-      ))}
-    </div>
+    <section>
+      <div className="mb-4 flex items-end justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8f1838]">
+            Categories V1
+          </p>
+          <h3 className="mt-1 text-xl font-semibold tracking-tight text-zinc-950 md:text-2xl">
+            Browse the three core Plays Go categories
+          </h3>
+        </div>
+        <p className="hidden text-sm text-zinc-600 md:block">
+          Players, local help, and nearby items for sale.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        {Data.CategoryData.map((item, index) => {
+          const isActive = activeCategory === item.name;
+
+          return (
+            <motion.button
+              key={item.name}
+              type="button"
+              className={`rounded-md border bg-[#fff7f9]/86 p-4 text-left shadow-sm transition-all duration-300 ${
+                isActive
+                  ? "border-[#8f1838] bg-[#f7e5eb] shadow-[0_12px_30px_rgba(48,3,16,0.18)]"
+                  : "border-[#8f1838]/20 hover:border-[#8f1838]/45 hover:bg-[#fff7f9]/96 hover:shadow-[0_12px_30px_rgba(48,3,16,0.12)]"
+              }`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                delay: index * 0.05,
+                duration: 0.4,
+                ease: "easeOut",
+              }}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => onSelectCategory(item.name)}
+            >
+              <div className="text-3xl">{item.icon}</div>
+              <h4 className="mt-3 text-sm font-semibold text-zinc-950 md:text-base">
+                {item.name}
+              </h4>
+              <p className="mt-2 text-xs leading-relaxed text-zinc-600 md:text-sm">
+                {item.description}
+              </p>
+            </motion.button>
+          );
+        })}
+      </div>
+    </section>
   );
 };
 

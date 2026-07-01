@@ -1,80 +1,159 @@
-"use client"
-import React from 'react'
-import { HiLocationMarker, HiOutlineCalendar, HiOutlineXCircle } from 'react-icons/hi'
-import Image from 'next/image'
-import { useSession } from 'next-auth/react'
+"use client";
+
+import React from "react";
+import Image from "next/image";
+import {
+  HiBadgeCheck, HiLocationMarker, HiOutlineBookmark,
+  HiOutlineCalendar, HiOutlineChatAlt2, HiOutlinePhone,
+  HiOutlineShare, HiOutlineXCircle,
+} from "react-icons/hi";
+import { FaWhatsapp } from "react-icons/fa";
+import Button from "../ui/Button";
+
+const getCategoryThemeClass = (c) => {
+  if (c === "Players")    return "category-theme--players";
+  if (c === "Local Help") return "category-theme--local-help";
+  if (c === "For Sale")   return "category-theme--for-sale";
+  return "";
+};
+
+const detailItems = (post) => [
+  { label: "Category",           value: post?.category           || "Other" },
+  { label: "Sub category",       value: post?.subCategory        || "General" },
+  { label: "Distance",           value: post?.distance           || "Nearby" },
+  { label: "Posted",             value: post?.postedTime         || "Recently" },
+  { label: "Contact preference", value: post?.contactPreference  || "Chat Only" },
+  { label: "Radius",             value: post?.radius             || "10 KM" },
+];
+
+const getDetailsSection = (post) => {
+  if (post?.category === "For Sale") return { title: "Sale details", rows: [["Available from", post?.date || "Available now"], ["Pickup time", post?.time || "Flexible"], ["Condition", post?.duration || "Not specified"], ["Price", post?.requiredPeople || "Ask for price"]] };
+  if (post?.category === "Local Help") return { title: "Help details", rows: [["Preferred date", post?.date || "Flexible"], ["Preferred time", post?.time || "Flexible"], ["Duration", post?.duration || "Not specified"], ["Helpers needed", post?.requiredPeople || "Not specified"]] };
+  return { title: "Match details", rows: [["Date", post?.date || "Flexible"], ["Time", post?.time || "Flexible"], ["Duration", post?.duration || "Not specified"], ["Players needed", post?.requiredPeople || "Not specified"]] };
+};
 
 const PostModal = ({ post }) => {
-  const { data: session } = useSession()
+  const themeClass     = getCategoryThemeClass(post?.category);
+  const detailsSection = getDetailsSection(post);
 
   return (
-    <div>
-      <dialog id="my_modal_1" className="modal">
-        <div className="modal-box max-w-lg border border-white/10 bg-black/60 p-0 text-slate-50 shadow-[0_18px_60px_rgba(0,0,0,0.8)] backdrop-blur">
-          <div className="modal-action m-0 p-0 relative">
-            <form method="dialog" className="w-full">
-              {/* Close Button */}
-              <button className="absolute right-3 top-3 text-slate-400 transition-colors hover:text-red-400">
-                <HiOutlineXCircle className="text-[28px]" />
-              </button>
+    <dialog id="my_modal_1" className="modal">
+      <div className={`modal-box w-full max-w-2xl overflow-hidden rounded-[22px] bg-white shadow-[0_20px_60px_rgba(15,23,42,0.18)] ${themeClass}`}>
 
-              <div className="border-t border-white/10">
-                {/* Image */}
-                <img
-                  className="h-[220px] w-full border-b border-white/10 object-cover"
-                  src={post?.imageUrl}
-                  alt="poster"
-                />
+        {/* image + close */}
+        <div className="relative">
+          <form method="dialog" className="absolute right-3 top-3 z-10">
+            <button type="submit" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#6B7280] shadow-sm backdrop-blur-sm transition hover:bg-white hover:text-[#0F1623]">
+              <HiOutlineXCircle className="text-[22px]" />
+            </button>
+          </form>
+          <img
+            className="h-[220px] w-full object-cover md:h-[280px]"
+            src={post?.imageUrl || "/placeholder-post.svg"}
+            alt={post?.title || "post"}
+          />
+        </div>
 
-                {/* Content with Tailwind animation */}
-                <div className="p-4 transition-all duration-500 ease-out">
-                  <h5 className="mb-3 text-xl font-semibold tracking-tight text-slate-50">
-                    {post?.title}
-                  </h5>
+        <div className="space-y-5 p-5 md:p-6">
 
-                  <div className="mb-2 flex items-center gap-2 text-xs text-slate-300 md:text-sm">
-                    <HiOutlineCalendar className="text-lg text-amber-300" />
-                    {post?.date}
-                  </div>
+          {/* badges */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="category-accent-bg rounded-full px-3 py-1 text-[11px] font-semibold">{post?.category || "Other"}</span>
+            <span className="category-soft-chip rounded-full px-3 py-1 text-[11px]">{post?.subCategory || "General"}</span>
+            <span className="category-soft-chip rounded-full px-3 py-1 text-[11px]">{post?.distance || "Nearby"}</span>
+          </div>
 
-                  <div className="mb-3 flex items-center gap-2 text-xs text-slate-300 md:text-sm">
-                    <HiLocationMarker className="text-lg text-emerald-300" />
-                    {post?.location}
-                  </div>
-
-                  <p className="mb-4 text-sm leading-relaxed text-slate-300">
-                    If you're interested, reach out to the organizer using the details below and join the match before
-                    all spots are taken.
-                  </p>
-
-                  <div className="mb-4 border-t border-white/10" />
-
-                  {/* User Info */}
-                  <div className="flex items-center gap-3">
-                    <Image
-                      src={post?.userImage}
-                      alt="user-image"
-                      width={40}
-                      height={40}
-                      className="h-10 w-10 rounded-full border border-white/15 object-cover"
-                    />
-                    <div>
-                      <h2 className="text-[14px] font-semibold text-slate-50">
-                        {post?.userName}
-                      </h2>
-                      <h2 className="text-[13px] font-light text-slate-300">
-                        {post?.email}
-                      </h2>
-                    </div>
-                  </div>
-                </div>
+          {/* title + user */}
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
+              <h2 className="text-[22px] font-black leading-tight text-[#0F1623] md:text-[26px]">{post?.title}</h2>
+              <div className="mt-2 flex flex-wrap items-center gap-3 text-[13px] text-[#6B7280]">
+                {post?.location && (
+                  <span className="flex items-center gap-1.5">
+                    <HiLocationMarker className="category-accent-text text-[14px]" />
+                    {post.location}
+                  </span>
+                )}
+                {(post?.date || post?.time) && (
+                  <span className="flex items-center gap-1.5">
+                    <HiOutlineCalendar className="category-accent-text text-[14px]" />
+                    {[post.date, post.time].filter(Boolean).join(" • ")}
+                  </span>
+                )}
               </div>
-            </form>
+            </div>
+
+            <div className="category-soft-panel flex shrink-0 items-center gap-3 rounded-[14px] px-3 py-2.5">
+              <Image
+                src={post?.userImage || "/avatar-placeholder.svg"}
+                alt="user" width={40} height={40}
+                className="h-10 w-10 rounded-full border category-accent-border object-cover"
+              />
+              <div>
+                <div className="flex items-center gap-1">
+                  <p className="text-[13px] font-bold text-[#0F1623]">{post?.userName}</p>
+                  {post?.isVerified && <HiBadgeCheck className="category-accent-text text-[13px]" />}
+                </div>
+                <p className="text-[11px] text-[#6B7280]">{post?.email}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* description */}
+          <p className="text-[13.5px] leading-relaxed text-[#374151]">{post?.desc}</p>
+
+          {/* detail chips */}
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {detailItems(post).map((item) => (
+              <div key={item.label} className="category-soft-panel rounded-[12px] px-3 py-2.5">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B7280]">{item.label}</p>
+                <p className="mt-1 text-[13px] font-bold text-[#0F1623]">{item.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* contact + match details */}
+          <div className="grid gap-3 border-t border-[#E8EDF5] pt-4 sm:grid-cols-2">
+            <div className="category-soft-panel rounded-[12px] p-3.5">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B7280] mb-2">Contact</p>
+              <div className="space-y-1.5 text-[12.5px] text-[#374151]">
+                <p>Email: {post?.email}</p>
+                <p>Phone: {post?.phone || "Not shared"}</p>
+                <p>WhatsApp: {post?.whatsapp || "Not shared"}</p>
+              </div>
+            </div>
+            <div className="category-soft-panel rounded-[12px] p-3.5">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B7280] mb-2">{detailsSection.title}</p>
+              <div className="space-y-1.5 text-[12.5px] text-[#374151]">
+                {detailsSection.rows.map(([label, value]) => (
+                  <p key={label}>{label}: {value}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* action buttons */}
+          <div className="flex flex-wrap gap-2 border-t border-[#E8EDF5] pt-4">
+            <Button variant="yellow" size="sm">
+              <HiOutlineChatAlt2 className="text-[14px]" /> Chat
+            </Button>
+            <Button variant="secondary" size="sm">
+              <FaWhatsapp className="text-[14px]" /> WhatsApp
+            </Button>
+            <Button variant="secondary" size="sm">
+              <HiOutlinePhone className="text-[14px]" /> Call
+            </Button>
+            <Button variant="ghost" size="sm">
+              <HiOutlineBookmark className="text-[14px]" /> Save
+            </Button>
+            <Button variant="ghost" size="sm">
+              <HiOutlineShare className="text-[14px]" /> Share
+            </Button>
           </div>
         </div>
-      </dialog>
-    </div>
-  )
-}
+      </div>
+    </dialog>
+  );
+};
 
-export default PostModal
+export default PostModal;
