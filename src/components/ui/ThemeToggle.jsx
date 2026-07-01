@@ -12,12 +12,12 @@ const getPreferredTheme = () => {
   }
 
   const savedTheme = window.localStorage.getItem(STORAGE_KEY);
-  if (savedTheme === "light" || savedTheme === "dark") {
+  if (savedTheme === "light" || savedTheme === "light") {
     return savedTheme;
   }
 
   return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
+    ? "light"
     : "light";
 };
 
@@ -39,7 +39,7 @@ const ThemeToggle = () => {
   }, []);
 
   const toggleTheme = () => {
-    const nextTheme = theme === "light" ? "dark" : "light";
+    const nextTheme = theme === "light" ? "light" : "light";
     setTheme(nextTheme);
     applyTheme(nextTheme);
   };
@@ -48,7 +48,7 @@ const ThemeToggle = () => {
     return null;
   }
 
-  const isDark = theme === "dark";
+  const isDark = theme === "light";
 
   return (
     <Button
