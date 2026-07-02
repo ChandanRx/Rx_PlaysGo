@@ -3,22 +3,38 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Card from "../../components/ui/Card";
-import Button from "../../components/ui/Button";
 import Data from "../../shared/data";
-import { Check } from "lucide-react";
+import { Check, Moon, Sun } from "lucide-react";
 import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from "../../shared/lucideIcons";
 import {
   getCategoryLabel, getCategoryThemeValue,
   getStoredAppCategory, setStoredAppCategory,
 } from "../../shared/appPreferences";
 
-const CATEGORY_BG    = { Players: "from-yellow-50 to-amber-50", "Local Help": "from-blue-50 to-sky-50", "For Sale": "from-purple-50 to-violet-50" };
+const STORAGE_KEY = "quibly_theme";
+const CATEGORY_BG = { Players: "from-yellow-50 to-amber-50", "Local Help": "from-blue-50 to-sky-50", "For Sale": "from-purple-50 to-violet-50" };
 
 const SettingsPage = () => {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState("");
+  const [theme, setTheme] = useState("light");
+  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => { setActiveCategory(getStoredAppCategory()); }, []);
+  useEffect(() => {
+    setActiveCategory(getStoredAppCategory());
+    const saved = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
+    const resolved = saved === "dark" ? "dark" : saved === "light" ? "light" :
+      (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    setTheme(resolved);
+    setMounted(true);
+  }, []);
+
+  const applyTheme = (t) => {
+    document.documentElement.dataset.theme = t;
+    document.body.dataset.theme = t;
+    window.localStorage.setItem(STORAGE_KEY, t);
+    setTheme(t);
+  };
 
   const chooseCategory = (cat) => {
     setStoredAppCategory(cat);
@@ -28,6 +44,69 @@ const SettingsPage = () => {
 
   return (
     <div className="space-y-5">
+
+      {/* ── Appearance — mobile only (desktop has ThemeToggle in left sidebar) ── */}
+      <Card className="p-5 md:p-6 lg:hidden" hover={false}>
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--text-faint)]">Appearance</p>
+        <h2 className="mt-1.5 text-[18px] font-black text-[var(--text-heading)]">Theme</h2>
+        <p className="mt-1 text-[13px] text-[var(--text-muted)]">Choose how PlaysGo looks on your device.</p>
+
+        {mounted && (
+          <div className="mt-4 grid grid-cols-2 gap-3">
+
+            {/* Light */}
+            <button
+              type="button"
+              onClick={() => applyTheme("light")}
+              className={`relative flex flex-col items-center gap-2.5 rounded-sm border-2 px-4 py-5 transition-all duration-200 ${
+                theme === "light"
+                  ? "border-[var(--brand)] bg-[var(--brand-soft)] shadow-[0_4px_16px_rgba(255,60,31,0.15)]"
+                  : "border-[var(--border-subtle)] bg-[var(--bg-secondary)] hover:border-[var(--brand)]"
+              }`}
+            >
+              {theme === "light" && (
+                <span className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--brand)]">
+                  <Check className="h-3 w-3 text-white" strokeWidth={3} />
+                </span>
+              )}
+              <div className={`flex h-11 w-11 items-center justify-center rounded-full ${
+                theme === "light" ? "bg-[var(--brand)] text-white" : "bg-[var(--bg-hover)] text-[var(--text-muted)]"
+              }`}>
+                <Sun className="h-6 w-6" strokeWidth={2} />
+              </div>
+              <span className={`text-[13px] font-bold ${theme === "light" ? "text-[var(--brand)]" : "text-[var(--text-body)]"}`}>
+                Light
+              </span>
+            </button>
+
+            {/* Dark */}
+            <button
+              type="button"
+              onClick={() => applyTheme("dark")}
+              className={`relative flex flex-col items-center gap-2.5 rounded-sm border-2 px-4 py-5 transition-all duration-200 ${
+                theme === "dark"
+                  ? "border-[var(--brand)] bg-[var(--brand-soft)] shadow-[0_4px_16px_rgba(255,60,31,0.15)]"
+                  : "border-[var(--border-subtle)] bg-[var(--bg-secondary)] hover:border-[var(--brand)]"
+              }`}
+            >
+              {theme === "dark" && (
+                <span className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--brand)]">
+                  <Check className="h-3 w-3 text-white" strokeWidth={3} />
+                </span>
+              )}
+              <div className={`flex h-11 w-11 items-center justify-center rounded-full ${
+                theme === "dark" ? "bg-[var(--brand)] text-white" : "bg-[var(--bg-hover)] text-[var(--text-muted)]"
+              }`}>
+                <Moon className="h-6 w-6" strokeWidth={2} />
+              </div>
+              <span className={`text-[13px] font-bold ${theme === "dark" ? "text-[var(--brand)]" : "text-[var(--text-body)]"}`}>
+                Dark
+              </span>
+            </button>
+
+          </div>
+        )}
+      </Card>
 
       {/* header card */}
       <Card className="p-5 md:p-6" hover={false}>

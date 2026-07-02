@@ -94,6 +94,13 @@
   --shadow-md: 0 18px 40px rgba(30,20,10,.08);
   --shadow-lg: 0 30px 80px rgba(30,20,10,.10);
 
+  /*==============================
+    SELECTED FOREGROUND
+    Text/icon on active dark pills
+  ==============================*/
+
+  --selected-fg: #FFFFFF;   /* white on #111111 black bg — light mode */
+
 }
 
 [data-theme="dark"]{
@@ -123,6 +130,13 @@
   --secondary-border: rgba(196,168,255,.28);
 
   --accent: #FF7A3A;
+
+  /*==============================
+    SELECTED FOREGROUND
+    Text/icon on active near-white pills
+  ==============================*/
+
+  --selected-fg: #111111;   /* dark on #F5F2EE near-white bg — dark mode */
 
 }
 
