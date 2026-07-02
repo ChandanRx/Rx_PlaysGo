@@ -1,22 +1,22 @@
 import React from "react";
 
-/* Base — matches EdTech reference: tight letter spacing, rounded-full pill */
+/* Base — matches reference: tight letter spacing, rounded-full pill */
 const baseClasses =
   "inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold tracking-tight " +
   "transition-[background-color,color,border-color,box-shadow,transform] duration-200 outline-none select-none " +
-  "focus-visible:ring-2 focus-visible:ring-[#FF7A00]/40 " +
+  "focus-visible:ring-2 focus-visible:ring-[#FF3C1F]/40 " +
   "disabled:pointer-events-none disabled:opacity-50 active:scale-[0.97]";
 
 const variantClasses = {
   /* ── Dark pill — EdTech "Dashboard" active nav style ── */
   primary:
-    "rounded-full bg-[var(--text-heading)] text-[var(--bg-card)] shadow-sm " +
+    "rounded-full bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-sm " +
     "hover:bg-[var(--text-heading)]/90 hover:shadow-md",
 
-  /* ── yellow brand — sports CTA ── */
+  /* ── Coral brand CTA ── */
   yellow:
-    "rounded-full bg-[var(--brand)] text-white shadow-[0_4px_14px_rgba(255,122,0,0.35)] " +
-    "hover:bg-[var(--brand-hover)] hover:shadow-[0_6px_20px_rgba(255,122,0,0.45)]",
+    "rounded-full bg-[var(--brand)] text-white shadow-[0_4px_14px_rgba(255,60,31,0.32)] " +
+    "hover:bg-[var(--brand-hover)] hover:shadow-[0_6px_20px_rgba(255,60,31,0.42)]",
 
   /* ── Ghost outlined ── */
   secondary:
@@ -35,7 +35,7 @@ const variantClasses = {
 
   /* ── Dark (same as primary) ── */
   dark:
-    "rounded-full bg-[var(--text-heading)] text-[var(--bg-card)] shadow-sm hover:bg-[var(--text-heading)]/90",
+    "rounded-full bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-sm hover:bg-[var(--text-heading)]/90",
 
   /* ── Light tinted ── */
   light:
@@ -58,7 +58,7 @@ const variantClasses = {
 
   /* Alias kept for legacy usage */
   lime:
-    "rounded-full bg-[var(--brand)] text-white shadow-[0_4px_14px_rgba(255,122,0,0.35)] " +
+    "rounded-full bg-[var(--brand)] text-white shadow-[0_4px_14px_rgba(255,60,31,0.32)] " +
     "hover:bg-[var(--brand-hover)]",
 };
 

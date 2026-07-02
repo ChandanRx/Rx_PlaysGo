@@ -21,7 +21,7 @@ const RightSidebar = () => {
 
   return (
     <aside className="fixed right-4 top-4 bottom-4 z-30 hidden w-[300px] lg:flex">
-      <div className="flex h-full w-full flex-col overflow-hidden rounded-[22px] border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_8px_32px_rgba(15,23,42,0.08)]">
+      <div className="flex h-full w-full flex-col overflow-hidden rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_8px_32px_rgba(30,20,10,0.07)]">
 
         {/* ── Profile header ── */}
         <button
@@ -55,8 +55,8 @@ const RightSidebar = () => {
                   key={chat.id}
                   type="button"
                   onClick={() => setActiveChatId(chat.id)}
-                  className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 transition-colors duration-200 ${
-                    active ? "bg-[var(--text-heading)] text-[var(--bg-card)]" : "hover:bg-[var(--bg-input)]"
+                  className={`flex w-full items-center gap-2.5 rounded-sm px-3 py-2.5 transition-colors duration-200 ${
+                    active ? "bg-[var(--text-heading)] text-[var(--selected-fg)]" : "hover:bg-[var(--bg-input)]"
                   }`}
                 >
                   <div className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[13px] font-bold ${
@@ -67,10 +67,10 @@ const RightSidebar = () => {
                   </div>
                   <div className="min-w-0 flex-1 text-left">
                     <div className="flex items-center justify-between">
-                      <span className={`truncate text-[12px] font-semibold ${active ? "text-[var(--bg-card)]" : "text-[var(--text-heading)]"}`}>{chat.name}</span>
-                      <span className={`text-[10px] ${active ? "text-[var(--bg-card)]/60" : "text-[var(--text-faint)]"}`}>{chat.time}</span>
+                      <span className={`truncate text-[12px] font-semibold ${active ? "text-[var(--selected-fg)]" : "text-[var(--text-heading)]"}`}>{chat.name}</span>
+                      <span className={`text-[10px] ${active ? "text-[var(--selected-fg)]/60" : "text-[var(--text-faint)]"}`}>{chat.time}</span>
                     </div>
-                    <p className={`truncate text-[11px] ${active ? "text-[var(--bg-card)]/70" : "text-[var(--text-muted)]"}`}>{chat.preview}</p>
+                    <p className={`truncate text-[11px] ${active ? "text-[var(--selected-fg)]/70" : "text-[var(--text-muted)]"}`}>{chat.preview}</p>
                   </div>
                   {chat.unread > 0 && (
                     <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--brand)] px-1.5 text-[10px] font-bold text-white">{chat.unread}</span>
@@ -89,7 +89,7 @@ const RightSidebar = () => {
                   {activeChat.online ? <span className="font-medium text-[#22C55E]">● Online</span> : "Offline"}
                 </p>
               </div>
-              <button className="rounded-xl p-1.5 text-[var(--text-faint)] transition hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]">
+              <button className="rounded-sm p-1.5 text-[var(--text-faint)] transition hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]">
                 <HiOutlineChevronRight className="text-[18px]" />
               </button>
             </div>
@@ -98,10 +98,10 @@ const RightSidebar = () => {
             <div className="flex-1 space-y-2.5 overflow-y-auto pr-1">
               {activeChat.messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.from === "me" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-[12.5px] leading-relaxed ${
+                  <div className={`max-w-[80%] rounded-sm px-3.5 py-2.5 text-[12.5px] leading-relaxed ${
                     msg.from === "me"
-                      ? "rounded-br-sm bg-[var(--text-heading)] text-[var(--bg-card)]"
-                      : "rounded-bl-sm border border-[var(--border-subtle)] bg-[var(--bg-input)] text-[var(--text-body)]"
+                      ? "rounded-sm bg-[var(--text-heading)] text-[var(--selected-fg)]"
+                      : "rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-input)] text-[var(--text-body)]"
                   }`}>
                     {msg.text}
                   </div>
@@ -111,7 +111,7 @@ const RightSidebar = () => {
 
             {/* input */}
             <form
-              className="mt-3 flex items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 py-2"
+              className="mt-3 flex items-center gap-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 py-2"
               onSubmit={(e) => { e.preventDefault(); if (!message.trim()) return; setMessage(""); }}
             >
               <input

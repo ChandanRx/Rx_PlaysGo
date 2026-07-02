@@ -9,6 +9,8 @@ import {
   HiStar, HiClock, HiUsers, HiTag,
 } from "react-icons/hi";
 import { motion } from "framer-motion";
+import { MapPin } from "lucide-react";
+import { DEFAULT_CATEGORY_ICON, SUBCATEGORY_ICONS } from "../shared/lucideIcons";
 
 /* ── helpers ── */
 const getCategoryThemeClass = (c) => {
@@ -16,13 +18,6 @@ const getCategoryThemeClass = (c) => {
   if (c === "Local Help") return "category-theme--local-help";
   if (c === "For Sale")   return "category-theme--for-sale";
   return "";
-};
-
-const EMOJI = {
-  Cricket:"🏏",Football:"⚽",Volleyball:"🏐",Badminton:"🏸",Tennis:"🎾",Basketball:"🏀",
-  Tutor:"📚",Maths:"📐",Design:"🎨","Moving Help":"📦","House Help":"🏠",Driver:"🚗",
-  "Event Volunteer":"🙌",Freelancer:"💼","Travel Partner":"✈️","Shared Apartment":"🛋️",
-  Electronics:"💻",Furniture:"🪑",Vehicles:"🚘",Books:"📖","Sports Equipment":"🏋️",
 };
 
 const getMetaText = (post) => {
@@ -60,7 +55,7 @@ const PostItems = ({ post, onClick }) => {
   };
 
   const themeClass   = getCategoryThemeClass(post?.category);
-  const emoji        = EMOJI[post?.subCategory] || "📌";
+  const CategoryIcon = SUBCATEGORY_ICONS[post?.subCategory] || DEFAULT_CATEGORY_ICON;
   const primaryLabel = getPrimaryLabel(post?.category);
   const chips        = getChips(post);
   const metaText     = getMetaText(post);
@@ -70,7 +65,7 @@ const PostItems = ({ post, onClick }) => {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className={`group flex flex-col h-full w-full bg-[var(--bg-card)] rounded-[20px] overflow-hidden border border-[var(--border-subtle)] shadow-[0_2px_12px_rgba(15,23,42,0.07)] hover:shadow-[0_10px_32px_rgba(15,23,42,0.13)] hover:-translate-y-1 transition-[transform,box-shadow] duration-200 cursor-pointer select-none ${themeClass}`}
+      className={`group flex flex-col h-full w-full bg-[var(--bg-card)] rounded-sm overflow-hidden border border-[var(--border-subtle)] shadow-[0_2px_12px_rgba(30,20,10,0.06)] hover:shadow-[0_10px_32px_rgba(30,20,10,0.11)] hover:-translate-y-1 transition-[transform,box-shadow] duration-200 cursor-pointer select-none transform-gpu will-change-transform ${themeClass}`}
       onClick={onClick}
       onKeyDown={handleKeyDown}
       role={onClick ? "button" : undefined}
@@ -82,13 +77,14 @@ const PostItems = ({ post, onClick }) => {
           src={imageSrc}
           alt={post?.title || "post"}
           onError={() => setImageSrc("/placeholder-post.svg")}
-          className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+          className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] transform-gpu will-change-transform"
         />
         <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--bg-card)]/20 to-transparent pointer-events-none" />
 
         {/* category pill — top left */}
         <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-[var(--bg-card)]/95 px-2.5 py-1 text-[11px] font-semibold text-[var(--text-heading)] shadow-sm backdrop-blur-sm">
-          {emoji} {post?.subCategory || post?.category}
+          <CategoryIcon className="h-3.5 w-3.5 shrink-0 text-[var(--brand)]" strokeWidth={2.25} />
+          {post?.subCategory || post?.category}
         </span>
 
         {/* save — top right */}
@@ -105,8 +101,9 @@ const PostItems = ({ post, onClick }) => {
 
         {/* distance — bottom right */}
         {post?.distance && (
-          <span className="absolute bottom-2.5 right-3 inline-flex items-center gap-1 rounded-full bg-[var(--text-heading)]/45 px-2.5 py-0.5 text-[10px] font-semibold text-[var(--bg-card)] backdrop-blur-sm">
-            📍 {post.distance}
+          <span className="absolute bottom-2.5 right-3 inline-flex items-center gap-1 rounded-full bg-[var(--text-heading)]/45 px-2.5 py-0.5 text-[10px] font-semibold text-[var(--selected-fg)] backdrop-blur-sm">
+            <MapPin className="h-3 w-3 shrink-0" strokeWidth={2.25} />
+            {post.distance}
           </span>
         )}
       </div>
@@ -120,7 +117,7 @@ const PostItems = ({ post, onClick }) => {
             {post?.title}
           </h2>
           <div className="flex shrink-0 items-center gap-0.5 pt-0.5">
-            <HiStar className="text-[13px] text-amber-400" />
+            <HiStar className="text-[13px] text-[var(--amber-400)]" />
             <span className="text-[12px] font-bold text-[var(--text-heading)]">4.8</span>
             <span className="text-[11px] text-[var(--text-faint)]">(24)</span>
           </div>
@@ -183,10 +180,10 @@ const PostItems = ({ post, onClick }) => {
           </div>
 
           <motion.button
-            whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-            onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-            className="flex shrink-0 items-center gap-1.5 rounded-full bg-[var(--brand)] px-4 py-2 text-[12.5px] font-bold text-white shadow-[0_4px_12px_rgba(255,122,0,0.35)] transition-[background-color,box-shadow] hover:bg-[var(--brand-hover)] hover:shadow-[0_6px_18px_rgba(255,122,0,0.45)]"
-          >
+             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+             onClick={(e) => { e.stopPropagation(); onClick?.(); }}
+             className="flex shrink-0 items-center gap-1.5 rounded-sm bg-[var(--brand)] px-4 py-2 text-[12.5px] font-bold text-white transition-[background-color] hover:bg-[var(--brand-hover)]"
+           >
             <HiOutlineUserAdd className="text-[13px]" />
             {primaryLabel}
           </motion.button>

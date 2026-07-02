@@ -6,9 +6,10 @@ import { createPost } from "../../shared/dummyPosts";
 import Data from "../../shared/data";
 import { getCategoryLabel, getStoredAppCategory } from "../../shared/appPreferences";
 import { Input, Select, Textarea } from "../../components/ui/FormControls";
+import { ArrowRight, Check, ChevronLeft, ChevronRight, Settings } from "lucide-react";
 
-const label = "mb-1.5 block text-[13px] font-semibold text-[#374151]";
-const hint  = "mt-1 text-[12px] text-[#6B7280]";
+const label = "mb-1.5 block text-[13px] font-semibold text-[var(--text-body)]";
+const hint  = "mt-1 text-[12px] text-[var(--text-muted)]";
 
 const steps = ["Details", "Location", "Media", "Contact", "Preview"];
 
@@ -50,12 +51,13 @@ const CreatePost = () => {
 
   /* ── no mode chosen ── */
   if (!stored) return (
-    <div className="flex flex-col items-center justify-center rounded-[20px] border border-[#E8EDF5] bg-white p-12 text-center shadow-[0_2px_12px_rgba(15,23,42,0.07)]">
-      <div className="mb-3 text-5xl">⚙️</div>
-      <h2 className="text-[18px] font-black text-[#0F1623]">Choose a mode first</h2>
-      <p className="mt-2 text-[13px] text-[#6B7280]">Go to Settings and pick Sports, Helper, or Sale before creating a post.</p>
-      <button type="button" onClick={() => router.push("/settings")} className="mt-5 rounded-full bg-[#FF7A00] px-6 py-2.5 text-[13px] font-bold text-white shadow-[0_4px_12px_rgba(255,122,0,0.3)] transition hover:bg-[#F26A00]">
+    <div className="flex flex-col items-center justify-center rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] p-12 text-center shadow-[0_2px_12px_rgba(30,20,10,0.06)]">
+      <Settings className="mb-3 h-12 w-12 text-[var(--brand)]" strokeWidth={1.75} />
+      <h2 className="text-[18px] font-black text-[var(--text-heading)]">Choose a mode first</h2>
+      <p className="mt-2 text-[13px] text-[var(--text-muted)]">Go to Settings and pick Sports, Helper, or Sale before creating a post.</p>
+      <button type="button" onClick={() => router.push("/settings")} className="mt-5 inline-flex items-center justify-center gap-1.5 rounded-full bg-[var(--brand)] px-6 py-2.5 text-[13px] font-bold text-white shadow-[0_4px_12px_rgba(255,60,31,0.28)] transition hover:bg-[var(--brand-hover)]">
         Open Settings
+        <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
       </button>
     </div>
   );
@@ -65,8 +67,8 @@ const CreatePost = () => {
     switch (step) {
       case 0: return (
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="md:col-span-2 rounded-[12px] border border-[#E8EDF5] bg-[#F8FAFC] px-4 py-3 text-[13px] text-[#374151]">
-            Posting in <strong className="text-[#0F1623]">{getCategoryLabel(input.category)}</strong> mode. Change in Settings.
+          <div className="md:col-span-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3 text-[13px] text-[var(--text-body)]">
+            Posting in <strong className="text-[var(--text-heading)]">{getCategoryLabel(input.category)}</strong> mode. Change in Settings.
           </div>
           <div className="md:col-span-2"><label className={label}>Title</label><Input name="title" value={input.title||""} placeholder="Need 4 players for Sunday match" onChange={onChange} required /></div>
           <div><label className={label}>Subcategory</label><Select name="subCategory" value={input.subCategory||""} onChange={onChange}><option value="">Select subcategory</option>{subOpts.map((s) => <option key={s} value={s}>{s}</option>)}</Select></div>
@@ -79,11 +81,11 @@ const CreatePost = () => {
       );
       case 1: return (
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="md:col-span-2 rounded-[12px] border border-[#E8EDF5] bg-[#F8FAFC] px-4 py-3 text-[13px] text-[#374151]">Location for your {getCategoryLabel(input.category).toLowerCase()} post</div>
+          <div className="md:col-span-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3 text-[13px] text-[var(--text-body)]">Location for your {getCategoryLabel(input.category).toLowerCase()} post</div>
           <div><label className={label}>Current location</label><Input name="currentLocation" value={input.currentLocation||""} placeholder="Use current location" onChange={onChange} /></div>
           <div><label className={label}>Search location</label><Input name="searchLocation" value={input.searchLocation||""} placeholder="SG Highway, Ahmedabad" onChange={onChange} /></div>
           <div><label className={label}>Radius</label><Select name="radius" value={input.radius} onChange={onChange}>{Data.radiusOptions.map((r) => <option key={r} value={r}>{r}</option>)}</Select></div>
-          <div className="rounded-[12px] border border-dashed border-[#E8EDF5] bg-[#F8FAFC] p-4 text-[13px] text-[#6B7280]">Map preview placeholder</div>
+          <div className="rounded-sm border border-dashed border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 text-[13px] text-[var(--text-muted)]">Map preview placeholder</div>
         </div>
       );
       case 2: return (
@@ -103,14 +105,14 @@ const CreatePost = () => {
       default: return (
         <div className="grid gap-3 md:grid-cols-2">
           {[["Category",input.category],["Subcategory",input.subCategory||"Not selected"],["Title",input.title||"Untitled"],["Location",input.searchLocation||input.currentLocation||"Not added"],["Radius",input.radius],["Contact",input.contactPreference]].map(([l,v]) => (
-            <div key={l} className="rounded-[12px] border border-[#E8EDF5] bg-[#F8FAFC] p-3">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">{l}</p>
-              <p className="mt-1 text-[13px] font-semibold text-[#0F1623]">{v}</p>
+            <div key={l} className="rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{l}</p>
+              <p className="mt-1 text-[13px] font-semibold text-[var(--text-heading)]">{v}</p>
             </div>
           ))}
-          <div className="rounded-[12px] border border-[#E8EDF5] bg-[#F8FAFC] p-3 md:col-span-2">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">Description</p>
-            <p className="mt-1 text-[13px] text-[#374151]">{input.desc||"No description added."}</p>
+          <div className="rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 md:col-span-2">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Description</p>
+            <p className="mt-1 text-[13px] text-[var(--text-body)]">{input.desc||"No description added."}</p>
           </div>
         </div>
       );
@@ -119,23 +121,23 @@ const CreatePost = () => {
 
   return (
     <div className={theme}>
-      <div className="overflow-hidden rounded-[20px] border border-[#E8EDF5] bg-white shadow-[0_2px_12px_rgba(15,23,42,0.07)]">
+      <div className="overflow-hidden rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_2px_12px_rgba(30,20,10,0.06)]">
 
         {/* header */}
-        <div className="border-b border-[#E8EDF5] px-5 py-5 md:px-6">
+        <div className="border-b border-[var(--border-subtle)] px-5 py-5 md:px-6">
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] category-accent-text">Create post</p>
-          <h1 className="mt-1 text-[20px] font-black text-[#0F1623]">{copy.title}</h1>
-          <p className="mt-0.5 text-[13px] text-[#6B7280]">{copy.desc}</p>
+          <h1 className="mt-1 text-[20px] font-black text-[var(--text-heading)]">{copy.title}</h1>
+          <p className="mt-0.5 text-[13px] text-[var(--text-muted)]">{copy.desc}</p>
         </div>
 
         {/* step tabs */}
-        <div className="flex gap-2 overflow-x-auto border-b border-[#E8EDF5] px-5 py-3 scrollbar-none">
+        <div className="flex gap-2 overflow-x-auto border-b border-[var(--border-subtle)] px-5 py-3 scrollbar-none">
           {steps.map((s, i) => (
             <button key={s} type="button" onClick={() => setStep(i)}
               className={`shrink-0 rounded-full px-4 py-1.5 text-[12px] font-semibold transition-all ${
-                step === i ? "bg-[#0F1623] text-white"
-                : i < step  ? "bg-[#FF7A00] text-white"
-                : "border border-[#E8EDF5] text-[#6B7280] hover:border-[#0F1623]"
+                step === i ? "bg-[var(--text-heading)] text-[var(--selected-fg)]"
+                : i < step  ? "bg-[var(--brand)] text-white"
+                : "border border-[var(--border-subtle)] text-[var(--text-muted)] hover:border-[var(--text-heading)]"
               }`}
             >{i+1}. {s}</button>
           ))}
@@ -143,15 +145,24 @@ const CreatePost = () => {
 
         {/* step body */}
         <form onSubmit={onSubmit} className="p-5 md:p-6">
-          <div className="category-soft-panel rounded-[16px] p-4 md:p-5">{renderStep()}</div>
+          <div className="category-soft-panel rounded-sm p-4 md:p-5">{renderStep()}</div>
 
-          <div className="mt-5 flex flex-col gap-3 border-t border-[#E8EDF5] pt-5 sm:flex-row sm:justify-between">
-            <button type="button" onClick={() => router.push("/")} className="rounded-full border border-[#E8EDF5] px-5 py-2 text-[13px] font-semibold text-[#6B7280] transition hover:border-[#0F1623] hover:text-[#0F1623]">Cancel</button>
+          <div className="mt-5 flex flex-col gap-3 border-t border-[var(--border-subtle)] pt-5 sm:flex-row sm:justify-between">
+            <button type="button" onClick={() => router.push("/")} className="rounded-full border border-[var(--border-subtle)] px-5 py-2 text-[13px] font-semibold text-[var(--text-muted)] transition hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]">Cancel</button>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setStep((s) => Math.max(0,s-1))} disabled={step===0} className="rounded-full border border-[#E8EDF5] px-5 py-2 text-[13px] font-semibold text-[#374151] transition hover:border-[#0F1623] disabled:opacity-40">← Back</button>
+              <button type="button" onClick={() => setStep((s) => Math.max(0,s-1))} disabled={step===0} className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[var(--border-subtle)] px-5 py-2 text-[13px] font-semibold text-[var(--text-body)] transition hover:border-[var(--text-heading)] disabled:opacity-40">
+                <ChevronLeft className="h-4 w-4" strokeWidth={2.25} />
+                Back
+              </button>
               {step < steps.length - 1
-                ? <button type="button" onClick={() => setStep((s) => Math.min(steps.length-1,s+1))} className="rounded-full bg-[#0F1623] px-6 py-2 text-[13px] font-bold text-white transition hover:bg-[#1e293b]">Next →</button>
-                : <button type="submit" className="rounded-full bg-[#FF7A00] px-6 py-2 text-[13px] font-bold text-white shadow-[0_4px_12px_rgba(255,122,0,0.3)] transition hover:bg-[#F26A00]">✓ Publish</button>
+                ? <button type="button" onClick={() => setStep((s) => Math.min(steps.length-1,s+1))} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[var(--text-heading)] px-6 py-2 text-[13px] font-bold text-[var(--selected-fg)] transition hover:bg-[var(--text-heading)]/85">
+                    Next
+                    <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
+                  </button>
+                : <button type="submit" className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[var(--brand)] px-6 py-2 text-[13px] font-bold text-white shadow-[0_4px_12px_rgba(255,60,31,0.28)] transition hover:bg-[var(--brand-hover)]">
+                    <Check className="h-4 w-4" strokeWidth={2.5} />
+                    Publish
+                  </button>
               }
             </div>
           </div>

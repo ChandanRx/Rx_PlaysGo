@@ -9,120 +9,135 @@
 ═══════════════════════════════════════════ */
 
 :root {
-  /* =========================
-     Backgrounds
-  ========================= */
-  --bg-page: #F7F3E8;
-  --bg-card: #FFFDF8;
-  --bg-input: #FAF7EF;
-  --border-subtle: #E7DDCB;
 
-  /* =========================
-     Typography
-  ========================= */
-  --text-heading: #1D1D1D;
-  --text-body: #4A4A4A;
-  --text-muted: #7B7B7B;
-  --text-faint: #B2B2B2;
+  /* ── Backgrounds ── */
+  --bg-page:      #ebe3fd;   /* warm off-white, like the reference */
+  --bg-card:      #FFFFFF;
+  --bg-secondary: #F3F0EC;   /* slightly warmer panel / sidebar bg */
+  --bg-input:     #FFFFFF;
+  --bg-hover:     #EDE9E3;
 
-  /* =========================
-     Brand
-  ========================= */
-  --brand: #F5C84C;
-  --brand-hover: #EAB308;
-  --brand-soft: #FFF7DA;
-  --brand-border: #F4DA8A;
+  /*==============================
+    BORDER
+  ==============================*/
 
-  /* =========================
-     Accent
-  ========================= */
-  --accent-dark: #2C2C2C;
-  --accent-light: #FFFFFF;
+  --border-subtle: #E8E3DC;
+  --border-light:  #F0ECE6;
+  --border-strong: #D4CEC5;
 
-  /* =========================
-     Category Colors
-  ========================= */
-  --category-accent: #F5C84C;
-  --category-accent-text: #1D1D1D;
-  --category-accent-soft: #FFF7DA;
-  --category-accent-border: #F4DA8A;
+  /*==============================
+    TYPOGRAPHY
+  ==============================*/
 
-  /* =========================
-     Legacy
-  ========================= */
-  --foreground-rgb: 29,29,29;
-  --background-start-rgb: 247,243,232;
-  --background-end-rgb: 255,253,248;
-  --theme-accent: 245,200,76;
+  --text-heading: #111111;   /* near-black, same as reference */
+  --text-body:    #3D3835;
+  --text-muted:   #7A736A;
+  --text-faint:   #B0A89E;
+
+  /*==============================
+    PRIMARY  — coral / warm red-orange
+  ==============================*/
+
+  --brand:        #FF3C1F;   /* vivid coral-red from reference CTAs */
+  --brand-hover:  #E82E12;
+  --brand-soft:   #FFF0ED;
+  --brand-border: #FFC9BF;
+
+  /*==============================
+    SECONDARY  — soft lavender / purple
+  ==============================*/
+
+  --secondary:        #C4A8FF;   /* lavender accent tiles */
+  --secondary-soft:   #F0EBFF;
+  --secondary-border: #D8CAFF;
+
+  /*==============================
+    ACCENT  — bright orange (icon tiles, highlights)
+  ==============================*/
+
+  --accent: #FF6B2B;
+
+  /*==============================
+    SUCCESS
+  ==============================*/
+
+  --success:      #50C878;
+  --success-soft: #E8F9EE;
+
+  /*==============================
+    WARNING
+  ==============================*/
+
+  --warning:      #FFC940;
+  --warning-soft: #FFF7DC;
+
+  /*==============================
+    INFO
+  ==============================*/
+
+  --info:         #7BC9FF;
+  --info-soft:    #E8F4FF;
+
+  /*==============================
+    DANGER
+  ==============================*/
+
+  --danger:       #FF7B7B;
+  --danger-soft:  #FFF0F0;
+
+  /*==============================
+    SHADOWS — softer, warmer tones
+  ==============================*/
+
+  --shadow-xs: 0 2px 8px  rgba(30,20,10,.04);
+  --shadow-sm: 0 8px 20px rgba(30,20,10,.06);
+  --shadow-md: 0 18px 40px rgba(30,20,10,.08);
+  --shadow-lg: 0 30px 80px rgba(30,20,10,.10);
+
+  /*==============================
+    SELECTED FOREGROUND
+    Text/icon on active dark pills
+  ==============================*/
+
+  --selected-fg: #FFFFFF;   /* white on #111111 black bg — light mode */
+
 }
 
-/* ==========================================
-   DARK THEME
-========================================== */
+[data-theme="dark"]{
 
-[data-theme="dark"] {
+  --bg-page:      #141210;
+  --bg-card:      #1C1917;
+  --bg-secondary: #231F1C;
+  --bg-input:     #2A2622;
+  --bg-hover:     #302B27;
 
-  /* Backgrounds */
-  --bg-page: #141414;
-  --bg-card: #1E1E1E;
-  --bg-input: #252525;
-  --border-subtle: #2F2F2F;
+  --border-subtle:#3A342E;
+  --border-light: #443D36;
+  --border-strong:#574F46;
 
-  /* Typography */
-  --text-heading: #F8F6F2;
-  --text-body: #D8D3C7;
-  --text-muted: #A8A39A;
-  --text-faint: #78736B;
+  --text-heading: #F5F2EE;
+  --text-body:    #CCC5BC;
+  --text-muted:   #968E84;
+  --text-faint:   #6E6860;
 
-  /* Brand */
-  --brand: #F5C84C;
-  --brand-hover: #FFD45A;
-  --brand-soft: rgba(245,200,76,.12);
-  --brand-border: rgba(245,200,76,.28);
+  --brand:        #FF5B3A;
+  --brand-hover:  #FF7055;
+  --brand-soft:   rgba(255,60,31,.13);
+  --brand-border: rgba(255,60,31,.30);
 
-  /* Accent */
-  --accent-dark: #2C2C2C;
-  --accent-light: #FFFFFF;
+  --secondary:        #C9ADFF;
+  --secondary-soft:   rgba(196,168,255,.13);
+  --secondary-border: rgba(196,168,255,.28);
 
-  /* Category */
-  --category-accent: #F5C84C;
-  --category-accent-text: #141414;
-  --category-accent-soft: rgba(245,200,76,.12);
-  --category-accent-border: rgba(245,200,76,.28);
+  --accent: #FF7A3A;
 
-  /* Legacy */
-  --foreground-rgb: 248,246,242;
-  --background-start-rgb: 20,20,20;
-  --background-end-rgb: 30,30,30;
-  --theme-accent: 245,200,76;
-}
+  /*==============================
+    SELECTED FOREGROUND
+    Text/icon on active near-white pills
+  ==============================*/
 
-/* ==========================================
-   CATEGORY THEMES
-========================================== */
+  --selected-fg: #111111;   /* dark on #F5F2EE near-white bg — dark mode */
 
-[data-category-theme="players"],
-.category-theme--players {
-  --category-accent: #F5C84C;
-  --category-accent-text: #1D1D1D;
-  --category-accent-soft: #FFF7DA;
-  --category-accent-border: #F4DA8A;
-}
-
-[data-category-theme="local-help"],
-.category-theme--local-help {
-  --category-accent: #EAB308;
-  --category-accent-text: #1D1D1D;
-  --category-accent-soft: #FFF8D8;
-  --category-accent-border: #EFD47A;
-}
-
-[data-category-theme="for-sale"],
-.category-theme--for-sale {
-  --category-accent: #D4A017;
-  --category-accent-text: #1D1D1D;
-  --category-accent-soft: #FFF6D1;
-  --category-accent-border: #E9CF72;
 }
 
 /* ═══════════════════════════════════════════
@@ -131,252 +146,357 @@
 
 *,
 *::before,
-*::after {
-  box-sizing: border-box;
+*::after{
+  box-sizing:border-box;
 }
 
-* {
-  scrollbar-gutter: stable;
+*{
+  margin:0;
+  padding:0;
+  scrollbar-gutter:stable;
 }
 
-html {
-  min-height: 100%;
+html{
+  min-height:100%;
+  scroll-behavior:smooth;
+  overflow-y:scroll;
+  scrollbar-gutter:stable;
 }
 
-body {
-  min-height: 100vh;
-  margin: 0;
-  font-family: var(--font-jakarta), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text-body);
-  background: var(--bg-page);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+body{
+
+  min-height:100vh;
+  width:100%;
+  max-width:100%;
+
+  font-family:
+    var(--font-jakarta),
+    "Plus Jakarta Sans",
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
+
+  font-size:15px;
+  line-height:1.65;
+
+  color:var(--text-body);
+
+  background:
+    radial-gradient(circle at top left,
+      rgba(255,60,31,.07),
+      transparent 28%),
+
+    radial-gradient(circle at top right,
+      rgba(196,168,255,.09),
+      transparent 32%),
+
+    radial-gradient(circle at bottom,
+      rgba(255,107,43,.05),
+      transparent 40%),
+
+    var(--bg-page);
+
+  overflow-x:hidden;
+
+  transition:
+    background .35s ease,
+    color .25s ease;
+
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
-/* Headings */
+/*==========================================
+TYPOGRAPHY
+==========================================*/
 
 h1,
 h2,
 h3,
 h4,
 h5,
-h6 {
-  color: var(--text-heading);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
+h6{
+
+  color:var(--text-heading);
+
+  font-weight:800;
+
+  letter-spacing:-0.04em;
+
+  line-height:1.05;
 }
 
-/* ==========================================
-   GLOBAL SCROLLBAR
-========================================== */
+h1{
+
+  font-size:clamp(3rem,6vw,5rem);
+}
+
+h2{
+
+  font-size:clamp(2.3rem,4vw,3.5rem);
+}
+
+h3{
+
+  font-size:2rem;
+}
+
+h4{
+
+  font-size:1.5rem;
+}
+
+h5{
+
+  font-size:1.2rem;
+}
+
+h6{
+
+  font-size:1rem;
+}
+
+p{
+
+  color:var(--text-body);
+}
+
+small{
+
+  color:var(--text-muted);
+}
+
+strong{
+
+  color:var(--text-heading);
+}
+
+a{
+
+  color:inherit;
+
+  text-decoration:none;
+
+  transition:.25s;
+}
+
+button,
+input,
+textarea,
+select{
+
+  font:inherit;
+}
+
+/*==========================================
+IMAGES
+==========================================*/
+
+img,
+picture,
+video,
+canvas,
+svg{
+
+  display:block;
+
+  max-width:100%;
+}
+
+/*==========================================
+FOCUS
+==========================================*/
+
+:focus-visible{
+
+  outline:none;
+
+  box-shadow:
+      0 0 0 4px rgba(255,60,31,.20);
+
+  border-radius:16px;
+}
+
+/*==========================================
+SELECTION
+==========================================*/
+
+::selection{
+
+  background:rgba(255,60,31,.18);
+
+  color:var(--text-heading);
+}
+
+/*==========================================
+TRANSITIONS
+==========================================*/
+
+button,
+a,
+input,
+textarea,
+select{
+
+  transition:
+      background .25s,
+      color .25s,
+      border-color .25s,
+      transform .25s,
+      box-shadow .25s;
+}
+
+/*==========================================
+GLOBAL SCROLLBAR
+==========================================*/
 
 /* Firefox */
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(156, 163, 175, .4) transparent;
+*{
+
+  scrollbar-width:thin;
+
+  scrollbar-color:
+      rgba(255,60,31,.45)
+      transparent;
 }
 
-/* Chrome / Edge / Safari */
+/* Chrome / Brave — force fully custom scrollbar (disables OS native rendering) */
 
-*::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+*::-webkit-scrollbar{
+
+  width:7px;
+
+  height:7px;
+
+  -webkit-appearance:none;
+
+  appearance:none;
 }
 
-*::-webkit-scrollbar-track {
-  background: transparent;
+*::-webkit-scrollbar-track{
+
+  background:transparent;
+
+  -webkit-appearance:none;
 }
 
-*::-webkit-scrollbar-thumb {
-  background: rgba(156,163,175,.45);
-  border-radius: 999px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
+*::-webkit-scrollbar-thumb{
+
+  background:
+      linear-gradient(
+        180deg,
+        #FF3C1F,
+        #C4A8FF
+      );
+
+  border-radius:999px;
+
+  -webkit-appearance:none;
 }
 
-*::-webkit-scrollbar-thumb:hover {
-  background: rgba(107,114,128,.65);
+*::-webkit-scrollbar-thumb:hover{
+
+  background:
+      linear-gradient(
+        180deg,
+        #E82E12,
+        #B394F5
+      );
 }
 
-*::-webkit-scrollbar-button {
-  display: none;
-  width: 0;
-  height: 0;
+/* Remove ALL scrollbar arrow buttons — covers all 4 directional variants */
+
+*::-webkit-scrollbar-button                                    { display:none; width:0; height:0; }
+*::-webkit-scrollbar-button:single-button                      { display:none; width:0; height:0; }
+*::-webkit-scrollbar-button:double-button                      { display:none; width:0; height:0; }
+*::-webkit-scrollbar-button:single-button:vertical:decrement   { display:none; width:0; height:0; }
+*::-webkit-scrollbar-button:single-button:vertical:increment   { display:none; width:0; height:0; }
+*::-webkit-scrollbar-button:single-button:horizontal:decrement { display:none; width:0; height:0; }
+*::-webkit-scrollbar-button:single-button:horizontal:increment { display:none; width:0; height:0; }
+*::-webkit-scrollbar-button:start:decrement                    { display:none; width:0; height:0; }
+*::-webkit-scrollbar-button:end:increment                      { display:none; width:0; height:0; }
+*::-webkit-scrollbar-button:vertical:start:decrement           { display:none; width:0; height:0; }
+*::-webkit-scrollbar-button:vertical:end:increment             { display:none; width:0; height:0; }
+*::-webkit-scrollbar-button:horizontal:start:decrement         { display:none; width:0; height:0; }
+*::-webkit-scrollbar-button:horizontal:end:increment           { display:none; width:0; height:0; }
+
+*::-webkit-scrollbar-corner{
+
+  background:transparent;
 }
 
-*::-webkit-scrollbar-corner {
-  background: transparent;
+/*==========================================
+GLOBAL CONTAINERS
+==========================================*/
+
+section{
+
+  position:relative;
 }
 
-/* Auto Hide */
+main{
 
-.scrollbar-auto-hide {
-  scrollbar-width: none;
+  position:relative;
 }
 
-.scrollbar-auto-hide::-webkit-scrollbar {
-  display: none;
+.container{
+
+  width:min(1320px,92%);
+
+  margin-inline:auto;
 }
 
-/* Show scrollbar on hover */
+/*==========================================
+HELPERS
+==========================================*/
 
-.scrollbar-auto-hide:hover,
-.scrollbar-auto-hide:focus,
-.scrollbar-auto-hide.scrolling {
-  scrollbar-width: thin;
+.gradient-text{
+
+  background:
+      linear-gradient(
+        90deg,
+        #C4A8FF 0%,
+        #FF3C1F 100%
+      );
+
+  -webkit-background-clip:text;
+
+  -webkit-text-fill-color:transparent;
+
+  background-clip:text;
 }
 
-.scrollbar-auto-hide:hover::-webkit-scrollbar,
-.scrollbar-auto-hide:focus::-webkit-scrollbar,
-.scrollbar-auto-hide.scrolling::-webkit-scrollbar {
-  display: block;
+.blur-circle{
+
+  position:absolute;
+
+  width:350px;
+
+  height:350px;
+
+  border-radius:999px;
+
+  background:rgba(196,168,255,.18);
+
+  filter:blur(100px);
+
+  pointer-events:none;
 }
 
-/* ═══════════════════════════════════════════
-   UTILITIES
-═══════════════════════════════════════════ */
+.blur-orange{
 
-@layer utilities {
+  position:absolute;
 
-  .text-balance {
-    text-wrap: balance;
-  }
+  width:350px;
 
-  /* Hide scrollbar */
+  height:350px;
 
-  .scrollbar-none {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+  border-radius:999px;
 
-  .scrollbar-none::-webkit-scrollbar {
-    display: none;
-  }
+  background:rgba(255,60,31,.16);
 
-  /* ==========================================
-     CARD SURFACE
-  ========================================== */
+  filter:blur(100px);
 
-  .card-surface {
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    border-radius: 20px;
-    box-shadow:
-      0 2px 8px rgba(0,0,0,.04),
-      0 10px 24px rgba(0,0,0,.05);
-    transition:
-      transform .25s ease,
-      box-shadow .25s ease,
-      border-color .25s ease;
-  }
-
-  .card-surface:hover {
-    transform: translateY(-4px);
-    box-shadow:
-      0 10px 30px rgba(0,0,0,.08),
-      0 20px 50px rgba(0,0,0,.06);
-  }
-
-  /* ==========================================
-     DASHBOARD PANELS
-  ========================================== */
-
-  .dash-panel {
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    border-radius: 20px;
-    box-shadow:
-      0 2px 10px rgba(0,0,0,.05);
-  }
-
-  .dash-main {
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    border-radius: 20px;
-    box-shadow:
-      0 2px 10px rgba(0,0,0,.05);
-  }
-
-  /* ==========================================
-     BRAND
-  ========================================== */
-
-  .theme-accent-fill,
-  .dash-brand {
-    background: var(--brand);
-    color: var(--text-heading);
-  }
-
-  .theme-accent-outline {
-    border: 1px solid var(--brand);
-    color: var(--brand);
-    background: transparent;
-  }
-
-  /* ==========================================
-     GLASS
-  ========================================== */
-
-  .theme-glass {
-    background: rgba(255,255,255,.75);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--border-subtle);
-  }
-
-  [data-theme="dark"] .theme-glass {
-    background: rgba(30,30,30,.75);
-  }
-
-  /* ==========================================
-     CHIPS
-  ========================================== */
-
-  .theme-chip {
-    background: var(--bg-input);
-    color: var(--text-muted);
-    border: 1px solid var(--border-subtle);
-    border-radius: 999px;
-  }
-
-  .theme-chip-active {
-    background: var(--brand);
-    color: var(--text-heading);
-    border: 1px solid var(--brand);
-  }
-
-  /* ==========================================
-     FLOATING PANEL
-  ========================================== */
-
-  .theme-float {
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    border-radius: 20px;
-    box-shadow:
-      0 18px 50px rgba(0,0,0,.10);
-  }
-
-  /* ==========================================
-     SPORTS CARD
-  ========================================== */
-
-  .sports-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    border-radius: 20px;
-    transition:
-      transform .25s ease,
-      box-shadow .25s ease,
-      border-color .25s ease;
-  }
-
-  .sports-card:hover {
-    transform: translateY(-4px);
-    box-shadow:
-      0 14px 40px rgba(0,0,0,.10);
-  }
+  pointer-events:none;
 }
