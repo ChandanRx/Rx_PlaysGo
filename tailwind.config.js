@@ -13,40 +13,52 @@ module.exports = {
         sans: ["var(--font-jakarta)", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       colors: {
-        /* Design-system tokens — easy to reference throughout */
+        /* Design-system tokens — matches the coral + lavender palette */
         brand: {
-          DEFAULT: "#FF7A00",
-          hover:   "#F26A00",
-          soft:    "#FFF3E8",
-          border:  "#FFE0C2",
+          DEFAULT: "#FF3C1F",   /* vivid coral-red */
+          hover:   "#E82E12",
+          soft:    "#FFF0ED",
+          border:  "#FFC9BF",
+        },
+        secondary: {
+          DEFAULT: "#C4A8FF",   /* soft lavender */
+          soft:    "#F0EBFF",
+          border:  "#D8CAFF",
+        },
+        accent: {
+          DEFAULT: "#FF6B2B",   /* warm orange for tiles / highlights */
         },
         surface: {
-          bg:     "#F0F4FF",   /* cool blue-gray page background */
+          bg:     "#F9F7F4",    /* warm off-white page background */
           card:   "#FFFFFF",
-          input:  "#F8FAFC",
-          border: "#E8EDF5",
+          input:  "#FFFFFF",
+          border: "#E8E3DC",
+          hover:  "#EDE9E3",
         },
         ink: {
-          DEFAULT: "#0F1623",  /* near-black headings */
-          muted:   "#6B7280",
-          faint:   "#9CA3AF",
+          DEFAULT: "#111111",   /* near-black headings */
+          body:    "#3D3835",
+          muted:   "#7A736A",
+          faint:   "#B0A89E",
         },
       },
       borderRadius: {
-        "pill": "999px",
-        "card": "18px",
+        "pill":    "999px",
+        "card":    "18px",
         "card-lg": "24px",
       },
       boxShadow: {
-        card:    "0 2px 12px rgba(15,23,42,0.07)",
-        "card-hover": "0 8px 32px rgba(15,23,42,0.12)",
-        brand:   "0 4px 14px rgba(255,122,0,0.35)",
-        "brand-hover": "0 6px 20px rgba(255,122,0,0.45)",
-        sidebar: "0 8px 32px rgba(15,23,42,0.08)",
+        card:          "0 2px 12px rgba(30,20,10,0.06)",
+        "card-hover":  "0 8px 32px rgba(30,20,10,0.10)",
+        brand:         "0 4px 14px rgba(255,60,31,0.32)",
+        "brand-hover": "0 6px 20px rgba(255,60,31,0.42)",
+        sidebar:       "0 8px 32px rgba(30,20,10,0.07)",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":  "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        /* Coral → Lavender diagonal — use as bg-[image:var(--...)] or via className */
+        "brand-gradient":  "linear-gradient(135deg, #FF3C1F 0%, #C4A8FF 100%)",
       },
       transitionDuration: {
         400: "400ms",

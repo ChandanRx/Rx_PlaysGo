@@ -30,7 +30,7 @@ const MessagesPage = () => {
       </div>
 
       {/* Chat layout */}
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[20px] border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_2px_12px_rgba(15,23,42,0.07)]">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_2px_12px_rgba(30,20,10,0.06)]">
         {/* Chat list */}
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="max-h-[240px] space-y-1 overflow-y-auto border-b border-[var(--border-subtle)] px-4 py-3">
@@ -41,8 +41,8 @@ const MessagesPage = () => {
                   key={chat.id}
                   type="button"
                   onClick={() => setActiveChatId(chat.id)}
-                  className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 ${
-                    active ? "bg-[var(--text-heading)] text-[var(--bg-card)]" : "hover:bg-[var(--bg-input)]"
+                  className={`flex w-full items-center gap-3 rounded-sm px-3 py-2.5 transition-all duration-200 ${
+                    active ? "bg-[var(--text-heading)] text-[var(--selected-fg)]" : "hover:bg-[var(--bg-input)]"
                   }`}
                 >
                   <div className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
@@ -53,10 +53,10 @@ const MessagesPage = () => {
                   </div>
                   <div className="min-w-0 flex-1 text-left">
                     <div className="flex items-center justify-between">
-                      <span className={`truncate text-[13px] font-semibold ${active ? "text-[var(--bg-card)]" : "text-[var(--text-heading)]"}`}>{chat.name}</span>
-                      <span className={`text-[10px] ${active ? "text-[var(--bg-card)]/60" : "text-[var(--text-faint)]"}`}>{chat.time}</span>
+                      <span className={`truncate text-[13px] font-semibold ${active ? "text-[var(--selected-fg)]" : "text-[var(--text-heading)]"}`}>{chat.name}</span>
+                      <span className={`text-[10px] ${active ? "text-[var(--selected-fg)]/60" : "text-[var(--text-faint)]"}`}>{chat.time}</span>
                     </div>
-                    <p className={`truncate text-[11px] ${active ? "text-[var(--bg-card)]/70" : "text-[var(--text-muted)]"}`}>{chat.preview}</p>
+                    <p className={`truncate text-[11px] ${active ? "text-[var(--selected-fg)]/70" : "text-[var(--text-muted)]"}`}>{chat.preview}</p>
                   </div>
                   {chat.unread > 0 && (
                     <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--brand)] px-1.5 text-[10px] font-bold text-white">{chat.unread}</span>
@@ -75,7 +75,7 @@ const MessagesPage = () => {
                   {activeChat.online ? <span className="font-medium text-[#22C55E]">● Online</span> : "Offline"}
                 </p>
               </div>
-              <button className="rounded-xl p-1.5 text-[var(--text-faint)] transition hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]">
+              <button className="rounded-sm p-1.5 text-[var(--text-faint)] transition hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]">
                 <HiOutlineChevronRight className="text-[18px]" />
               </button>
             </div>
@@ -84,10 +84,10 @@ const MessagesPage = () => {
             <div className="flex-1 space-y-3 overflow-y-auto pr-1">
               {activeChat.messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.from === "me" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[75%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed ${
+                  <div className={`max-w-[75%] rounded-sm px-4 py-3 text-[13px] leading-relaxed ${
                     msg.from === "me"
-                      ? "rounded-br-sm bg-[var(--text-heading)] text-[var(--bg-card)]"
-                      : "rounded-bl-sm border border-[var(--border-subtle)] bg-[var(--bg-input)] text-[var(--text-body)]"
+                      ? "rounded-sm bg-[var(--text-heading)] text-[var(--selected-fg)]"
+                      : "rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-input)] text-[var(--text-body)]"
                   }`}>
                     {msg.text}
                   </div>
@@ -97,7 +97,7 @@ const MessagesPage = () => {
 
             {/* Input */}
             <form
-              className="mt-4 flex items-center gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-input)] px-4 py-3"
+              className="mt-4 flex items-center gap-3 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-input)] px-4 py-3"
               onSubmit={(e) => { e.preventDefault(); if (!message.trim()) return; setMessage(""); }}
             >
               <input

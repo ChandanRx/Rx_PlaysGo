@@ -35,23 +35,23 @@ const Search = ({
             {(eyebrow || title) && (
               <div>
                 {eyebrow && (
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8f1838]">
-                    {eyebrow}
-                  </p>
-                )}
-                {title && (
-                  <h2 className="mt-1 text-xl font-semibold tracking-tight text-zinc-950 md:text-2xl">
-                    {title}
-                  </h2>
-                )}
+                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--hero-brand)]">
+                     {eyebrow}
+                   </p>
+                 )}
+                 {title && (
+                   <h2 className="mt-1 text-xl font-semibold tracking-tight text-[var(--text-zinc-950)] md:text-2xl">
+                     {title}
+                   </h2>
+                 )}
               </div>
             )}
 
             {(description || action) && (
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end lg:max-w-xl">
                 {description && (
-                  <p className="text-sm text-zinc-600">{description}</p>
-                )}
+                   <p className="text-sm text-[var(--text-zinc-600)]">{description}</p>
+                 )}
                 {action}
               </div>
             )}
@@ -64,7 +64,7 @@ const Search = ({
           <div className={`relative ${centered ? "w-full" : "flex-1"}`}>
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <svg
-                className="h-5 w-5 text-zinc-500"
+                className="h-5 w-5 text-[var(--text-zinc-500)]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -83,7 +83,7 @@ const Search = ({
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               placeholder={placeholder}
-              className="rounded-full pl-10 pr-24 text-sm shadow-sm"
+              className="rounded-sm pl-10 pr-24 text-sm shadow-sm"
             />
             <Button
               onClick={searchButtonOnClick}
@@ -109,10 +109,10 @@ const Search = ({
                   key={filter}
                   type="button"
                   onClick={() => onFilterChange(filter)}
-                  className={`rounded-full border px-3 py-2 text-sm font-medium transition ${
+                  className={`rounded-sm border px-3 py-2 text-sm font-medium transition ${
                     isActive
-                      ? "border-[#8f1838] bg-[#8f1838] text-[#ffffff]"
-                      : "border-[#8f1838]/25 bg-[#f7e5eb]/76 text-zinc-700 hover:border-[#8f1838]/45 hover:bg-[#fff7f9]/92"
+                      ? "border-[var(--hero-brand)] bg-[var(--hero-brand)] text-white"
+                      : "border-[var(--hero-brand)]/25 bg-[var(--hero-brand-soft)]/76 text-[var(--text-zinc-700)] hover:border-[var(--hero-brand)]/45 hover:bg-[var(--bg-card)]/92"
                   }`}
                 >
                   {filter}

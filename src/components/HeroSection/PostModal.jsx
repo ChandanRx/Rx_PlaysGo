@@ -38,12 +38,12 @@ const PostModal = ({ post }) => {
 
   return (
     <dialog id="my_modal_1" className="modal">
-      <div className={`modal-box w-full max-w-2xl overflow-hidden rounded-[22px] bg-white shadow-[0_20px_60px_rgba(15,23,42,0.18)] ${themeClass}`}>
+      <div className={`modal-box w-full max-w-2xl overflow-hidden rounded-sm bg-[var(--bg-card)] shadow-[0_20px_60px_rgba(30,20,10,0.16)] ${themeClass}`}>
 
         {/* image + close */}
         <div className="relative">
           <form method="dialog" className="absolute right-3 top-3 z-10">
-            <button type="submit" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#6B7280] shadow-sm backdrop-blur-sm transition hover:bg-white hover:text-[#0F1623]">
+            <button type="submit" className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-card)]/90 text-[var(--text-muted)] shadow-sm backdrop-blur-sm transition hover:bg-[var(--bg-card)] hover:text-[var(--text-heading)]">
               <HiOutlineXCircle className="text-[22px]" />
             </button>
           </form>
@@ -66,8 +66,8 @@ const PostModal = ({ post }) => {
           {/* title + user */}
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <h2 className="text-[22px] font-black leading-tight text-[#0F1623] md:text-[26px]">{post?.title}</h2>
-              <div className="mt-2 flex flex-wrap items-center gap-3 text-[13px] text-[#6B7280]">
+              <h2 className="text-[22px] font-black leading-tight text-[var(--text-heading)] md:text-[26px]">{post?.title}</h2>
+              <div className="mt-2 flex flex-wrap items-center gap-3 text-[13px] text-[var(--text-muted)]">
                 {post?.location && (
                   <span className="flex items-center gap-1.5">
                     <HiLocationMarker className="category-accent-text text-[14px]" />
@@ -83,7 +83,7 @@ const PostModal = ({ post }) => {
               </div>
             </div>
 
-            <div className="category-soft-panel flex shrink-0 items-center gap-3 rounded-[14px] px-3 py-2.5">
+            <div className="category-soft-panel flex shrink-0 items-center gap-3 rounded-sm px-3 py-2.5">
               <Image
                 src={post?.userImage || "/avatar-placeholder.svg"}
                 alt="user" width={40} height={40}
@@ -91,40 +91,40 @@ const PostModal = ({ post }) => {
               />
               <div>
                 <div className="flex items-center gap-1">
-                  <p className="text-[13px] font-bold text-[#0F1623]">{post?.userName}</p>
+                  <p className="text-[13px] font-bold text-[var(--text-heading)]">{post?.userName}</p>
                   {post?.isVerified && <HiBadgeCheck className="category-accent-text text-[13px]" />}
                 </div>
-                <p className="text-[11px] text-[#6B7280]">{post?.email}</p>
+                <p className="text-[11px] text-[var(--text-muted)]">{post?.email}</p>
               </div>
             </div>
           </div>
 
           {/* description */}
-          <p className="text-[13.5px] leading-relaxed text-[#374151]">{post?.desc}</p>
+          <p className="text-[13.5px] leading-relaxed text-[var(--text-body)]">{post?.desc}</p>
 
           {/* detail chips */}
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {detailItems(post).map((item) => (
-              <div key={item.label} className="category-soft-panel rounded-[12px] px-3 py-2.5">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B7280]">{item.label}</p>
-                <p className="mt-1 text-[13px] font-bold text-[#0F1623]">{item.value}</p>
+              <div key={item.label} className="category-soft-panel rounded-sm px-3 py-2.5">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">{item.label}</p>
+                <p className="mt-1 text-[13px] font-bold text-[var(--text-heading)]">{item.value}</p>
               </div>
             ))}
           </div>
 
           {/* contact + match details */}
-          <div className="grid gap-3 border-t border-[#E8EDF5] pt-4 sm:grid-cols-2">
-            <div className="category-soft-panel rounded-[12px] p-3.5">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B7280] mb-2">Contact</p>
-              <div className="space-y-1.5 text-[12.5px] text-[#374151]">
+          <div className="grid gap-3 border-t border-[var(--border-subtle)] pt-4 sm:grid-cols-2">
+            <div className="category-soft-panel rounded-sm p-3.5">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-2">Contact</p>
+              <div className="space-y-1.5 text-[12.5px] text-[var(--text-body)]">
                 <p>Email: {post?.email}</p>
                 <p>Phone: {post?.phone || "Not shared"}</p>
                 <p>WhatsApp: {post?.whatsapp || "Not shared"}</p>
               </div>
             </div>
-            <div className="category-soft-panel rounded-[12px] p-3.5">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B7280] mb-2">{detailsSection.title}</p>
-              <div className="space-y-1.5 text-[12.5px] text-[#374151]">
+            <div className="category-soft-panel rounded-sm p-3.5">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-2">{detailsSection.title}</p>
+              <div className="space-y-1.5 text-[12.5px] text-[var(--text-body)]">
                 {detailsSection.rows.map(([label, value]) => (
                   <p key={label}>{label}: {value}</p>
                 ))}
@@ -133,7 +133,7 @@ const PostModal = ({ post }) => {
           </div>
 
           {/* action buttons */}
-          <div className="flex flex-wrap gap-2 border-t border-[#E8EDF5] pt-4">
+          <div className="flex flex-wrap gap-2 border-t border-[var(--border-subtle)] pt-4">
             <Button variant="yellow" size="sm">
               <HiOutlineChatAlt2 className="text-[14px]" /> Chat
             </Button>

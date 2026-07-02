@@ -6,6 +6,7 @@ import PostItems from "../../components/PostItems";
 import { deletePost, dummyUser, getUserPosts } from "../../shared/dummyPosts";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
+import { Bookmark, Check, CircleCheck, ClipboardList, Handshake, Inbox } from "lucide-react";
 
 const TABS = ["Active", "Draft", "Closed", "Expired"];
 
@@ -16,10 +17,10 @@ const Profile = () => {
   useEffect(() => { setUserPost(getUserPosts(dummyUser.email)); }, []);
 
   const stats = useMemo(() => [
-    { label: "Total posts",  value: userPost.length, icon: "📋" },
-    { label: "Active posts", value: userPost.length, icon: "✅" },
-    { label: "Joined posts", value: 2,               icon: "🤝" },
-    { label: "Saved posts",  value: 7,               icon: "🔖" },
+    { label: "Total posts",  value: userPost.length, icon: ClipboardList },
+    { label: "Active posts", value: userPost.length, icon: CircleCheck },
+    { label: "Joined posts", value: 2,               icon: Handshake },
+    { label: "Saved posts",  value: 7,               icon: Bookmark },
   ], [userPost]);
 
   const onDelete = (id) => { deletePost(id); setUserPost(getUserPosts(dummyUser.email)); };
@@ -37,9 +38,11 @@ const Profile = () => {
                 src={dummyUser.image}
                 alt={dummyUser.name}
                 width={80} height={80}
-                className="h-20 w-20 rounded-[16px] border-2 border-[var(--border-subtle)] object-cover"
+                className="h-20 w-20 rounded-sm border-2 border-[var(--border-subtle)] object-cover"
               />
-              <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#22C55E] text-white text-[10px] font-black border-2 border-[var(--bg-card)]">✓</span>
+              <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#22C55E] text-white border-2 border-[var(--bg-card)]">
+                <Check className="h-3.5 w-3.5" strokeWidth={3} />
+              </span>
             </div>
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--brand)]">User Profile</p>
@@ -58,15 +61,19 @@ const Profile = () => {
 
       {/* ── Stats ── */}
       <div className="grid gap-3 md:grid-cols-4">
-        {stats.map((s) => (
+        {stats.map((s) => {
+          const Icon = s.icon;
+
+          return (
           <Card key={s.label} className="p-4" hover={false}>
             <div className="flex items-center justify-between">
               <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[var(--text-muted)]">{s.label}</p>
-              <span className="text-lg">{s.icon}</span>
+              <Icon className="h-5 w-5 text-[var(--brand)]" strokeWidth={2} />
             </div>
             <p className="mt-2 text-[28px] font-black leading-none text-[var(--text-heading)]">{s.value}</p>
           </Card>
-        ))}
+          );
+        })}
       </div>
 
       {/* ── Posts ── */}
@@ -84,7 +91,7 @@ const Profile = () => {
                 onClick={() => setActiveTab(tab)}
                 className={`rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
                   activeTab === tab
-                    ? "bg-[var(--text-heading)] text-[var(--bg-card)]"
+                    ? "bg-[var(--text-heading)] text-[var(--selected-fg)]"
                     : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]"
                 }`}
               >
@@ -96,7 +103,7 @@ const Profile = () => {
 
         {userPost.length === 0 ? (
           <div className="mt-10 flex flex-col items-center text-center">
-            <div className="mb-3 text-5xl">📭</div>
+            <Inbox className="mb-3 h-12 w-12 text-[var(--text-faint)]" strokeWidth={1.75} />
             <p className="text-[15px] font-bold text-[var(--text-heading)]">No posts yet</p>
             <p className="mt-1 text-[13px] text-[var(--text-muted)]">Create your first post to get started.</p>
             <Button variant="yellow" size="sm" className="mt-4" onClick={() => window.location.assign("/createpost")}>

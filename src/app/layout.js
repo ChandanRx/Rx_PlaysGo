@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import "./globals.css";
 import AppShell from "../components/AppShell";
 import CategoryThemeSync from "../components/CategoryThemeSync";
-import ScrollbarAutoHide from "../components/ScrollbarAutoHide";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -24,7 +23,6 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen flex flex-col font-sans antialiased">
         <Suspense fallback={null}>
           <CategoryThemeSync />
-          <ScrollbarAutoHide />
           <AppShell>{children}</AppShell>
         </Suspense>
       </body>

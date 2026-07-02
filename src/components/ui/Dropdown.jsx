@@ -154,10 +154,10 @@ const Dropdown = ({
         onKeyDown={handleTriggerKeyDown}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        className={`inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
+        className={`inline-flex items-center justify-center gap-2 rounded-sm px-4 py-2 text-sm font-medium transition ${
           active
             ? "theme-accent-fill shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-            : "text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950"
+            : "text-[var(--text-zinc-700)] hover:bg-[var(--bg-input)] hover:text-[var(--text-zinc-950)]"
         } ${buttonClassName}`}
       >
         {label}
@@ -170,7 +170,7 @@ const Dropdown = ({
 
       {isOpen && (
         <div
-          className={`theme-float absolute left-0 mt-3 w-64 overflow-hidden rounded-[20px] p-2 text-zinc-950 ${menuClassName}`}
+          className={`theme-float absolute left-0 mt-3 w-64 overflow-hidden rounded-sm p-2 text-[var(--text-zinc-950)] ${menuClassName}`}
         >
           <div
             role="listbox"
@@ -196,11 +196,11 @@ const Dropdown = ({
                   aria-selected={isSelected}
                   onClick={() => selectOption(option)}
                   onMouseEnter={() => setHighlightedIndex(index)}
-                  className={`flex w-full items-center rounded-md px-3 py-2 text-left text-sm transition ${
-                    isHighlighted || isSelected
-                      ? "theme-accent-fill"
-                      : "text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950"
-                  } ${optionClassName}`}
+                  className={`flex w-full items-center rounded-sm px-3 py-2 text-left text-sm transition ${
+                      isHighlighted || isSelected
+                        ? "theme-accent-fill"
+                        : "text-[var(--text-zinc-700)] hover:bg-[var(--bg-input)] hover:text-[var(--text-zinc-950)]"
+                    } ${optionClassName}`}
                 >
                   {optionLabel}
                 </button>

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { HiBell, HiOutlinePlus, HiSearch } from "react-icons/hi";
+import { Hand } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CategoryModeBadge } from "./CategoryModePrompt";
 import { useClientGreeting, useStoredAppCategory } from "../hooks/useClientData";
@@ -81,7 +82,7 @@ const DashboardHeader = () => {
           <Button
             variant="primary"
             size="sm"
-            className="rounded-xl bg-[#FF7A00] text-sm hover:bg-[#F26A00]"
+            className="rounded-sm bg-[var(--brand)] text-sm hover:bg-[var(--brand-hover)]"
             onClick={() => router.push("/createpost")}
           >
             <HiOutlinePlus className="text-base" />
@@ -102,7 +103,10 @@ const DashboardHeader = () => {
       {/* ── Greeting row (very compact) ── */}
       <div className="flex items-center gap-2">
         <h1 className="text-[18px] font-bold text-[var(--text-heading)]">
-          {greeting}, {firstName} 👋
+          <span className="inline-flex items-center gap-1.5">
+            {greeting}, {firstName}
+            <Hand className="h-4 w-4 text-[var(--brand)]" strokeWidth={2.25} />
+          </span>
         </h1>
         {hasCategory && (
           <span className="hidden text-[12px] text-[var(--text-faint)] lg:inline">
@@ -116,7 +120,7 @@ const DashboardHeader = () => {
 
       {/* ── Single toolbar: filters LEFT · search + bell RIGHT ── */}
       {isFeedPage && hasCategory && (
-        <div className="flex items-center gap-2 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2 shadow-[0_2px_10px_rgba(15,23,42,0.06)]">
+        <div className="flex items-center gap-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2 shadow-[0_2px_10px_rgba(30,20,10,0.05)]">
 
           {/* LEFT — quick filter pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
@@ -127,9 +131,9 @@ const DashboardHeader = () => {
                   key={filter}
                   type="button"
                   onClick={() => updateFeedParam("filter", filter)}
-                  className={`shrink-0 rounded-full px-4 py-1.5 text-[12px] font-semibold transition-colors duration-150 ${
+                  className={`shrink-0 rounded-sm px-4 py-1.5 text-[12px] font-semibold transition-colors duration-150 ${
                     active
-                      ? "bg-[var(--brand)] text-white shadow-[0_2px_8px_rgba(255,122,0,0.3)]"
+                      ? "bg-[var(--brand)] text-white shadow-[0_2px_8px_rgba(255,60,31,0.28)]"
                       : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--brand-border)] hover:text-[var(--brand)]"
                   }`}
                 >
@@ -148,7 +152,7 @@ const DashboardHeader = () => {
               onSubmit={handleSearchSubmit}
               className="flex shrink-0 items-center gap-1.5"
             >
-              <div className="flex h-8 w-[200px] items-center gap-2 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 transition-shadow focus-within:border-[var(--brand)] focus-within:bg-[var(--bg-card)] focus-within:shadow-[0_0_0_3px_rgba(255,122,0,0.08)]">
+              <div className="flex h-8 w-[200px] items-center gap-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 transition-shadow focus-within:border-[var(--brand)] focus-within:bg-[var(--bg-card)] focus-within:shadow-[0_0_0_3px_rgba(255,60,31,0.08)]">
                 <HiSearch className="shrink-0 text-[13px] text-[var(--text-faint)]" />
                 <input
                   type="search"
@@ -161,7 +165,7 @@ const DashboardHeader = () => {
 
               <button
                 type="submit"
-                className="flex h-8 shrink-0 items-center rounded-full bg-[var(--brand)] px-4 text-[12px] font-semibold text-white shadow-[0_2px_8px_rgba(255,122,0,0.28)] transition-colors hover:bg-[var(--brand-hover)] active:scale-95"
+                className="flex h-8 shrink-0 items-center rounded-sm bg-[var(--brand)] px-4 text-[12px] font-semibold text-white shadow-[0_2px_8px_rgba(255,60,31,0.28)] transition-colors hover:bg-[var(--brand-hover)] active:scale-95"
               >
                 Search
               </button>
@@ -181,7 +185,7 @@ const BellButton = () => (
   <button
     type="button"
     aria-label="Notifications"
-    className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[var(--brand-border)] bg-[var(--bg-card)] text-[var(--text-muted)] transition hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+    className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border border-[var(--brand-border)] bg-[var(--bg-card)] text-[var(--text-muted)] transition hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
   >
     <HiBell className="text-[16px]" />
     <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[var(--brand)]" />

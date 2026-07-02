@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight, Search, Sparkles } from "lucide-react";
 import PostItems from "../PostItems";
 import PostModal from "./PostModal";
 
@@ -29,19 +30,20 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
     <section className="space-y-4">
 
       {/* feed header */}
-      <div className="flex h-11 items-center justify-between rounded-[14px] border border-[#E8EDF5] bg-white px-4 shadow-[0_1px_6px_rgba(15,23,42,0.05)]">
+      <div className="flex h-11 items-center justify-between rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] px-4 shadow-[0_1px_6px_rgba(30,20,10,0.05)]">
         <div className="flex items-baseline gap-2">
-          <span className="text-[13px] font-bold text-[#0F1623]">{feedLabel}</span>
-          <span className="text-[11.5px] text-[#9CA3AF]">
+          <span className="text-[13px] font-bold text-[var(--text-heading)]">{feedLabel}</span>
+          <span className="text-[11.5px] text-[var(--text-faint)]">
             {isReady ? `${pageStart}–${pageEnd} of ${posts.length}` : "Loading…"}
           </span>
         </div>
         <button
           type="button"
           onClick={() => router.push("/pro")}
-          className="flex items-center gap-1 rounded-full border border-[#E8EDF5] bg-[#F8FAFC] px-3 py-1 text-[11px] font-semibold text-[#374151] transition hover:bg-[#0F1623] hover:text-white hover:border-[#0F1623]"
+          className="flex items-center gap-1 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 py-1 text-[11px] font-semibold text-[var(--text-body)] transition hover:bg-[var(--text-heading)] hover:text-[var(--selected-fg)] hover:border-[var(--text-heading)]"
         >
-          ✨ Go Pro
+          <Sparkles className="h-3.5 w-3.5" strokeWidth={2.25} />
+          Go Pro
         </button>
       </div>
 
@@ -51,20 +53,22 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
       {!isReady ? (
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-[400px] animate-pulse rounded-[20px] bg-[#F0F4FF]" />
+            <div key={i} className="h-[400px] animate-pulse rounded-sm bg-[var(--bg-secondary)]" />
           ))}
         </div>
 
       /* empty */
       ) : posts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[20px] border border-[#E8EDF5] bg-white py-16 text-center">
-          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[#F0F4FF] text-2xl">🔍</div>
-          <h4 className="text-[15px] font-bold text-[#0F1623]">No posts found</h4>
-          <p className="mt-1.5 max-w-xs text-[13px] text-[#6B7280]">Try another keyword or switch filters.</p>
+        <div className="flex flex-col items-center justify-center rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] py-16 text-center">
+          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--bg-secondary)] text-[var(--text-muted)]">
+            <Search className="h-7 w-7" strokeWidth={1.9} />
+          </div>
+          <h4 className="text-[15px] font-bold text-[var(--text-heading)]">No posts found</h4>
+          <p className="mt-1.5 max-w-xs text-[13px] text-[var(--text-muted)]">Try another keyword or switch filters.</p>
           <button
             type="button"
             onClick={() => router.push("/createpost")}
-            className="mt-5 rounded-full bg-[#FF7A00] px-5 py-2.5 text-[13px] font-bold text-white shadow-[0_4px_12px_rgba(255,122,0,0.3)] transition hover:bg-[#F26A00]"
+            className="mt-5 rounded-sm bg-[var(--brand)] px-5 py-2.5 text-[13px] font-bold text-white shadow-[0_4px_12px_rgba(255,60,31,0.28)] transition hover:bg-[var(--brand-hover)]"
           >
             Create your first post
           </button>
@@ -90,18 +94,22 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
           {/* pagination */}
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 py-2">
-              <PagBtn onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>←</PagBtn>
+              <PagBtn onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+                <ChevronLeft className="h-4 w-4" strokeWidth={2.25} />
+              </PagBtn>
               {Array.from({ length: totalPages }, (_, i) => {
                 const p = i + 1, active = p === page;
                 return (
                   <button key={p} onClick={() => setPage(p)}
-                    className={`flex h-8 min-w-[32px] items-center justify-center rounded-full px-2.5 text-[12px] font-semibold transition-colors ${
-                      active ? "bg-[#0F1623] text-white shadow-sm" : "border border-[#E8EDF5] bg-white text-[#6B7280] hover:border-[#0F1623] hover:text-[#0F1623]"
+                    className={`flex h-8 min-w-[32px] items-center justify-center rounded-sm px-2.5 text-[12px] font-semibold transition-colors ${
+                      active ? "bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-sm" : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]"
                     }`}
                   >{p}</button>
                 );
               })}
-              <PagBtn onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>→</PagBtn>
+              <PagBtn onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+                <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
+              </PagBtn>
             </div>
           )}
         </>
@@ -112,7 +120,7 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
 
 const PagBtn = ({ children, ...props }) => (
   <button type="button"
-    className="flex h-8 w-8 items-center justify-center rounded-full border border-[#E8EDF5] bg-white text-[#6B7280] text-sm transition hover:border-[#0F1623] hover:text-[#0F1623] disabled:cursor-not-allowed disabled:opacity-40"
+    className="flex h-8 w-8 items-center justify-center rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] text-sm transition hover:border-[var(--text-heading)] hover:text-[var(--text-heading)] disabled:cursor-not-allowed disabled:opacity-40"
     {...props}>{children}</button>
 );
 

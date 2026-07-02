@@ -23,12 +23,12 @@ const Footer = () => {
   const pathname = usePathname();
 
   return (
-    <footer className="mt-8 border-t border-[#E8EDF5] pt-5">
+    <footer className="mt-8 border-t border-[var(--border-subtle)] pt-5">
       <div className="flex flex-col gap-4 text-center md:flex-row md:items-center md:justify-between md:text-left">
 
         <div className="flex flex-col items-center gap-2 md:flex-row md:gap-3">
           <PlaysGoLogo variant="dark" />
-          <p className="text-[12px] text-[#6B7280]">
+          <p className="text-[12px] text-[var(--text-muted)]">
             © <span suppressHydrationWarning>{new Date().getFullYear()}</span> Plays Go
           </p>
         </div>
@@ -43,8 +43,8 @@ const Footer = () => {
                   href={href}
                   className={`rounded-full px-3 py-1.5 text-[12.5px] font-medium transition ${
                     active
-                      ? "bg-[#0F1623] text-white"
-                      : "text-[#6B7280] hover:bg-[#F0F4FF] hover:text-[#0F1623]"
+                      ? "bg-[var(--text-heading)] text-[var(--selected-fg)]"
+                      : "text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-heading)]"
                   }`}
                 >
                   {label}
@@ -61,7 +61,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noreferrer"
                 aria-label={label}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#E8EDF5] bg-[#F8FAFC] text-[#6B7280] transition hover:border-[#FF7A00] hover:bg-[#FFF3E8] hover:text-[#FF7A00]"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-[var(--bg-secondary)] text-[var(--text-muted)] transition hover:border-[var(--brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
               >
                 <Icon className="text-[13px]" />
               </a>

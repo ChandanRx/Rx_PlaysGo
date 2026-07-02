@@ -36,7 +36,7 @@ const Header = () => {
     [],
   );
 
-  const glassSection = "theme-glass rounded-md";
+  const glassSection = "theme-glass rounded-sm";
   const isFeedPage = pathname === "/" || pathname === "/posts";
   const currentQuery = searchParams.get("q") || "";
 
@@ -104,13 +104,13 @@ const Header = () => {
             variant="ghost"
             size="sm"
             onClick={() => goTo("/")}
-            className="min-w-0 rounded-md px-2 text-left hover:bg-transparent hover:opacity-90"
+            className="min-w-0 rounded-sm px-2 text-left hover:bg-transparent hover:opacity-90"
           >
               <span className="flex items-center gap-2">
                 <span className="hidden text-base font-bold tracking-tight text-[var(--text-heading)] sm:block">
                   Plays
                 </span>
-                <span className="inline-flex rounded-xl bg-[var(--text-heading)] px-2 py-1 text-sm font-black uppercase tracking-[0.2em] text-[var(--bg-card)] shadow-sm">
+                <span className="inline-flex rounded-sm bg-[var(--text-heading)] px-2 py-1 text-sm font-black uppercase tracking-[0.2em] text-[var(--selected-fg)] shadow-sm">
                   GO
                 </span>
             </span>
@@ -157,7 +157,7 @@ const Header = () => {
             onSubmit={handleSearchSubmit}
             className={`${glassSection} flex h-[52px] w-full max-w-2xl items-center gap-2 px-2 py-1`}
           >
-            <div className="pointer-events-none flex h-10 w-10 items-center justify-center rounded-lg text-[var(--text-faint)]">
+            <div className="pointer-events-none flex h-10 w-10 items-center justify-center rounded-sm text-[var(--text-faint)]">
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14z" />
               </svg>
@@ -180,7 +180,7 @@ const Header = () => {
         <div
           className={`${glassSection} flex h-[52px] items-center gap-2 px-2 py-1 sm:gap-3`}
         >
-          <div className="theme-muted-chip hidden items-center gap-2 rounded-xl px-3 py-2 text-sm sm:flex">
+          <div className="theme-muted-chip hidden items-center gap-2 rounded-sm px-3 py-2 text-sm sm:flex">
             <HiLocationMarker className="text-base text-[var(--text-muted)]" />
             <span className="max-w-[160px] truncate text-[var(--text-muted)]">
               Mumbai community
@@ -202,7 +202,7 @@ const Header = () => {
               variant="ghost"
               size="icon"
               onClick={() => setIsProfileOpen((value) => !value)}
-              className={`h-11 w-11 overflow-hidden rounded-md border p-[2px] ${
+              className={`h-11 w-11 overflow-hidden rounded-sm border p-[2px] ${
                 isProfileOpen
                   ? "border-[var(--border-subtle)] bg-[var(--bg-input)]"
                   : "border-[var(--border-subtle)] hover:border-[var(--border-subtle)]"
@@ -212,14 +212,14 @@ const Header = () => {
               <Image
                 src={dummyUser.image}
                 alt="demo user"
-                className="h-8 w-8 rounded-md object-cover"
+                className="h-8 w-8 rounded-sm object-cover"
                 width={32}
                 height={32}
               />
             </Button>
 
             {isProfileOpen && (
-              <div className="theme-float absolute right-0 mt-3 w-64 overflow-hidden rounded-[20px] p-2 text-[var(--text-heading)]">
+              <div className="theme-float absolute right-0 mt-3 w-64 overflow-hidden rounded-sm p-2 text-[var(--text-heading)]">
                 <div className="border-b border-[var(--border-subtle)] px-3 py-2">
                   <p className="truncate text-sm font-semibold text-[var(--text-heading)]">
                     {dummyUser.name}
@@ -231,7 +231,7 @@ const Header = () => {
 
                 <Button
                   variant="ghost"
-                  className="mt-2 w-full justify-start rounded-xl px-3 text-[var(--text-body)] hover:text-[var(--text-heading)]"
+                  className="mt-2 w-full justify-start rounded-sm px-3 text-[var(--text-body)] hover:text-[var(--text-heading)]"
                   onClick={() => goTo("/profile")}
                 >
                   <HiOutlineUser className="text-[18px]" />
@@ -239,7 +239,7 @@ const Header = () => {
                 </Button>
                 <Button
                   variant="ghost"
-                  className="w-full justify-start rounded-xl px-3 text-[var(--text-body)] hover:text-[var(--text-heading)]"
+                  className="w-full justify-start rounded-sm px-3 text-[var(--text-body)] hover:text-[var(--text-heading)]"
                   onClick={() => goTo("/createpost")}
                 >
                   <HiOutlinePencilAlt className="text-[18px]" />
@@ -247,7 +247,7 @@ const Header = () => {
                 </Button>
                 <Button
                   variant="ghost"
-                  className="w-full justify-start rounded-xl px-3 text-[var(--text-body)] hover:text-[var(--text-heading)]"
+                  className="w-full justify-start rounded-sm px-3 text-[var(--text-body)] hover:text-[var(--text-heading)]"
                   onClick={() => setIsProfileOpen(false)}
                 >
                   <HiOutlineCog className="text-[18px]" />

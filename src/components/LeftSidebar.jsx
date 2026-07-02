@@ -12,10 +12,8 @@ import {
 } from "react-icons/hi";
 
 import { usePathname, useRouter } from "next/navigation";
-import Image from "next/image";
 import ThemeToggle from "./ui/ThemeToggle";
-
-import logo from "../../assets/Images/icon1.png";
+import PlaysGoLogo from "./PlaysGoLogo";
 
 const navItems = [
   { label: "Home", href: "/", icon: HiHome },
@@ -37,16 +35,11 @@ const LeftSidebar = () => {
 
   return (
     <aside className="fixed bottom-20 left-3 top-3 z-30 hidden w-[82px] lg:bottom-4 lg:left-4 lg:top-4 lg:flex">
-      <div className="flex h-full w-full flex-col items-center rounded-[22px] border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-6 shadow-[0_8px_32px_rgba(15,23,42,0.08)]">
+      <div className="flex h-full w-full flex-col items-center rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-6 shadow-[0_8px_32px_rgba(30,20,10,0.07)]">
 
         {/* Logo */}
         <div className="mb-8">
-          <Image
-            src={logo}
-            alt="PlaysGo Logo"
-            width={44}
-            height={44}
-          />
+          <PlaysGoLogo iconOnly />
         </div>
 
         {/* Navigation */}
@@ -59,9 +52,9 @@ const LeftSidebar = () => {
                 key={label}
                 title={label}
                 onClick={() => router.push(href)}
-                className={`group flex h-12 w-12 items-center justify-center rounded-full transition-[colors,transform] duration-200 ${
+                className={`group flex h-12 w-12 items-center justify-center rounded-full transition-[colors,transform] duration-200 transform-gpu will-change-transform ${
                   active
-                    ? "bg-[var(--text-heading)] text-[var(--bg-card)] shadow-sm scale-105"
+                    ? "bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-sm scale-105"
                     : "text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)] hover:scale-105"
                 }`}
               >
@@ -76,7 +69,7 @@ const LeftSidebar = () => {
             onClick={() => router.push("/createpost")}
             className={`mt-2 flex h-12 w-12 items-center justify-center rounded-full transition-[colors,transform] duration-200 ${
               pathname === "/createpost"
-                ? "bg-[var(--brand)] text-white shadow-[0_4px_14px_rgba(255,122,0,0.4)]"
+                ? "bg-[var(--brand)] text-white shadow-[0_4px_14px_rgba(255,60,31,0.35)]"
                 : "border border-dashed border-[var(--border-subtle)] bg-[var(--bg-input)] text-[var(--text-muted)] hover:bg-[var(--brand)] hover:text-white hover:border-[var(--brand)]"
             }`}
           >
@@ -96,7 +89,7 @@ const LeftSidebar = () => {
             onClick={() => router.push("/settings")}
             className={`flex h-12 w-12 items-center justify-center rounded-full transition-[colors,transform] duration-200 ${
               pathname === "/settings"
-                ? "bg-[var(--text-heading)] text-[var(--bg-card)] shadow-sm"
+                ? "bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-sm"
                 : "text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]"
             }`}
           >
@@ -106,7 +99,7 @@ const LeftSidebar = () => {
           {/* More */}
           <button
             title="More"
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-muted)] transition-[colors,transform] duration-200 hover:bg-[var(--text-heading)] hover:text-[var(--bg-card)]"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-muted)] transition-[colors,transform] duration-200 hover:bg-[var(--text-heading)] hover:text-[var(--selected-fg)]"
           >
             <HiDotsVertical className="text-xl" />
           </button>
