@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { HiBell, HiOutlinePlus, HiSearch } from "react-icons/hi";
-import { Hand } from "lucide-react";
+import { ChevronDown, Hand } from "lucide-react";
+import { motion } from "framer-motion";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CategoryModeBadge } from "./CategoryModePrompt";
 import { useClientGreeting, useStoredAppCategory } from "../hooks/useClientData";
 import { getCategoryLabel } from "../shared/appPreferences";
+import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from "../shared/lucideIcons";
 import Data from "../shared/data";
 import { dummyUser } from "../shared/dummyPosts";
 import Button from "./ui/Button";
@@ -98,32 +100,49 @@ const DashboardHeader = () => {
      FEED PAGES
   ───────────────────────────────────── */
   return (
-    <header className="mb-4 space-y-2">
+    <header className="mb-4">
 
-      {/* ── Greeting row (very compact) ── */}
-      <div className="flex items-center gap-2">
-        <h1 className="text-[18px] font-bold text-[var(--text-heading)]">
-          <span className="inline-flex items-center gap-1.5">
-            {greeting}, {firstName}
-            <Hand className="h-4 w-4 text-[var(--brand)]" strokeWidth={2.25} />
-          </span>
-        </h1>
-        {hasCategory && (
-          <span className="hidden text-[12px] text-[var(--text-faint)] lg:inline">
-            — {getCategoryLabel(category)} posts near you
-          </span>
-        )}
-        <div className="ml-auto">
-          <CategoryModeBadge />
+      {/* ═══════════════════════════════════
+          MOBILE — redesigned from scratch
+          (hidden at lg and above)
+      ═══════════════════════════════════ */}
+      <div className="space-y-4 pb-1 pt-1 lg:hidden">
+
+        {/* Row 1 — compact greeting + sports selector */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="flex items-center gap-1 text-[13px] font-medium text-[var(--text-muted)]">
+              {greeting} <span aria-hidden="true">👋</span>
+            </p>
+            <h1 className="truncate text-[22px] font-extrabold leading-tight tracking-tight text-[var(--text-heading)]">
+              {firstName}
+            </h1>
+          </div>
+          {hasCategory && <MobileSportsChip category={category} onClick={() => router.push("/settings")} />}
         </div>
-      </div>
 
-      {/* ── Single toolbar: filters LEFT · search + bell RIGHT ── */}
-      {isFeedPage && hasCategory && (
-        <div className="flex items-center gap-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2 shadow-[0_2px_10px_rgba(30,20,10,0.05)]">
+        {/* Row 2 — search + notification, side by side */}
+        {isFeedPage && hasCategory && (
+          <div className="flex items-center gap-2">
+            <form onSubmit={handleSearchSubmit} className="min-w-0 flex-1">
+              <div className="flex h-12 items-center gap-2.5 rounded-full bg-[var(--bg-input)] px-4 shadow-[0_4px_18px_rgba(30,20,10,0.07)] transition-shadow duration-200 focus-within:shadow-[0_4px_20px_rgba(255,60,31,0.16)]">
+                <HiSearch className="shrink-0 text-[17px] text-[var(--text-faint)]" />
+                <input
+                  type="search"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  placeholder={searchPlaceholder}
+                  className="h-full w-full bg-transparent text-[14px] text-[var(--text-heading)] outline-none placeholder:text-[var(--text-faint)]"
+                />
+              </div>
+            </form>
+            <MobileBellButton />
+          </div>
+        )}
 
-          {/* LEFT — quick filter pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+        {/* Row 3 — filter chips */}
+        {isFeedPage && hasCategory && (
+          <div className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 scrollbar-none">
             {Data.quickFilters.map((filter) => {
               const active = activeFilter === filter;
               return (
@@ -131,56 +150,114 @@ const DashboardHeader = () => {
                   key={filter}
                   type="button"
                   onClick={() => updateFeedParam("filter", filter)}
-                  className={`shrink-0 rounded-sm px-4 py-1.5 text-[12px] font-semibold transition-colors duration-150 ${
-                    active
-                      ? "bg-[var(--brand)] text-white shadow-[0_2px_8px_rgba(255,60,31,0.28)]"
-                      : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--brand-border)] hover:text-[var(--brand)]"
-                  }`}
+                  className="relative shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold transition-transform duration-150 active:scale-95"
                 >
-                  {filter}
+                  {active ? (
+                    <motion.span
+                      layoutId="filter-chip-active-pill"
+                      transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                      className="absolute inset-0 rounded-full bg-[var(--brand)] shadow-[0_4px_12px_rgba(255,60,31,0.30)]"
+                    />
+                  ) : (
+                    <span className="absolute inset-0 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-card)]" />
+                  )}
+                  <span className={`relative z-10 ${active ? "text-white" : "text-[var(--text-muted)]"}`}>
+                    {filter}
+                  </span>
                 </button>
               );
             })}
           </div>
+        )}
+      </div>
 
-          {/* divider */}
-          <div className="mx-1 h-5 w-px shrink-0 bg-[var(--border-subtle)]" />
+      {/* ═══════════════════════════════════
+          DESKTOP — unchanged
+      ═══════════════════════════════════ */}
+      <div className="hidden space-y-2 lg:block">
 
-          {/* RIGHT — search form + bell */}
-          <div className="ml-auto flex items-center gap-1.5">
-            <form
-              onSubmit={handleSearchSubmit}
-              className="flex shrink-0 items-center gap-1.5"
-            >
-              <div className="flex h-8 w-[200px] items-center gap-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 transition-shadow focus-within:border-[var(--brand)] focus-within:bg-[var(--bg-card)] focus-within:shadow-[0_0_0_3px_rgba(255,60,31,0.08)]">
-                <HiSearch className="shrink-0 text-[13px] text-[var(--text-faint)]" />
-                <input
-                  type="search"
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  placeholder={searchPlaceholder}
-                  className="h-full w-full bg-transparent text-[12px] text-[var(--text-heading)] outline-none placeholder:text-[var(--text-faint)]"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="flex h-8 shrink-0 items-center rounded-sm bg-[var(--brand)] px-4 text-[12px] font-semibold text-white shadow-[0_2px_8px_rgba(255,60,31,0.28)] transition-colors hover:bg-[var(--brand-hover)] active:scale-95"
-              >
-                Search
-              </button>
-            </form>
-
-            {/* bell */}
-            <BellButton />
+        {/* ── Greeting row (very compact) ── */}
+        <div className="flex items-center gap-2">
+          <h1 className="text-[18px] font-bold text-[var(--text-heading)]">
+            <span className="inline-flex items-center gap-1.5">
+              {greeting}, {firstName}
+              <Hand className="h-4 w-4 text-[var(--brand)]" strokeWidth={2.25} />
+            </span>
+          </h1>
+          {hasCategory && (
+            <span className="hidden text-[12px] text-[var(--text-faint)] lg:inline">
+              — {getCategoryLabel(category)} posts near you
+            </span>
+          )}
+          <div className="ml-auto">
+            <CategoryModeBadge />
           </div>
         </div>
-      )}
+
+        {/* ── Single toolbar: filters LEFT · search + bell RIGHT ── */}
+        {isFeedPage && hasCategory && (
+          <div className="flex items-center gap-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2 shadow-[0_2px_10px_rgba(30,20,10,0.05)]">
+
+            {/* LEFT — quick filter pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+              {Data.quickFilters.map((filter) => {
+                const active = activeFilter === filter;
+                return (
+                  <button
+                    key={filter}
+                    type="button"
+                    onClick={() => updateFeedParam("filter", filter)}
+                    className={`shrink-0 rounded-sm px-4 py-1.5 text-[12px] font-semibold transition-colors duration-150 ${
+                      active
+                        ? "bg-[var(--brand)] text-white shadow-[0_2px_8px_rgba(255,60,31,0.28)]"
+                        : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--brand-border)] hover:text-[var(--brand)]"
+                    }`}
+                  >
+                    {filter}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* divider */}
+            <div className="mx-1 h-5 w-px shrink-0 bg-[var(--border-subtle)]" />
+
+            {/* RIGHT — search form + bell */}
+            <div className="ml-auto flex items-center gap-1.5">
+              <form
+                onSubmit={handleSearchSubmit}
+                className="flex shrink-0 items-center gap-1.5"
+              >
+                <div className="flex h-8 w-[200px] items-center gap-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 transition-shadow focus-within:border-[var(--brand)] focus-within:bg-[var(--bg-card)] focus-within:shadow-[0_0_0_3px_rgba(255,60,31,0.08)]">
+                  <HiSearch className="shrink-0 text-[13px] text-[var(--text-faint)]" />
+                  <input
+                    type="search"
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    placeholder={searchPlaceholder}
+                    className="h-full w-full bg-transparent text-[12px] text-[var(--text-heading)] outline-none placeholder:text-[var(--text-faint)]"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="flex h-8 shrink-0 items-center rounded-sm bg-[var(--brand)] px-4 text-[12px] font-semibold text-white shadow-[0_2px_8px_rgba(255,60,31,0.28)] transition-colors hover:bg-[var(--brand-hover)] active:scale-95"
+                >
+                  Search
+                </button>
+              </form>
+
+              {/* bell */}
+              <BellButton />
+            </div>
+          </div>
+        )}
+      </div>
     </header>
   );
 };
 
-/* ── Bell button ── */
+/* ── Bell button (desktop / non-feed pages) ── */
 const BellButton = () => (
   <button
     type="button"
@@ -191,5 +268,37 @@ const BellButton = () => (
     <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[var(--brand)]" />
   </button>
 );
+
+/* ── Mobile bell button — beside search, with pulsing badge ── */
+const MobileBellButton = () => (
+  <button
+    type="button"
+    aria-label="Notifications"
+    className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-muted)] shadow-[0_4px_18px_rgba(30,20,10,0.07)] transition active:scale-95"
+  >
+    <HiBell className="text-[19px]" />
+    <span className="absolute right-3 top-3 flex h-2 w-2">
+      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--brand)] opacity-75" />
+      <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--brand)]" />
+    </span>
+  </button>
+);
+
+/* ── Mobile sports-mode selector — premium pill w/ dropdown affordance ── */
+const MobileSportsChip = ({ category, onClick }) => {
+  const Icon = CATEGORY_ICONS[category] || DEFAULT_CATEGORY_ICON;
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-[var(--bg-card)] py-1.5 pl-3 pr-2.5 text-[12.5px] font-semibold text-[var(--text-heading)] shadow-[0_4px_14px_rgba(30,20,10,0.08)] transition active:scale-95"
+    >
+      <Icon className="h-[15px] w-[15px] shrink-0 text-[var(--brand)]" strokeWidth={2.25} />
+      <span className="max-w-[86px] truncate">{getCategoryLabel(category)}</span>
+      <ChevronDown className="h-3.5 w-3.5 shrink-0 text-[var(--text-faint)]" strokeWidth={2.5} />
+    </button>
+  );
+};
 
 export default DashboardHeader;

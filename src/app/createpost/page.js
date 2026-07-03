@@ -67,9 +67,9 @@ const CreatePost = () => {
     switch (step) {
       case 0: return (
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="md:col-span-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3 text-[13px] text-[var(--text-body)]">
-            Posting in <strong className="text-[var(--text-heading)]">{getCategoryLabel(input.category)}</strong> mode. Change in Settings.
-          </div>
+          <p className="md:col-span-2 text-[12.5px] text-[var(--text-muted)]">
+            Posting in <strong className="font-semibold text-[var(--text-heading)]">{getCategoryLabel(input.category)}</strong> mode — change this in Settings.
+          </p>
           <div className="md:col-span-2"><label className={label}>Title</label><Input name="title" value={input.title||""} placeholder="Need 4 players for Sunday match" onChange={onChange} required /></div>
           <div><label className={label}>Subcategory</label><Select name="subCategory" value={input.subCategory||""} onChange={onChange}><option value="">Select subcategory</option>{subOpts.map((s) => <option key={s} value={s}>{s}</option>)}</Select></div>
           <div className="md:col-span-2"><label className={label}>Description</label><Textarea name="desc" value={input.desc||""} placeholder="Add timing, expectations, location notes…" onChange={onChange} required /></div>
@@ -81,11 +81,11 @@ const CreatePost = () => {
       );
       case 1: return (
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="md:col-span-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3 text-[13px] text-[var(--text-body)]">Location for your {getCategoryLabel(input.category).toLowerCase()} post</div>
+          <p className="md:col-span-2 text-[12.5px] text-[var(--text-muted)]">Location for your {getCategoryLabel(input.category).toLowerCase()} post</p>
           <div><label className={label}>Current location</label><Input name="currentLocation" value={input.currentLocation||""} placeholder="Use current location" onChange={onChange} /></div>
           <div><label className={label}>Search location</label><Input name="searchLocation" value={input.searchLocation||""} placeholder="SG Highway, Ahmedabad" onChange={onChange} /></div>
           <div><label className={label}>Radius</label><Select name="radius" value={input.radius} onChange={onChange}>{Data.radiusOptions.map((r) => <option key={r} value={r}>{r}</option>)}</Select></div>
-          <div className="rounded-sm border border-dashed border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 text-[13px] text-[var(--text-muted)]">Map preview placeholder</div>
+          <div className="flex items-center justify-center rounded-sm bg-[var(--bg-secondary)] p-4 text-[12.5px] text-[var(--text-faint)]">Map preview placeholder</div>
         </div>
       );
       case 2: return (
@@ -103,16 +103,16 @@ const CreatePost = () => {
         </div>
       );
       default: return (
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="divide-y divide-[var(--border-subtle)]">
           {[["Category",input.category],["Subcategory",input.subCategory||"Not selected"],["Title",input.title||"Untitled"],["Location",input.searchLocation||input.currentLocation||"Not added"],["Radius",input.radius],["Contact",input.contactPreference]].map(([l,v]) => (
-            <div key={l} className="rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{l}</p>
-              <p className="mt-1 text-[13px] font-semibold text-[var(--text-heading)]">{v}</p>
+            <div key={l} className="flex items-center justify-between gap-4 py-2.5 text-[13px]">
+              <p className="text-[var(--text-muted)]">{l}</p>
+              <p className="truncate font-semibold text-[var(--text-heading)]">{v}</p>
             </div>
           ))}
-          <div className="rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 md:col-span-2">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Description</p>
-            <p className="mt-1 text-[13px] text-[var(--text-body)]">{input.desc||"No description added."}</p>
+          <div className="py-2.5">
+            <p className="text-[13px] text-[var(--text-muted)]">Description</p>
+            <p className="mt-1 text-[13px] leading-relaxed text-[var(--text-body)]">{input.desc||"No description added."}</p>
           </div>
         </div>
       );
@@ -121,36 +121,36 @@ const CreatePost = () => {
 
   return (
     <div className={theme}>
-      <div className="overflow-hidden rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_2px_12px_rgba(30,20,10,0.06)]">
+      <div className="rounded-sm bg-[var(--bg-card)]">
 
         {/* header */}
-        <div className="border-b border-[var(--border-subtle)] px-5 py-5 md:px-6">
+        <div className="px-1 pb-4">
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] category-accent-text">Create post</p>
           <h1 className="mt-1 text-[20px] font-black text-[var(--text-heading)]">{copy.title}</h1>
           <p className="mt-0.5 text-[13px] text-[var(--text-muted)]">{copy.desc}</p>
         </div>
 
         {/* step tabs */}
-        <div className="flex gap-2 overflow-x-auto border-b border-[var(--border-subtle)] px-5 py-3 scrollbar-none">
+        <div className="flex gap-1.5 overflow-x-auto px-1 pb-4 scrollbar-none">
           {steps.map((s, i) => (
             <button key={s} type="button" onClick={() => setStep(i)}
-              className={`shrink-0 rounded-full px-4 py-1.5 text-[12px] font-semibold transition-all ${
-                step === i ? "bg-[var(--text-heading)] text-[var(--selected-fg)]"
-                : i < step  ? "bg-[var(--brand)] text-white"
-                : "border border-[var(--border-subtle)] text-[var(--text-muted)] hover:border-[var(--text-heading)]"
+              className={`shrink-0 rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-all ${
+                step === i ? "bg-[var(--brand)] text-white"
+                : i < step  ? "text-[var(--text-heading)]"
+                : "text-[var(--text-faint)]"
               }`}
-            >{i+1}. {s}</button>
+            >{s}</button>
           ))}
         </div>
 
         {/* step body */}
-        <form onSubmit={onSubmit} className="p-5 md:p-6">
-          <div className="category-soft-panel rounded-sm p-4 md:p-5">{renderStep()}</div>
+        <form onSubmit={onSubmit} className="px-1">
+          {renderStep()}
 
-          <div className="mt-5 flex flex-col gap-3 border-t border-[var(--border-subtle)] pt-5 sm:flex-row sm:justify-between">
-            <button type="button" onClick={() => router.push("/")} className="rounded-full border border-[var(--border-subtle)] px-5 py-2 text-[13px] font-semibold text-[var(--text-muted)] transition hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]">Cancel</button>
+          <div className="mt-6 flex flex-col gap-3 border-t border-[var(--border-subtle)] pt-4 sm:flex-row sm:justify-between">
+            <button type="button" onClick={() => router.push("/")} className="text-[13px] font-semibold text-[var(--text-muted)] transition hover:text-[var(--text-heading)]">Cancel</button>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setStep((s) => Math.max(0,s-1))} disabled={step===0} className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[var(--border-subtle)] px-5 py-2 text-[13px] font-semibold text-[var(--text-body)] transition hover:border-[var(--text-heading)] disabled:opacity-40">
+              <button type="button" onClick={() => setStep((s) => Math.max(0,s-1))} disabled={step===0} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[var(--bg-secondary)] px-5 py-2 text-[13px] font-semibold text-[var(--text-body)] transition disabled:opacity-40">
                 <ChevronLeft className="h-4 w-4" strokeWidth={2.25} />
                 Back
               </button>

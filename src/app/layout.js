@@ -17,6 +17,12 @@ export const metadata = {
     "Post, discover, and connect with local opportunities, services, events, and people nearby.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={jakarta.variable}>

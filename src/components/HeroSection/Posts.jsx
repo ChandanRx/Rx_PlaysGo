@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Search, Sparkles } from "lucide-react";
 import PostItems from "../PostItems";
-import PostModal from "./PostModal";
+import QuickActions from "./QuickActions";
+import PostModal from "../PostModal";
 
 const POSTS_PER_PAGE = 12;
 
@@ -13,11 +14,12 @@ const containerVariants = { hidden: {}, visible: { transition: { staggerChildren
 const cardVariants = { hidden: { opacity: 0, y: 18 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } } };
 
 const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
-  const [post, setPost]     = useState();
-  const [page, setPage]     = useState(1);
-  const router              = useRouter();
+  const [page, setPage]         = useState(1);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const router                  = useRouter();
+  const pathname                = usePathname();
 
-  const openPost = (item) => { setPost(item); document.getElementById("my_modal_1").showModal(); };
+  const openPost = (item) => { setSelectedPost(item); };
   useEffect(() => { setPage(1); }, [posts]);
 
   const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
@@ -29,8 +31,25 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
   return (
     <section className="space-y-4">
 
-      {/* feed header */}
-      <div className="flex h-11 items-center justify-between rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] px-4 shadow-[0_1px_6px_rgba(30,20,10,0.05)]">
+      {/* ═══ MOBILE — Quick Actions + section header (hidden at lg) ═══ */}
+      <div className="space-y-4 lg:hidden">
+        <div className="flex items-center justify-between">
+          <h2 className="text-[18px] font-extrabold tracking-tight text-[var(--text-heading)]">{feedLabel}</h2>
+          {pathname === "/" && (
+            <button
+              type="button"
+              onClick={() => router.push("/posts")}
+              className="flex items-center gap-0.5 text-[13px] font-semibold text-[var(--brand)] active:opacity-70"
+            >
+              See All
+              <ChevronRight className="h-4 w-4" strokeWidth={2.5} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* ═══ DESKTOP — feed header (unchanged) ═══ */}
+      <div className="hidden h-11 items-center justify-between rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] px-4 shadow-[0_1px_6px_rgba(30,20,10,0.05)] lg:flex">
         <div className="flex items-baseline gap-2">
           <span className="text-[13px] font-bold text-[var(--text-heading)]">{feedLabel}</span>
           <span className="text-[11.5px] text-[var(--text-faint)]">
@@ -47,13 +66,11 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
         </button>
       </div>
 
-      <PostModal post={post} />
-
       {/* skeleton */}
       {!isReady ? (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-[400px] animate-pulse rounded-sm bg-[var(--bg-secondary)]" />
+            <div key={i} className="h-[280px] animate-pulse rounded-2xl bg-[var(--bg-secondary)] lg:h-[400px] lg:rounded-sm" />
           ))}
         </div>
 
@@ -79,7 +96,7 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
         <>
           <motion.div
             key={`page-${page}`}
-            className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"
+            className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5 xl:grid-cols-3"
             variants={containerVariants} initial="hidden" animate="visible"
           >
             <AnimatePresence mode="popLayout">
@@ -114,6 +131,12 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
           )}
         </>
       )}
+
+      <AnimatePresence>
+        {selectedPost && (
+          <PostModal key={selectedPost.id} post={selectedPost} onClose={() => setSelectedPost(null)} />
+        )}
+      </AnimatePresence>
     </section>
   );
 };

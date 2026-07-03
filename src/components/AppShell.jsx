@@ -1,7 +1,8 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   HiChatAlt2,
   HiHome,
@@ -14,6 +15,11 @@ import DashboardHeader from "./DashboardHeader";
 import LeftSidebar from "./LeftSidebar";
 import RightSidebar from "./RightSidebar";
 
+// Only the feed pages need their scroll position remembered across a
+// details-view visit; every other route always starts at the top.
+const FEED_PATHS = ["/", "/posts"];
+const SCROLL_KEY_PREFIX = "quibly_scroll_";
+
 const bottomNav = [
   { label: "Home", href: "/", icon: HiHome },
   { label: "Explore", href: "/posts", icon: HiLocationMarker },
@@ -25,6 +31,27 @@ const bottomNav = [
 const AppShell = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const contentRef = useRef(null);
+  const prevPathRef = useRef(pathname);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    const prevPath = prevPathRef.current;
+
+    if (el && FEED_PATHS.includes(prevPath)) {
+      sessionStorage.setItem(SCROLL_KEY_PREFIX + prevPath, String(el.scrollTop));
+    }
+    prevPathRef.current = pathname;
+
+    if (!el) return;
+
+    if (FEED_PATHS.includes(pathname)) {
+      const saved = Number(sessionStorage.getItem(SCROLL_KEY_PREFIX + pathname)) || 0;
+      requestAnimationFrame(() => requestAnimationFrame(() => { el.scrollTop = saved; }));
+    } else {
+      el.scrollTop = 0;
+    }
+  }, [pathname]);
 
   const isActive = (href) => {
     if (href === "/") {
@@ -46,22 +73,38 @@ const AppShell = ({ children }) => {
 
       <div className="min-h-screen px-2 pb-24 pt-2 lg:pl-[122px] lg:pr-[340px] lg:pb-4 lg:pt-4">
 
-        <div className="mx-auto h-full min-h-[calc(100vh-4rem)] overflow-y-auto rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] px-4 py-4 shadow-[0_2px_16px_rgba(30,20,10,0.06)] md:px-5 md:py-5 lg:min-h-[calc(100vh-2rem)] lg:px-6 lg:py-5">
+        <div
+          ref={contentRef}
+          className="mx-auto h-full min-h-[calc(100vh-4rem)] overflow-y-auto rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] px-4 py-4 shadow-[0_2px_16px_rgba(30,20,10,0.06)] md:px-5 md:py-5 lg:min-h-[calc(100vh-2rem)] lg:px-6 lg:py-5"
+        >
 
           <Suspense fallback={null}>
             <DashboardHeader />
           </Suspense>
 
-          {children}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, x: 14 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -14 }}
+              transition={{ duration: 0.22, ease: "easeInOut" }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
 
         </div>
 
       </div>
 
-      {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-4 left-4 right-4 z-50 lg:hidden">
+      {/* Mobile Bottom Navigation — floating glass capsule, labels below icons */}
+      <nav
+        className="fixed inset-x-4 z-50 lg:hidden"
+        style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
+      >
 
-        <div className="mx-auto flex max-w-md items-center justify-around rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] px-2 py-2 shadow-[0_8px_32px_rgba(30,20,10,0.09)]">
+        <div className="mx-auto flex max-w-md items-stretch gap-1 rounded-[28px] border border-white/40 bg-[var(--bg-card)]/75 p-1.5 shadow-[0_8px_28px_rgba(30,20,10,0.14)] backdrop-blur-xl">
 
           {bottomNav.map(({ label, href, icon: Icon }) => {
 
@@ -73,18 +116,27 @@ const AppShell = ({ children }) => {
                 key={label}
                 type="button"
                 onClick={() => router.push(href)}
-                className={`flex flex-col items-center gap-1 rounded-full px-3 py-2 transition-colors duration-200 ${
-                  active
-                    ? "bg-[var(--text-heading)] text-[var(--selected-fg)] shadow"
-                    : "text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]"
-                }`}
+                aria-label={label}
+                className="relative flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 rounded-[30px]"
               >
 
-                <Icon className="text-xl" />
+                {active && (
+                  <motion.span
+                    layoutId="bottom-nav-active-pill"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    className="absolute inset-0 rounded-full bg-[var(--brand)] shadow-[0_4px_14px_rgba(255,60,31,0.35)]"
+                  />
+                )}
 
-                <span className="text-[10px] font-semibold">
-                  {label}
-                </span>
+                <motion.span
+                  animate={{ scale: active ? 1.08 : 1 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                  className={`relative z-10 flex flex-col items-center gap-0.5 transition-colors duration-200 ${
+                    active ? "text-white" : "text-[var(--text-muted)]"
+                  }`}
+                >
+                  <Icon className="text-[19px]" />
+                </motion.span>
 
               </button>
 

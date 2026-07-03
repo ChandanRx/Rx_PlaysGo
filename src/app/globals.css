@@ -55,7 +55,8 @@
     ACCENT  — bright orange (icon tiles, highlights)
   ==============================*/
 
-  --accent: #FF6B2B;
+  --accent:      #FF6B2B;
+  --accent-soft: #FFF1E9;
 
   /*==============================
     SUCCESS
@@ -129,7 +130,8 @@
   --secondary-soft:   rgba(196,168,255,.13);
   --secondary-border: rgba(196,168,255,.28);
 
-  --accent: #FF7A3A;
+  --accent:      #FF7A3A;
+  --accent-soft: rgba(255,122,58,.14);
 
   /*==============================
     SELECTED FOREGROUND
@@ -313,8 +315,6 @@ FOCUS
 
   box-shadow:
       0 0 0 4px rgba(255,60,31,.20);
-
-  border-radius:16px;
 }
 
 /*==========================================
@@ -424,6 +424,23 @@ GLOBAL SCROLLBAR
 *::-webkit-scrollbar-corner{
 
   background:transparent;
+}
+
+/*==========================================
+SCROLLBAR-LESS ROWS
+Used for horizontally-scrolling chip rows
+(sports selector, filter chips, category tabs)
+==========================================*/
+
+.scrollbar-none{
+  -ms-overflow-style:none;
+  scrollbar-width:none;
+}
+
+.scrollbar-none::-webkit-scrollbar{
+  display:none;
+  width:0;
+  height:0;
 }
 
 /*==========================================
