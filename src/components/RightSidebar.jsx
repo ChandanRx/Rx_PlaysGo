@@ -1,23 +1,24 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
-import { HiChatAlt2, HiMicrophone, HiOutlineChevronRight } from "react-icons/hi";
+import React from "react";
+import { HiBell } from "react-icons/hi";
 import { useRouter } from "next/navigation";
+import { BadgeCheck, MessageCircle, Radio, Reply } from "lucide-react";
 import { dummyUser } from "../shared/dummyPosts";
+import { useNotifications } from "../hooks/useClientData";
+import { markAllNotificationsRead, markNotificationRead } from "../shared/notifications";
 
-const conversations = [
-  { id: "riya",  name: "Riya Kapoor",  preview: "Court is booked for 7:30.", time: "2m",  unread: 2, online: true,  messages: [{ from: "them", text: "Are you free for Sunday cricket?" }, { from: "me", text: "Yes! What time works?" }, { from: "them", text: "7:30 AM at Shivaji Park" }] },
-  { id: "priya", name: "Priya Nair",   preview: "Can you help on Saturday?",  time: "18m", unread: 1, online: true,  messages: [{ from: "them", text: "Can you help on Saturday?" }, { from: "me", text: "Sure, what do you need?" }] },
-  { id: "kabir", name: "Kabir Singh",  preview: "Desk is still available.",   time: "1h",  unread: 0, online: false, messages: [{ from: "them", text: "Desk is still available for pickup." }] },
-  { id: "neha",  name: "Neha Joshi",   preview: "Interested in the desk?",    time: "3h",  unread: 0, online: false, messages: [{ from: "them", text: "Interested in the study desk?" }] },
-];
+const ICONS = { reply: Reply, message: MessageCircle, live: Radio, badge: BadgeCheck };
 
 const RightSidebar = () => {
   const router = useRouter();
-  const [activeChatId, setActiveChatId] = useState("riya");
-  const [message, setMessage] = useState("");
-  const activeChat = conversations.find((c) => c.id === activeChatId) || conversations[0];
+  const { notifications, unreadCount } = useNotifications();
+
+  const handleSelect = (notification) => {
+    markNotificationRead(notification.id);
+    if (notification.href) router.push(notification.href);
+  };
 
   return (
     <aside className="fixed right-4 top-4 bottom-4 z-30 hidden w-[300px] lg:flex">
@@ -40,95 +41,53 @@ const RightSidebar = () => {
           <p className="relative text-center text-[12px] text-[var(--text-muted)]">@{dummyUser.username} · Mumbai</p>
         </button>
 
-        {/* ── Chat list ── */}
+        {/* ── Notifications ── */}
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex items-center justify-between border-b border-[var(--border-subtle)] px-4 py-3">
-            <h3 className="text-[13px] font-bold text-[var(--text-heading)]">Messages</h3>
-            <HiChatAlt2 className="text-[18px] text-[var(--brand)]" />
-          </div>
-
-          <div className="max-h-[200px] space-y-1 overflow-y-auto px-3 py-2">
-            {conversations.map((chat) => {
-              const active = chat.id === activeChatId;
-              return (
+            <h3 className="text-[13px] font-bold text-[var(--text-heading)]">Notifications</h3>
+            <div className="flex items-center gap-2.5">
+              {unreadCount > 0 && (
                 <button
-                  key={chat.id}
                   type="button"
-                  onClick={() => setActiveChatId(chat.id)}
-                  className={`flex w-full items-center gap-2.5 rounded-sm px-3 py-2.5 transition-colors duration-200 ${
-                    active ? "bg-[var(--text-heading)] text-[var(--selected-fg)]" : "hover:bg-[var(--bg-input)]"
-                  }`}
+                  onClick={() => markAllNotificationsRead()}
+                  className="text-[11px] font-semibold text-[var(--brand)] transition hover:text-[var(--brand-hover)]"
                 >
-                  <div className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[13px] font-bold ${
-                    active ? "bg-[var(--bg-card)] text-[var(--text-heading)]" : "bg-[var(--bg-input)] text-[var(--text-body)]"
-                  }`}>
-                    {chat.name[0]}
-                    {chat.online && <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[var(--bg-card)] bg-[#22C55E]" />}
-                  </div>
-                  <div className="min-w-0 flex-1 text-left">
-                    <div className="flex items-center justify-between">
-                      <span className={`truncate text-[12px] font-semibold ${active ? "text-[var(--selected-fg)]" : "text-[var(--text-heading)]"}`}>{chat.name}</span>
-                      <span className={`text-[10px] ${active ? "text-[var(--selected-fg)]/60" : "text-[var(--text-faint)]"}`}>{chat.time}</span>
-                    </div>
-                    <p className={`truncate text-[11px] ${active ? "text-[var(--selected-fg)]/70" : "text-[var(--text-muted)]"}`}>{chat.preview}</p>
-                  </div>
-                  {chat.unread > 0 && (
-                    <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--brand)] px-1.5 text-[10px] font-bold text-white">{chat.unread}</span>
-                  )}
+                  Mark all read
                 </button>
-              );
-            })}
+              )}
+              <HiBell className="text-[18px] text-[var(--brand)]" />
+            </div>
           </div>
 
-          {/* ── Chat window ── */}
-          <div className="flex min-h-0 flex-1 flex-col border-t border-[var(--border-subtle)] px-4 py-3">
-            <div className="mb-3 flex items-center justify-between">
-              <div>
-                <h4 className="text-[13px] font-bold text-[var(--text-heading)]">{activeChat.name}</h4>
-                <p className="text-[11px] text-[var(--text-muted)]">
-                  {activeChat.online ? <span className="font-medium text-[#22C55E]">● Online</span> : "Offline"}
-                </p>
-              </div>
-              <button className="rounded-sm p-1.5 text-[var(--text-faint)] transition hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]">
-                <HiOutlineChevronRight className="text-[18px]" />
-              </button>
-            </div>
-
-            {/* messages */}
-            <div className="flex-1 space-y-2.5 overflow-y-auto pr-1">
-              {activeChat.messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.from === "me" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[80%] rounded-sm px-3.5 py-2.5 text-[12.5px] leading-relaxed ${
-                    msg.from === "me"
-                      ? "rounded-sm bg-[var(--text-heading)] text-[var(--selected-fg)]"
-                      : "rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-input)] text-[var(--text-body)]"
-                  }`}>
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* input */}
-            <form
-              className="mt-3 flex items-center gap-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 py-2"
-              onSubmit={(e) => { e.preventDefault(); if (!message.trim()) return; setMessage(""); }}
-            >
-              <input
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Write a message…"
-                className="flex-1 bg-transparent text-[12.5px] text-[var(--text-body)] outline-none placeholder:text-[var(--text-faint)]"
-              />
-              <button
-                type="button"
-                aria-label="Voice message"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--brand)] text-white transition hover:bg-[var(--brand-hover)]"
-              >
-                <HiMicrophone className="text-[14px]" />
-              </button>
-            </form>
+          <div className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-2">
+            {notifications.length === 0 ? (
+              <p className="px-2 py-8 text-center text-[12.5px] text-[var(--text-muted)]">No notifications yet</p>
+            ) : (
+              notifications.map((notification) => {
+                const Icon = ICONS[notification.icon] || HiBell;
+                return (
+                  <button
+                    key={notification.id}
+                    type="button"
+                    onClick={() => handleSelect(notification)}
+                    className={`flex w-full items-start gap-2.5 rounded-sm px-3 py-2.5 text-left transition-colors duration-200 hover:bg-[var(--bg-input)] ${
+                      !notification.read ? "bg-[var(--brand-soft)]/40" : ""
+                    }`}
+                  >
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-[var(--brand-soft)] text-[var(--brand)]">
+                      <Icon className="h-4 w-4" strokeWidth={2.25} />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[12.5px] font-semibold text-[var(--text-heading)]">
+                        {notification.title}
+                      </span>
+                      <span className="mt-0.5 block text-[11px] text-[var(--text-faint)]">{notification.time}</span>
+                    </span>
+                    {!notification.read && <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand)]" />}
+                  </button>
+                );
+              })
+            )}
           </div>
         </div>
       </div>

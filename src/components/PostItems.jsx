@@ -6,7 +6,7 @@ import {
   HiBadgeCheck, HiHeart, HiOutlineHeart,
   HiLocationMarker, HiOutlineCalendar,
   HiOutlineChatAlt2, HiOutlineUserAdd,
-  HiStar, HiClock, HiUsers, HiTag,
+  HiClock, HiUsers, HiTag,
 } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { MapPin } from "lucide-react";
@@ -65,7 +65,7 @@ const PostItems = ({ post, onClick }) => {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className={`group flex flex-col h-full w-full bg-[var(--bg-card)] rounded-2xl lg:rounded-sm overflow-hidden border-0 lg:border lg:border-[var(--border-subtle)] shadow-[0_2px_16px_rgba(30,20,10,0.08)] lg:shadow-[0_2px_12px_rgba(30,20,10,0.06)] lg:hover:shadow-[0_10px_32px_rgba(30,20,10,0.11)] lg:hover:-translate-y-1 active:scale-[0.98] lg:active:scale-100 transition-[transform,box-shadow] duration-200 cursor-pointer select-none transform-gpu will-change-transform ${themeClass}`}
+      className={`group flex flex-col h-full w-full bg-[var(--bg-card)] rounded-sm overflow-hidden border border-[var(--border-subtle)] shadow-[0_2px_12px_rgba(30,20,10,0.06)] lg:hover:shadow-[0_10px_32px_rgba(30,20,10,0.11)] lg:hover:-translate-y-1 active:scale-[0.98] lg:active:scale-100 transition-[transform,box-shadow] duration-200 cursor-pointer select-none transform-gpu will-change-transform ${themeClass}`}
       onClick={onClick}
       onKeyDown={handleKeyDown}
       role={onClick ? "button" : undefined}
@@ -111,17 +111,10 @@ const PostItems = ({ post, onClick }) => {
       {/* ── Body ── */}
       <div className="flex flex-1 flex-col px-3.5 pb-3.5 pt-2.5 lg:px-4 lg:pb-4 lg:pt-3">
 
-        {/* title (+ rating, desktop only) */}
-        <div className="flex items-start justify-between gap-2">
-          <h2 className="line-clamp-2 flex-1 text-[14px] font-bold leading-snug text-[var(--text-heading)] lg:text-[15px]">
-            {post?.title}
-          </h2>
-          <div className="hidden shrink-0 items-center gap-0.5 pt-0.5 lg:flex">
-            <HiStar className="text-[13px] text-[var(--amber-400)]" />
-            <span className="text-[12px] font-bold text-[var(--text-heading)]">4.8</span>
-            <span className="text-[11px] text-[var(--text-faint)]">(24)</span>
-          </div>
-        </div>
+        {/* title */}
+        <h2 className="line-clamp-2 text-[14px] font-bold leading-snug text-[var(--text-heading)] lg:text-[15px]">
+          {post?.title}
+        </h2>
 
         {/* location */}
         <div className="mt-1 flex items-center gap-1.5 text-[11px] text-[var(--text-muted)] lg:mt-1.5 lg:text-[12px]">
@@ -182,7 +175,7 @@ const PostItems = ({ post, onClick }) => {
           <motion.button
              whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
              onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-             className="flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-[var(--brand)] to-[#FF7A47] px-4 text-[12.5px] font-bold text-white shadow-[0_4px_14px_rgba(255,60,31,0.30)] transition-[background-color] hover:bg-[var(--brand-hover)] lg:h-auto lg:rounded-sm lg:bg-none lg:bg-[var(--brand)] lg:py-2 lg:shadow-none"
+             className="flex h-11 shrink-0 items-center gap-1.5 rounded-sm bg-gradient-to-r from-[var(--brand)] to-[#FF7A47] px-4 text-[12.5px] font-bold text-white shadow-[0_4px_14px_rgba(255,60,31,0.30)] transition-[background-color] hover:bg-[var(--brand-hover)] lg:h-auto lg:bg-none lg:bg-[var(--brand)] lg:py-2 lg:shadow-none"
            >
             <HiOutlineUserAdd className="text-[13px]" />
             {primaryLabel}

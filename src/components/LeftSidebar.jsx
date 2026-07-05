@@ -7,6 +7,7 @@ import {
   HiDotsVertical,
   HiHome,
   HiOutlinePlus,
+  HiShieldCheck,
   HiSparkles,
   HiUser,
 } from "react-icons/hi";
@@ -17,6 +18,7 @@ import PlaysGoLogo from "./PlaysGoLogo";
 
 const navItems = [
   { label: "Home", href: "/", icon: HiHome },
+  { label: "Admin Dashboard", href: "/dashboard", icon: HiShieldCheck },
   { label: "Messages", href: "/messages", icon: HiChatAlt2 },
   { label: "Profile", href: "/profile", icon: HiUser },
   { label: "Pro", href: "/pro", icon: HiSparkles },
@@ -30,7 +32,8 @@ const LeftSidebar = () => {
     if (href === "/") {
       return pathname === "/" || pathname === "/posts";
     }
-    return pathname === href.split("?")[0];
+    const base = href.split("?")[0];
+    return pathname === base || pathname.startsWith(`${base}/`);
   };
 
   return (
