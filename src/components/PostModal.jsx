@@ -10,6 +10,7 @@ import {
   HiOutlineChatAlt2, HiOutlineHeart, HiOutlinePhone, HiOutlineShare, HiUsers,
 } from "react-icons/hi";
 import { FaWhatsapp } from "react-icons/fa";
+import { getChatIdForUserName } from "../shared/conversations";
 import Button from "./ui/Button";
 
 const getMetaText = (post) => {
@@ -90,7 +91,8 @@ const PostModal = ({ post, onClose }) => {
 
   const handleChat = () => {
     onClose?.();
-    router.push("/messages");
+    const chatId = getChatIdForUserName(post.userName);
+    router.push(`/messages/${chatId}?postId=${encodeURIComponent(post.id)}`);
   };
 
   const handleCall = () => {
@@ -135,7 +137,7 @@ const PostModal = ({ post, onClose }) => {
           variants={isMobile ? sheetVariants : dialogVariants}
           initial="hidden" animate="visible" exit="exit"
           onClick={(e) => e.stopPropagation()}
-          className="flex max-h-[85vh] w-full flex-col overflow-hidden rounded-[24px] bg-[var(--bg-card)] shadow-[0_-8px_40px_rgba(30,20,10,0.18)] sm:max-w-lg sm:max-h-[85vh] sm:rounded-sm sm:shadow-[0_20px_60px_rgba(30,20,10,0.18)]"
+          className="flex max-h-[85vh] w-full flex-col overflow-hidden rounded-sm bg-[var(--bg-card)] shadow-[0_-8px_40px_rgba(30,20,10,0.18)] sm:max-w-lg sm:max-h-[85vh] sm:shadow-[0_20px_60px_rgba(30,20,10,0.18)]"
         >
 
           {/* drag handle — mobile bottom sheet only */}

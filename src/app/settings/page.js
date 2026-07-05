@@ -167,6 +167,17 @@ const SettingsPage = () => {
           );
         })}
       </div>
+
+      {/* footer */}
+      <div className="flex justify-center pt-2">
+        <button
+          type="button"
+          onClick={() => router.push("/dashboard")}
+          className="text-[12px] font-semibold text-[var(--text-faint)] transition hover:text-[var(--brand)]"
+        >
+          Admin dashboard
+        </button>
+      </div>
     </div>
   );
 };

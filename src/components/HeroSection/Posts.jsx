@@ -70,7 +70,7 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
       {!isReady ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-[280px] animate-pulse rounded-2xl bg-[var(--bg-secondary)] lg:h-[400px] lg:rounded-sm" />
+            <div key={i} className="h-[280px] animate-pulse rounded-sm bg-[var(--bg-secondary)] lg:h-[400px]" />
           ))}
         </div>
 

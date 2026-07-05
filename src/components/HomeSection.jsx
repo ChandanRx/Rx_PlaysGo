@@ -14,7 +14,8 @@ const HomeSection = () => {
 
   const { posts, isReady: postsReady } = useClientSearchPosts(
     searchText,
-    hasCategory ? category : "__none__",
+    category,
+    categoryReady && hasCategory,
   );
 
   const isReady = categoryReady && postsReady;

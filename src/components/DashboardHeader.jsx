@@ -1,19 +1,21 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { HiBell, HiOutlinePlus, HiSearch } from "react-icons/hi";
 import { ChevronDown, Hand } from "lucide-react";
 import { motion } from "framer-motion";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CategoryModeBadge } from "./CategoryModePrompt";
-import { useClientGreeting, useStoredAppCategory } from "../hooks/useClientData";
+import { useClientGreeting, useNotifications, useStoredAppCategory } from "../hooks/useClientData";
 import { getCategoryLabel } from "../shared/appPreferences";
 import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from "../shared/lucideIcons";
+import { markAllNotificationsRead, markNotificationRead } from "../shared/notifications";
 import Data from "../shared/data";
 import { dummyUser } from "../shared/dummyPosts";
 import Button from "./ui/Button";
 
 const pageTitles = {
+  "/dashboard":  "Admin dashboard",
   "/createpost": "Create post",
   "/profile":    "My profile",
   "/settings":   "Settings",
@@ -90,7 +92,7 @@ const DashboardHeader = () => {
             <HiOutlinePlus className="text-base" />
             New post
           </Button>
-          <BellButton />
+          <NotificationBell variant="desktop" />
         </div>
       </header>
     );
@@ -132,11 +134,11 @@ const DashboardHeader = () => {
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                   placeholder={searchPlaceholder}
-                  className="h-full w-full bg-transparent text-[14px] text-[var(--text-heading)] outline-none placeholder:text-[var(--text-faint)]"
+                  className="h-full w-full bg-transparent text-[14px] text-[var(--text-heading)] outline-none focus-visible:shadow-none placeholder:text-[var(--text-faint)]"
                 />
               </div>
             </form>
-            <MobileBellButton />
+            <NotificationBell variant="mobile" />
           </div>
         )}
 
@@ -235,7 +237,7 @@ const DashboardHeader = () => {
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
                     placeholder={searchPlaceholder}
-                    className="h-full w-full bg-transparent text-[12px] text-[var(--text-heading)] outline-none placeholder:text-[var(--text-faint)]"
+                    className="h-full w-full bg-transparent text-[12px] text-[var(--text-heading)] outline-none focus-visible:shadow-none placeholder:text-[var(--text-faint)]"
                   />
                 </div>
 
@@ -248,7 +250,7 @@ const DashboardHeader = () => {
               </form>
 
               {/* bell */}
-              <BellButton />
+              <NotificationBell variant="desktop" />
             </div>
           </div>
         )}
@@ -257,32 +259,97 @@ const DashboardHeader = () => {
   );
 };
 
-/* ── Bell button (desktop / non-feed pages) ── */
-const BellButton = () => (
-  <button
-    type="button"
-    aria-label="Notifications"
-    className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border border-[var(--brand-border)] bg-[var(--bg-card)] text-[var(--text-muted)] transition hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
-  >
-    <HiBell className="text-[16px]" />
-    <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[var(--brand)]" />
-  </button>
-);
+/* ── Notification bell — real unread count + click-to-open dropdown ── */
+const NotificationBell = ({ variant = "desktop" }) => {
+  const router = useRouter();
+  const { notifications, unreadCount } = useNotifications();
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef(null);
+  const isMobile = variant === "mobile";
 
-/* ── Mobile bell button — beside search, with pulsing badge ── */
-const MobileBellButton = () => (
-  <button
-    type="button"
-    aria-label="Notifications"
-    className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-muted)] shadow-[0_4px_18px_rgba(30,20,10,0.07)] transition active:scale-95"
-  >
-    <HiBell className="text-[19px]" />
-    <span className="absolute right-3 top-3 flex h-2 w-2">
-      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--brand)] opacity-75" />
-      <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--brand)]" />
-    </span>
-  </button>
-);
+  useEffect(() => {
+    if (!open) return;
+    const handleClickAway = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) setOpen(false);
+    };
+    window.addEventListener("mousedown", handleClickAway);
+    return () => window.removeEventListener("mousedown", handleClickAway);
+  }, [open]);
+
+  const handleSelect = (notification) => {
+    markNotificationRead(notification.id);
+    setOpen(false);
+    if (notification.href) router.push(notification.href);
+  };
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        aria-label="Notifications"
+        onClick={() => setOpen((v) => !v)}
+        className={
+          isMobile
+            ? "relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-muted)] shadow-[0_4px_18px_rgba(30,20,10,0.07)] transition active:scale-95"
+            : "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border border-[var(--brand-border)] bg-[var(--bg-card)] text-[var(--text-muted)] transition hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+        }
+      >
+        <HiBell className={isMobile ? "text-[19px]" : "text-[16px]"} />
+        {unreadCount > 0 && (
+          isMobile ? (
+            <span className="absolute right-3 top-3 flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--brand)] opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--brand)]" />
+            </span>
+          ) : (
+            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[var(--brand)]" />
+          )
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full z-50 mt-2 w-72 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] p-2 shadow-[0_12px_32px_rgba(30,20,10,0.14)]">
+          <div className="flex items-center justify-between px-2 py-1.5">
+            <p className="text-[12px] font-bold text-[var(--text-heading)]">Notifications</p>
+            {unreadCount > 0 && (
+              <button
+                type="button"
+                onClick={() => markAllNotificationsRead()}
+                className="text-[11px] font-semibold text-[var(--brand)] transition hover:text-[var(--brand-hover)]"
+              >
+                Mark all read
+              </button>
+            )}
+          </div>
+
+          {notifications.length === 0 ? (
+            <p className="px-2 py-4 text-center text-[12.5px] text-[var(--text-muted)]">No notifications yet</p>
+          ) : (
+            <ul className="max-h-72 space-y-0.5 overflow-y-auto">
+              {notifications.map((notification) => (
+                <li key={notification.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleSelect(notification)}
+                    className={`flex w-full items-start gap-2 rounded-sm px-2 py-2 text-left transition hover:bg-[var(--bg-input)] ${
+                      !notification.read ? "bg-[var(--brand-soft)]/40" : ""
+                    }`}
+                  >
+                    {!notification.read && <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand)]" />}
+                    <span className={`min-w-0 flex-1 ${notification.read ? "pl-3.5" : ""}`}>
+                      <span className="block truncate text-[12.5px] text-[var(--text-body)]">{notification.title}</span>
+                      <span className="mt-0.5 block text-[10.5px] text-[var(--text-faint)]">{notification.time}</span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 /* ── Mobile sports-mode selector — premium pill w/ dropdown affordance ── */
 const MobileSportsChip = ({ category, onClick }) => {

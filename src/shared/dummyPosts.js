@@ -216,7 +216,74 @@ const initialPosts = [
     requiredPeople: "2",
     isVerified: false,
   },
+  {
+    id: "quibly-sports-4",
+    title: "Sunday football draft — finalizing lineup",
+    desc: "Working out the roster before posting publicly. Not visible to others yet.",
+    category: "Players",
+    subCategory: "Football",
+    location: "Shivaji Park, Mumbai",
+    radius: "10 KM",
+    distance: "3.2 km away",
+    postedTime: "Just now",
+    imageUrl: "/posts/football.jpg",
+    userName: dummyUser.name,
+    userImage: dummyUser.image,
+    email: dummyUser.email,
+    phone: dummyUser.mobile,
+    whatsapp: dummyUser.mobile,
+    contactPreference: "WhatsApp",
+    requiredPeople: "6",
+    isVerified: true,
+    status: "Draft",
+  },
+  {
+    id: "quibly-sports-5",
+    title: "Badminton pairs — squad filled up",
+    desc: "Thanks to everyone who reached out — we found our four players for this week.",
+    category: "Players",
+    subCategory: "Badminton",
+    location: "Kandivali Sports Club, Mumbai",
+    radius: "8 KM",
+    distance: "2.0 km away",
+    postedTime: "1 day ago",
+    imageUrl: "/posts/badminton.jpg",
+    userName: dummyUser.name,
+    userImage: dummyUser.image,
+    email: dummyUser.email,
+    phone: dummyUser.mobile,
+    whatsapp: dummyUser.mobile,
+    contactPreference: "WhatsApp",
+    requiredPeople: "4",
+    isVerified: true,
+    status: "Closed",
+  },
+  {
+    id: "quibly-sports-6",
+    title: "Cricket net practice — last month's session",
+    desc: "Practice session has already passed — keeping this here for reference.",
+    category: "Players",
+    subCategory: "Cricket",
+    date: "2026-05-10",
+    time: "07:00 AM",
+    location: "Shivaji Park, Mumbai",
+    radius: "10 KM",
+    distance: "3.2 km away",
+    postedTime: "3 weeks ago",
+    imageUrl: "/posts/cricket.jpg",
+    userName: dummyUser.name,
+    userImage: dummyUser.image,
+    email: dummyUser.email,
+    phone: dummyUser.mobile,
+    whatsapp: dummyUser.mobile,
+    contactPreference: "WhatsApp",
+    requiredPeople: "3",
+    isVerified: true,
+    status: "Expired",
+  },
 ];
+
+export const POST_STATUSES = ["Active", "Draft", "Closed", "Expired"];
 
 const isBrowser = () => typeof window !== "undefined";
 
@@ -255,11 +322,12 @@ const normalizePost = (post, index = 0) => {
     featurePost: Boolean(post.featurePost),
     pinPost: Boolean(post.pinPost),
     boostVisibility: Boolean(post.boostVisibility),
+    status: post.status || "Active",
   };
 };
 
 // Bump this version string whenever initialPosts changes — forces a cache reset
-const DATA_VERSION = "v4-sport-images-jpg";
+const DATA_VERSION = "v5-post-status-profile-posts";
 const VERSION_KEY  = "quibly_data_version";
 
 const readPosts = () => {
@@ -308,10 +376,6 @@ const writePosts = (posts) => {
 export const getPosts = () => readPosts();
 
 export const searchPosts = (searchText = "", category = "") => {
-  if (category === "__none__") {
-    return [];
-  }
-
   const normalizedSearch = searchText.trim().toLowerCase();
 
   return readPosts().filter((post) => {
@@ -336,6 +400,8 @@ export const searchPosts = (searchText = "", category = "") => {
 
 export const getUserPosts = (email = dummyUser.email) =>
   readPosts().filter((post) => post.email === email);
+
+export const getPostById = (id) => readPosts().find((post) => post.id === id) || null;
 
 export const createPost = (post) => {
   const nextPost = normalizePost({
@@ -366,4 +432,41 @@ export const deletePost = (id) => {
   const remainingPosts = readPosts().filter((post) => post.id !== id);
   writePosts(remainingPosts);
   return remainingPosts;
+};
+
+export const updatePost = (id, patch = {}) => {
+  const nextPosts = readPosts().map((post) =>
+    post.id === id ? normalizePost({ ...post, ...patch }) : post,
+  );
+  writePosts(nextPosts);
+  return nextPosts;
+};
+
+const USER_PROFILE_KEY = "quibly_user_profile";
+const EDITABLE_PROFILE_FIELDS = ["name", "username", "bio", "city", "state", "mobile"];
+
+// The public dummyUser stays the static fallback/defaults; anything the user
+// edits on the Profile page is layered on top of it in localStorage.
+export const getStoredUserProfile = () => {
+  if (!isBrowser()) return { ...dummyUser };
+
+  try {
+    const saved = window.localStorage.getItem(USER_PROFILE_KEY);
+    return saved ? { ...dummyUser, ...JSON.parse(saved) } : { ...dummyUser };
+  } catch {
+    return { ...dummyUser };
+  }
+};
+
+export const updateUserProfile = (patch = {}) => {
+  const next = { ...getStoredUserProfile() };
+  EDITABLE_PROFILE_FIELDS.forEach((field) => {
+    if (patch[field] !== undefined) next[field] = patch[field];
+  });
+
+  if (isBrowser()) {
+    window.localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(next));
+  }
+
+  return next;
 };

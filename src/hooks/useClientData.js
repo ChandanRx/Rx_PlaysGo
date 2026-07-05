@@ -6,15 +6,20 @@ import {
   CATEGORY_CHANGE_EVENT,
   getStoredAppCategory,
 } from "../shared/appPreferences";
+import {
+  NOTIFICATIONS_CHANGE_EVENT,
+  getNotifications,
+} from "../shared/notifications";
 
-export const useClientSearchPosts = (searchText = "", category = "") => {
+export const useClientSearchPosts = (searchText = "", category = "", enabled = true) => {
   const [posts, setPosts] = useState([]);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
+    if (!enabled) return;
     setPosts(searchPosts(searchText, category));
     setIsReady(true);
-  }, [searchText, category]);
+  }, [searchText, category, enabled]);
 
   return { posts, isReady };
 };
@@ -35,6 +40,26 @@ export const useStoredAppCategory = () => {
   }, []);
 
   return { category, isReady, hasCategory: Boolean(category) };
+};
+
+export const useNotifications = () => {
+  const [notifications, setNotifications] = useState([]);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const sync = () => {
+      setNotifications(getNotifications());
+      setIsReady(true);
+    };
+
+    sync();
+    window.addEventListener(NOTIFICATIONS_CHANGE_EVENT, sync);
+    return () => window.removeEventListener(NOTIFICATIONS_CHANGE_EVENT, sync);
+  }, []);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  return { notifications, unreadCount, isReady };
 };
 
 export const useClientGreeting = () => {
