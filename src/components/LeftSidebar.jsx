@@ -18,7 +18,6 @@ import PlaysGoLogo from "./PlaysGoLogo";
 
 const navItems = [
   { label: "Home", href: "/", icon: HiHome },
-  { label: "Admin Dashboard", href: "/dashboard", icon: HiShieldCheck },
   { label: "Messages", href: "/messages", icon: HiChatAlt2 },
   { label: "Profile", href: "/profile", icon: HiUser },
   { label: "Pro", href: "/pro", icon: HiSparkles },
