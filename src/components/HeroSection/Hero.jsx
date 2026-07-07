@@ -196,7 +196,7 @@ const Hero = () => {
              <div className="mt-1 flex items-center justify-between">
                <p className="text-[11px] text-[var(--text-zinc-500)]">Need 4 players</p>
                <span className="rounded-full bg-[var(--hero-brand)] px-3 py-1 text-[11px] font-semibold text-white">
-                 Join
+                 Contact
                </span>
              </div>
            </motion.div>

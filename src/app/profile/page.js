@@ -133,7 +133,7 @@ const Profile = () => {
       <ProfileStats stats={stats} />
 
       {/* ── Posts ── */}
-      <Card className="p-4 sm:p-5 md:p-6" hover={false}>
+      <Card className="p-4 sm:p-5 md:p-6" hover={false} padding={false}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--brand)]">My Posts</p>
