@@ -30,7 +30,12 @@ const getMetaText = (post) => {
 const getPrimaryLabel = (category) => {
   if (category === "For Sale")   return "View Details";
   if (category === "Local Help") return "Request Help";
-  return "Join Now";
+  return "Contact";
+};
+
+const getPrimaryIcon = (category) => {
+  if (category === "Players") return HiOutlineChatAlt2;
+  return HiOutlineUserAdd;
 };
 
 const getChips = (post) => {
@@ -57,6 +62,7 @@ const PostItems = ({ post, onClick }) => {
   const themeClass   = getCategoryThemeClass(post?.category);
   const CategoryIcon = SUBCATEGORY_ICONS[post?.subCategory] || DEFAULT_CATEGORY_ICON;
   const primaryLabel = getPrimaryLabel(post?.category);
+  const PrimaryIcon  = getPrimaryIcon(post?.category);
   const chips        = getChips(post);
   const metaText     = getMetaText(post);
 
@@ -177,7 +183,7 @@ const PostItems = ({ post, onClick }) => {
              onClick={(e) => { e.stopPropagation(); onClick?.(); }}
              className="flex h-11 shrink-0 items-center gap-1.5 rounded-sm bg-gradient-to-r from-[var(--brand)] to-[#FF7A47] px-4 text-[12.5px] font-bold text-white shadow-[0_4px_14px_rgba(255,60,31,0.30)] transition-[background-color] hover:bg-[var(--brand-hover)] lg:h-auto lg:bg-none lg:bg-[var(--brand)] lg:py-2 lg:shadow-none"
            >
-            <HiOutlineUserAdd className="text-[13px]" />
+            <PrimaryIcon className="text-[13px]" />
             {primaryLabel}
           </motion.button>
         </div>

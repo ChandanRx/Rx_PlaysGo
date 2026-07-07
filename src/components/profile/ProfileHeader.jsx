@@ -10,7 +10,7 @@ const ProfileHeader = ({ profile, onEditProfile }) => {
   const router = useRouter();
 
   return (
-    <Card className="overflow-hidden p-0" hover={false}>
+    <Card className="overflow-hidden" hover={false} padding={false}>
       {/* gradient banner — inspired by RightSidebar's profile block, fuller here */}
       <div className="relative overflow-hidden bg-gradient-to-br from-[var(--brand-soft)] via-[var(--bg-input)] to-[var(--bg-card)] px-5 pb-14 pt-6 sm:px-6 sm:pb-16 sm:pt-8">
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[var(--brand)]/10" />
@@ -20,10 +20,11 @@ const ProfileHeader = ({ profile, onEditProfile }) => {
         <p className="relative text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--brand)]">User Profile</p>
       </div>
 
-      {/* avatar + info overlapping the banner */}
-      <div className="px-5 pb-5 sm:px-6 sm:pb-6">
-        <div className="-mt-12 flex flex-col items-center gap-4 text-center sm:-mt-14 sm:flex-row sm:items-end sm:justify-between sm:text-left">
-          <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-end">
+      {/* avatar + info overlapping the banner — `relative` keeps this whole block
+          stacked above the banner's positioned decorative circles regardless of DOM order */}
+      <div className="relative px-5 pb-5 sm:px-6 sm:pb-6">
+        <div className="-mt-12 flex flex-col items-center gap-4 text-center sm:-mt-14 sm:flex-row sm:flex-wrap sm:items-end sm:gap-x-6 sm:gap-y-3 sm:text-left">
+          <div className="flex flex-col items-center gap-3 sm:shrink-0 sm:flex-row sm:items-end">
             <div className="relative shrink-0">
               <Image
                 src={profile.image}
@@ -38,16 +39,17 @@ const ProfileHeader = ({ profile, onEditProfile }) => {
                 </span>
               )}
             </div>
-            <div className="sm:pb-1">
-              <h1 className="text-[22px] font-black text-[var(--text-heading)]">{profile.name}</h1>
+            <div className="min-w-0 sm:pb-1">
+              <h1 className="text-[22px] font-black leading-tight text-[var(--text-heading)]">{profile.name}</h1>
               <p className="text-[13px] text-[var(--text-muted)]">
                 @{profile.username} · {profile.city}, {profile.state}
               </p>
             </div>
           </div>
 
-          {/* quick actions */}
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-end sm:pb-1">
+          {/* quick actions — ml-auto (instead of justify-between on the parent) keeps this
+              pinned to the right whether it shares the row with the avatar block or wraps below it */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:ml-auto sm:shrink-0 sm:justify-end sm:pb-1">
             <button
               type="button"
               onClick={onEditProfile}

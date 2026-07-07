@@ -4,7 +4,12 @@ import Card from "../ui/Card";
 const ProfileStats = ({ stats }) => (
   <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
     {stats.map(({ label, value, icon: Icon, hint }) => (
-      <Card key={label} className="p-3.5 sm:p-4" hover={false}>
+      <Card
+        key={label}
+        className={`p-3.5 sm:p-4 ${hint ? "opacity-60" : ""}`}
+        hover={false}
+        padding={false}
+      >
         <div className="flex items-center justify-between">
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] sm:text-[11px] sm:tracking-[0.15em]">
             {label}
@@ -14,7 +19,6 @@ const ProfileStats = ({ stats }) => (
         <p className="mt-2 text-[24px] font-black leading-none text-[var(--text-heading)] sm:text-[28px]">
           {value}
         </p>
-        {hint && <p className="mt-1 text-[10.5px] text-[var(--text-faint)]">{hint}</p>}
       </Card>
     ))}
   </div>
