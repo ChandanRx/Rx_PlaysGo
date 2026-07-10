@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
+import { AtSymbolIcon, BriefcaseIcon, CodeBracketIcon } from "@heroicons/react/24/outline";
 import PlaysGoLogo from "./PlaysGoLogo";
 
 const navItems = [
@@ -14,9 +14,9 @@ const navItems = [
 ];
 
 const socialItems = [
-  { label: "GitHub",   href: "https://github.com/chandanrx",                        icon: FaGithub },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/chandan-pargi-459272187", icon: FaLinkedin },
-  { label: "Twitter",  href: "https://twitter.com/rxn_13",                          icon: FaTwitter },
+  { label: "GitHub",   href: "https://github.com/chandanrx",                        icon: CodeBracketIcon },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/chandan-pargi-459272187", icon: BriefcaseIcon },
+  { label: "Twitter",  href: "https://twitter.com/rxn_13",                          icon: AtSymbolIcon },
 ];
 
 const Footer = () => {
@@ -63,7 +63,7 @@ const Footer = () => {
                 aria-label={label}
                 className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-[var(--bg-secondary)] text-[var(--text-muted)] transition hover:border-[var(--brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
               >
-                <Icon className="text-[13px]" />
+                <Icon className="h-[13px] w-[13px]" />
               </a>
             ))}
           </div>

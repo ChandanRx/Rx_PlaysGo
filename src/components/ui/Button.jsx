@@ -4,7 +4,7 @@ import React from "react";
 const baseClasses =
   "inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold tracking-tight " +
   "transition-[background-color,color,border-color,box-shadow,transform] duration-200 outline-none select-none " +
-  "focus-visible:ring-2 focus-visible:ring-[#FF3C1F]/40 " +
+  "focus-visible:ring-2 focus-visible:ring-[rgba(var(--brand-rgb),0.4)] " +
   "disabled:pointer-events-none disabled:opacity-50 active:scale-[0.97]";
 
 const variantClasses = {
@@ -13,10 +13,10 @@ const variantClasses = {
     "rounded-full bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-sm " +
     "hover:bg-[var(--text-heading)]/90 hover:shadow-md",
 
-  /* ── Coral brand CTA ── */
+  /* ── Brand CTA ── */
   yellow:
-    "rounded-full bg-[var(--brand)] text-white shadow-[0_4px_14px_rgba(255,60,31,0.32)] " +
-    "hover:bg-[var(--brand-hover)] hover:shadow-[0_6px_20px_rgba(255,60,31,0.42)]",
+    "rounded-full bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.32)] " +
+    "hover:bg-[var(--brand-hover)] hover:shadow-[0_6px_20px_rgba(var(--brand-rgb),0.42)]",
 
   /* ── Ghost outlined ── */
   secondary:
@@ -45,7 +45,7 @@ const variantClasses = {
   /* ── Outlined yellow ── */
   outline:
     "rounded-full border-2 border-[var(--brand)] bg-transparent text-[var(--brand)] " +
-    "hover:bg-[var(--brand)] hover:text-white",
+    "hover:bg-[var(--brand)] hover:text-[var(--on-brand)]",
 
   /* ── Success ── */
   success:
@@ -58,7 +58,7 @@ const variantClasses = {
 
   /* Alias kept for legacy usage */
   lime:
-    "rounded-full bg-[var(--brand)] text-white shadow-[0_4px_14px_rgba(255,60,31,0.32)] " +
+    "rounded-full bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.32)] " +
     "hover:bg-[var(--brand-hover)]",
 };
 

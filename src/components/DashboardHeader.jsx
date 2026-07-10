@@ -1,21 +1,22 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { HiBell, HiOutlinePlus, HiSearch } from "react-icons/hi";
-import { ChevronDown, Hand } from "lucide-react";
-import { motion } from "framer-motion";
+import { BellIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { ChevronDownIcon, HandRaisedIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { AnimatePresence, m } from "framer-motion";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CategoryModeBadge } from "./CategoryModePrompt";
-import { useClientGreeting, useNotifications, useStoredAppCategory } from "../hooks/useClientData";
+import { useAuthSession, useClientGreeting, useNotifications, useStoredAppCategory } from "../hooks/useClientData";
 import { getCategoryLabel } from "../shared/appPreferences";
 import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from "../shared/lucideIcons";
 import { markAllNotificationsRead, markNotificationRead } from "../shared/notifications";
 import Data from "../shared/data";
-import { dummyUser } from "../shared/dummyPosts";
+import { popIn, springSnappy } from "../shared/motionPresets";
 import Button from "./ui/Button";
 
+// "/dashboard" is absent on purpose — the admin console renders standalone
+// (src/app/dashboard/layout.js), outside AppShell and this header.
 const pageTitles = {
-  "/dashboard":  "Admin dashboard",
   "/createpost": "Create post",
   "/profile":    "My profile",
   "/settings":   "Settings",
@@ -35,11 +36,16 @@ const DashboardHeader = () => {
   const searchParams = useSearchParams();
   const [searchValue, setSearchValue] = useState("");
   const { category, hasCategory } = useStoredAppCategory();
+  const { session, isReady: authReady } = useAuthSession();
 
   const currentQuery      = searchParams.get("q")      || "";
   const activeFilter      = searchParams.get("filter") || "Nearby";
-  const firstName         = dummyUser.name.split(" ")[0];
-  const pageTitle         = pageTitles[pathname];
+  const firstName         = (session?.name || "Guest").split(" ")[0];
+  const showSignIn        = authReady && !session;
+  // Someone else's profile (/profile/[username]) is still a titled page, not a
+  // feed — without this it falls through to the feed greeting + search header.
+  const isProfileSubpage  = pathname.startsWith("/profile/");
+  const pageTitle         = pageTitles[pathname] || (isProfileSubpage ? "Profile" : undefined);
   const greeting          = useClientGreeting();
   const isFeedPage        = pathname === "/" || pathname === "/posts";
   const searchPlaceholder = searchPlaceholders[category] || "Search players, tutors, services…";
@@ -83,13 +89,18 @@ const DashboardHeader = () => {
           <p className="text-xs text-[var(--text-muted)]">Manage your local community activity</p>
         </div>
         <div className="flex items-center gap-2">
+          {showSignIn && (
+            <Button variant="secondary" size="sm" onClick={() => router.push("/signin")}>
+              Sign in
+            </Button>
+          )}
           <Button
             variant="primary"
             size="sm"
-            className="rounded-sm bg-[var(--brand)] text-sm hover:bg-[var(--brand-hover)]"
+            className="rounded-xl bg-[var(--brand)] text-sm hover:bg-[var(--brand-hover)]"
             onClick={() => router.push("/createpost")}
           >
-            <HiOutlinePlus className="text-base" />
+            <PlusIcon className="h-4 w-4" />
             New post
           </Button>
           <NotificationBell variant="desktop" />
@@ -120,15 +131,21 @@ const DashboardHeader = () => {
               {firstName}
             </h1>
           </div>
-          {hasCategory && <MobileSportsChip category={category} onClick={() => router.push("/settings")} />}
+          {showSignIn ? (
+            <Button variant="primary" size="sm" onClick={() => router.push("/signin")}>
+              Sign in
+            </Button>
+          ) : (
+            hasCategory && <MobileSportsChip category={category} onClick={() => router.push("/settings")} />
+          )}
         </div>
 
         {/* Row 2 — search + notification, side by side */}
         {isFeedPage && hasCategory && (
           <div className="flex items-center gap-2">
             <form onSubmit={handleSearchSubmit} className="min-w-0 flex-1">
-              <div className="flex h-12 items-center gap-2.5 rounded-full bg-[var(--bg-input)] px-4 shadow-[0_4px_18px_rgba(30,20,10,0.07)] transition-shadow duration-200 focus-within:shadow-[0_4px_20px_rgba(255,60,31,0.16)]">
-                <HiSearch className="shrink-0 text-[17px] text-[var(--text-faint)]" />
+              <div className="flex h-12 items-center gap-2.5 rounded-full bg-[var(--bg-input)] px-4 shadow-[0_4px_18px_rgba(28,32,18,0.07)] transition-shadow duration-200 focus-within:shadow-[0_4px_20px_rgba(var(--brand-rgb),0.16)]">
+                <MagnifyingGlassIcon className="shrink-0 h-[17px] w-[17px] text-[var(--text-faint)]" />
                 <input
                   type="search"
                   value={searchValue}
@@ -155,15 +172,15 @@ const DashboardHeader = () => {
                   className="relative shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold transition-transform duration-150 active:scale-95"
                 >
                   {active ? (
-                    <motion.span
+                    <m.span
                       layoutId="filter-chip-active-pill"
-                      transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                      className="absolute inset-0 rounded-full bg-[var(--brand)] shadow-[0_4px_12px_rgba(255,60,31,0.30)]"
+                      transition={springSnappy}
+                      className="absolute inset-0 rounded-full bg-[var(--brand)] shadow-[0_4px_12px_rgba(var(--brand-rgb),0.30)]"
                     />
                   ) : (
                     <span className="absolute inset-0 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-card)]" />
                   )}
-                  <span className={`relative z-10 ${active ? "text-white" : "text-[var(--text-muted)]"}`}>
+                  <span className={`relative z-10 ${active ? "text-[var(--on-brand)]" : "text-[var(--text-muted)]"}`}>
                     {filter}
                   </span>
                 </button>
@@ -183,7 +200,7 @@ const DashboardHeader = () => {
           <h1 className="text-[18px] font-bold text-[var(--text-heading)]">
             <span className="inline-flex items-center gap-1.5">
               {greeting}, {firstName}
-              <Hand className="h-4 w-4 text-[var(--brand)]" strokeWidth={2.25} />
+              <HandRaisedIcon className="h-4 w-4 text-[var(--brand)]" strokeWidth={2.25} />
             </span>
           </h1>
           {hasCategory && (
@@ -191,14 +208,19 @@ const DashboardHeader = () => {
               — {getCategoryLabel(category)} posts near you
             </span>
           )}
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            {showSignIn && (
+              <Button variant="secondary" size="sm" onClick={() => router.push("/signin")}>
+                Sign in
+              </Button>
+            )}
             <CategoryModeBadge />
           </div>
         </div>
 
         {/* ── Single toolbar: filters LEFT · search + bell RIGHT ── */}
         {isFeedPage && hasCategory && (
-          <div className="flex items-center gap-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2 shadow-[0_2px_10px_rgba(30,20,10,0.05)]">
+          <div className="flex items-center gap-2 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2 shadow-[0_2px_10px_rgba(28,32,18,0.05)]">
 
             {/* LEFT — quick filter pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
@@ -209,9 +231,9 @@ const DashboardHeader = () => {
                     key={filter}
                     type="button"
                     onClick={() => updateFeedParam("filter", filter)}
-                    className={`shrink-0 rounded-sm px-4 py-1.5 text-[12px] font-semibold transition-colors duration-150 ${
+                    className={`shrink-0 rounded-full px-4 py-1.5 text-[12px] font-semibold transition-colors duration-150 ${
                       active
-                        ? "bg-[var(--brand)] text-white shadow-[0_2px_8px_rgba(255,60,31,0.28)]"
+                        ? "bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_2px_8px_rgba(var(--brand-rgb),0.28)]"
                         : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--brand-border)] hover:text-[var(--brand)]"
                     }`}
                   >
@@ -230,8 +252,8 @@ const DashboardHeader = () => {
                 onSubmit={handleSearchSubmit}
                 className="flex shrink-0 items-center gap-1.5"
               >
-                <div className="flex h-8 w-[200px] items-center gap-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 transition-shadow focus-within:border-[var(--brand)] focus-within:bg-[var(--bg-card)] focus-within:shadow-[0_0_0_3px_rgba(255,60,31,0.08)]">
-                  <HiSearch className="shrink-0 text-[13px] text-[var(--text-faint)]" />
+                <div className="flex h-8 w-[200px] items-center gap-2 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 transition-shadow focus-within:border-[var(--brand)] focus-within:bg-[var(--bg-card)] focus-within:shadow-[0_0_0_3px_rgba(var(--brand-rgb),0.08)]">
+                  <MagnifyingGlassIcon className="shrink-0 h-[13px] w-[13px] text-[var(--text-faint)]" />
                   <input
                     type="search"
                     value={searchValue}
@@ -243,7 +265,7 @@ const DashboardHeader = () => {
 
                 <button
                   type="submit"
-                  className="flex h-8 shrink-0 items-center rounded-sm bg-[var(--brand)] px-4 text-[12px] font-semibold text-white shadow-[0_2px_8px_rgba(255,60,31,0.28)] transition-colors hover:bg-[var(--brand-hover)] active:scale-95"
+                  className="flex h-8 shrink-0 items-center rounded-full bg-[var(--brand)] px-4 text-[12px] font-semibold text-[var(--on-brand)] shadow-[0_2px_8px_rgba(var(--brand-rgb),0.28)] transition-colors hover:bg-[var(--brand-hover)] active:scale-95"
                 >
                   Search
                 </button>
@@ -290,11 +312,11 @@ const NotificationBell = ({ variant = "desktop" }) => {
         onClick={() => setOpen((v) => !v)}
         className={
           isMobile
-            ? "relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-muted)] shadow-[0_4px_18px_rgba(30,20,10,0.07)] transition active:scale-95"
-            : "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border border-[var(--brand-border)] bg-[var(--bg-card)] text-[var(--text-muted)] transition hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+            ? "relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-muted)] shadow-[0_4px_18px_rgba(28,32,18,0.07)] transition active:scale-95"
+            : "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[var(--brand-border)] bg-[var(--bg-card)] text-[var(--text-muted)] transition hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
         }
       >
-        <HiBell className={isMobile ? "text-[19px]" : "text-[16px]"} />
+        <BellIcon className={isMobile ? "h-[19px] w-[19px]" : "h-4 w-4"} />
         {unreadCount > 0 && (
           isMobile ? (
             <span className="absolute right-3 top-3 flex h-2 w-2">
@@ -307,8 +329,12 @@ const NotificationBell = ({ variant = "desktop" }) => {
         )}
       </button>
 
-      {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-72 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] p-2 shadow-[0_12px_32px_rgba(30,20,10,0.14)]">
+      <AnimatePresence>
+        {open && (
+        <m.div
+          {...popIn}
+          className="absolute right-0 top-full z-50 mt-2 w-72 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-2 shadow-[0_12px_32px_rgba(28,32,18,0.14)]"
+        >
           <div className="flex items-center justify-between px-2 py-1.5">
             <p className="text-[12px] font-bold text-[var(--text-heading)]">Notifications</p>
             {unreadCount > 0 && (
@@ -331,7 +357,7 @@ const NotificationBell = ({ variant = "desktop" }) => {
                   <button
                     type="button"
                     onClick={() => handleSelect(notification)}
-                    className={`flex w-full items-start gap-2 rounded-sm px-2 py-2 text-left transition hover:bg-[var(--bg-input)] ${
+                    className={`flex w-full items-start gap-2 rounded-lg px-2 py-2 text-left transition hover:bg-[var(--bg-input)] ${
                       !notification.read ? "bg-[var(--brand-soft)]/40" : ""
                     }`}
                   >
@@ -345,8 +371,9 @@ const NotificationBell = ({ variant = "desktop" }) => {
               ))}
             </ul>
           )}
-        </div>
-      )}
+        </m.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -359,11 +386,11 @@ const MobileSportsChip = ({ category, onClick }) => {
     <button
       type="button"
       onClick={onClick}
-      className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-[var(--bg-card)] py-1.5 pl-3 pr-2.5 text-[12.5px] font-semibold text-[var(--text-heading)] shadow-[0_4px_14px_rgba(30,20,10,0.08)] transition active:scale-95"
+      className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-[var(--bg-card)] py-1.5 pl-3 pr-2.5 text-[12.5px] font-semibold text-[var(--text-heading)] shadow-[0_4px_14px_rgba(28,32,18,0.08)] transition active:scale-95"
     >
       <Icon className="h-[15px] w-[15px] shrink-0 text-[var(--brand)]" strokeWidth={2.25} />
       <span className="max-w-[86px] truncate">{getCategoryLabel(category)}</span>
-      <ChevronDown className="h-3.5 w-3.5 shrink-0 text-[var(--text-faint)]" strokeWidth={2.5} />
+      <ChevronDownIcon className="h-3.5 w-3.5 shrink-0 text-[var(--text-faint)]" strokeWidth={2.5} />
     </button>
   );
 };

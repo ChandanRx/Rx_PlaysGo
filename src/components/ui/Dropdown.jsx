@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { HiChevronDown } from "react-icons/hi";
+import { AnimatePresence, m } from "framer-motion";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { popIn } from "../../shared/motionPresets";
 
 const defaultGetOptionLabel = (option) =>
   typeof option === "string" ? option : option?.name || "";
@@ -11,6 +13,8 @@ const defaultGetOptionValue = (option) =>
 
 const Dropdown = ({
   label,
+  placeholder = "Select…",
+  variant = "nav",
   options,
   value,
   onChange,
@@ -27,6 +31,7 @@ const Dropdown = ({
   const optionRefs = useRef([]);
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const isField = variant === "field";
 
   const selectedIndex = useMemo(
     () =>
@@ -36,6 +41,11 @@ const Dropdown = ({
       ),
     [getOptionValue, options, value],
   );
+
+  const selectedOption = options.find((option) => getOptionValue(option) === value);
+  const triggerLabel = isField
+    ? (selectedOption ? getOptionLabel(selectedOption) : placeholder)
+    : label;
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -154,30 +164,40 @@ const Dropdown = ({
         onKeyDown={handleTriggerKeyDown}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        className={`inline-flex items-center justify-center gap-2 rounded-sm px-4 py-2 text-sm font-medium transition ${
-          active
-            ? "theme-accent-fill shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-            : "text-[var(--text-zinc-700)] hover:bg-[var(--bg-input)] hover:text-[var(--text-zinc-950)]"
-        } ${buttonClassName}`}
+        className={
+          isField
+            ? `flex w-full items-center justify-between gap-2 rounded-xl border-0 bg-[var(--bg-secondary)] px-3.5 py-2.5 text-left text-[13.5px] transition focus:bg-[var(--bg-card)] focus:shadow-[0_0_0_2px_var(--brand)] disabled:cursor-not-allowed disabled:opacity-50 ${
+                selectedOption ? "text-[var(--text-heading)]" : "text-[var(--text-faint)]"
+              } ${buttonClassName}`
+            : `inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition ${
+                active
+                  ? "bg-[var(--brand)] text-[var(--on-brand)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+                  : "text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]"
+              } ${buttonClassName}`
+        }
       >
-        {label}
-        <HiChevronDown
-          className={`text-[18px] transition-transform ${
+        {triggerLabel}
+        <ChevronDownIcon
+          className={`h-[18px] w-[18px] shrink-0 transition-transform ${
             isOpen ? "rotate-180" : "rotate-0"
           }`}
         />
       </button>
 
-      {isOpen && (
-        <div
-          className={`theme-float absolute left-0 mt-3 w-64 overflow-hidden rounded-sm p-2 text-[var(--text-zinc-950)] ${menuClassName}`}
+      <AnimatePresence>
+        {isOpen && (
+        <m.div
+          {...popIn}
+          className={`absolute left-0 z-50 mt-2 overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-2 text-[var(--text-heading)] shadow-[0_12px_32px_rgba(28,32,18,0.14)] ${
+            isField ? "right-0 w-full" : "w-64"
+          } ${menuClassName}`}
         >
           <div
             role="listbox"
-            aria-label={label}
+            aria-label={label || placeholder}
             tabIndex={-1}
             onKeyDown={handleMenuKeyDown}
-            className="quibly-scrollbar max-h-72 overflow-y-auto"
+            className="max-h-72 overflow-y-auto"
           >
             {options.map((option, index) => {
               const optionLabel = getOptionLabel(option);
@@ -196,10 +216,10 @@ const Dropdown = ({
                   aria-selected={isSelected}
                   onClick={() => selectOption(option)}
                   onMouseEnter={() => setHighlightedIndex(index)}
-                  className={`flex w-full items-center rounded-sm px-3 py-2 text-left text-sm transition ${
+                  className={`flex w-full items-center rounded-lg px-3 py-2 text-left text-sm transition ${
                       isHighlighted || isSelected
-                        ? "theme-accent-fill"
-                        : "text-[var(--text-zinc-700)] hover:bg-[var(--bg-input)] hover:text-[var(--text-zinc-950)]"
+                        ? "bg-[var(--brand-soft)] text-[var(--brand)]"
+                        : "text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]"
                     } ${optionClassName}`}
                 >
                   {optionLabel}
@@ -207,8 +227,9 @@ const Dropdown = ({
               );
             })}
           </div>
-        </div>
-      )}
+        </m.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

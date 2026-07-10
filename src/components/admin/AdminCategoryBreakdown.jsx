@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Handshake, ShoppingBag, Trophy } from "lucide-react";
+import { HandRaisedIcon, ShoppingBagIcon, TrophyIcon } from "@heroicons/react/24/outline";
 import Card from "../ui/Card";
 import { getPosts } from "../../shared/dummyPosts";
 
 const CATEGORY_META = {
-  Players: { label: "Players", icon: Trophy, color: "bg-[var(--brand)]" },
-  "Local Help": { label: "Local Help", icon: Handshake, color: "bg-blue-500" },
-  "For Sale": { label: "For Sale", icon: ShoppingBag, color: "bg-purple-500" },
+  Players: { label: "Players", icon: TrophyIcon, color: "bg-[var(--brand)]" },
+  "Local Help": { label: "Local Help", icon: HandRaisedIcon, color: "bg-blue-500" },
+  "For Sale": { label: "For Sale", icon: ShoppingBagIcon, color: "bg-purple-500" },
 };
 
 // v1 mock admin activity log — swap for a real audit trail later.
@@ -50,7 +50,7 @@ const AdminCategoryBreakdown = () => {
                   </span>
                   <span className="text-[var(--text-muted)]">{count}</span>
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-sm bg-[var(--bg-input)]">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--bg-input)]">
                   <div className={`h-full ${meta.color}`} style={{ width: `${pct}%` }} />
                 </div>
               </div>

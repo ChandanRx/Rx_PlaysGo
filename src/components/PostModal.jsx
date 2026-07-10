@@ -2,15 +2,20 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { X } from "lucide-react";
+import { m } from "framer-motion";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
-  HiBadgeCheck, HiClock, HiHeart, HiLocationMarker, HiOutlineCalendar,
-  HiOutlineChatAlt2, HiOutlineHeart, HiOutlinePhone, HiOutlineShare, HiUsers,
-} from "react-icons/hi";
-import { FaWhatsapp } from "react-icons/fa";
+  CheckBadgeIcon, ClockIcon, HeartIcon, MapPinIcon, UsersIcon,
+} from "@heroicons/react/24/solid";
+import {
+  CalendarIcon, ChatBubbleLeftRightIcon, ChatBubbleOvalLeftEllipsisIcon,
+  HeartIcon as HeartOutlineIcon, PhoneIcon, ShareIcon,
+} from "@heroicons/react/24/outline";
 import { getChatIdForUserName } from "../shared/conversations";
+import { getUsernameForPost } from "../shared/dummyPosts";
+import { backdropFade, modalDialog, modalSheet } from "../shared/motionPresets";
 import Button from "./ui/Button";
 
 const getMetaText = (post) => {
@@ -28,11 +33,11 @@ const getAccent = (category) => {
 
 const getChips = (post) => {
   const chips = [];
-  if (post?.location) chips.push({ icon: HiLocationMarker, label: post.location });
-  if (post?.date)     chips.push({ icon: HiOutlineCalendar, label: post.date });
-  if (post?.time)     chips.push({ icon: HiClock, label: post.time });
+  if (post?.location) chips.push({ icon: MapPinIcon, label: post.location });
+  if (post?.date)     chips.push({ icon: CalendarIcon, label: post.date });
+  if (post?.time)     chips.push({ icon: ClockIcon, label: post.time });
   const metric = getMetaText(post);
-  if (metric)          chips.push({ icon: HiUsers, label: metric });
+  if (metric)          chips.push({ icon: UsersIcon, label: metric });
   return chips.slice(0, 4);
 };
 
@@ -51,18 +56,6 @@ const useIsMobile = () => {
   }, []);
 
   return isMobile;
-};
-
-const sheetVariants = {
-  hidden:  { y: "100%" },
-  visible: { y: 0, transition: { type: "spring", damping: 30, stiffness: 300 } },
-  exit:    { y: "100%", transition: { duration: 0.2, ease: "easeIn" } },
-};
-
-const dialogVariants = {
-  hidden:  { opacity: 0, scale: 0.95, y: 12 },
-  visible: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", damping: 26, stiffness: 320 } },
-  exit:    { opacity: 0, scale: 0.97, y: 8, transition: { duration: 0.15 } },
 };
 
 const PostModal = ({ post, onClose }) => {
@@ -85,9 +78,10 @@ const PostModal = ({ post, onClose }) => {
 
   if (!post) return null;
 
-  const accent       = getAccent(post.category);
-  const chips        = getChips(post);
-  const whatsappHref = waLink(post.whatsapp);
+  const accent         = getAccent(post.category);
+  const chips          = getChips(post);
+  const whatsappHref   = waLink(post.whatsapp);
+  const authorUsername = getUsernameForPost(post);
 
   const handleChat = () => {
     onClose?.();
@@ -120,9 +114,8 @@ const PostModal = ({ post, onClose }) => {
   return (
     <>
       {/* backdrop — visual only, the click-catcher below handles closing */}
-      <motion.div
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        transition={{ duration: 0.18 }}
+      <m.div
+        {...backdropFade}
         className="fixed inset-0 z-[100] bg-[var(--text-heading)]/40 backdrop-blur-sm"
       />
 
@@ -130,14 +123,14 @@ const PostModal = ({ post, onClose }) => {
         className="fixed inset-0 z-[101] flex items-end justify-center p-3 sm:items-center sm:p-4"
         onClick={onClose}
       >
-        <motion.div
+        <m.div
           role="dialog"
           aria-modal="true"
           aria-labelledby="post-modal-title"
-          variants={isMobile ? sheetVariants : dialogVariants}
+          variants={isMobile ? modalSheet : modalDialog}
           initial="hidden" animate="visible" exit="exit"
           onClick={(e) => e.stopPropagation()}
-          className="flex max-h-[85vh] w-full flex-col overflow-hidden rounded-sm bg-[var(--bg-card)] shadow-[0_-8px_40px_rgba(30,20,10,0.18)] sm:max-w-lg sm:max-h-[85vh] sm:shadow-[0_20px_60px_rgba(30,20,10,0.18)]"
+          className="flex max-h-[85vh] w-full flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl bg-[var(--bg-card)] shadow-[0_-8px_40px_rgba(28,32,18,0.18)] sm:max-w-lg sm:max-h-[85vh] sm:shadow-[0_20px_60px_rgba(28,32,18,0.18)]"
         >
 
           {/* drag handle — mobile bottom sheet only */}
@@ -162,7 +155,7 @@ const PostModal = ({ post, onClose }) => {
                 aria-label="Close"
                 className="absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-card)]/90 shadow-sm backdrop-blur-sm transition hover:bg-[var(--bg-card)]"
               >
-                <X className="h-4 w-4 text-[var(--text-heading)]" strokeWidth={2.25} />
+                <XMarkIcon className="h-4 w-4 text-[var(--text-heading)]" strokeWidth={2.25} />
               </button>
 
               {post.distance && (
@@ -193,7 +186,7 @@ const PostModal = ({ post, onClose }) => {
                       className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium text-[var(--text-body)]"
                       style={{ background: accent.soft }}
                     >
-                      <Icon style={{ color: accent.text }} className="text-[11px]" />
+                      <Icon style={{ color: accent.text }} className="h-[11px] w-[11px]" />
                       {label}
                     </span>
                   ))}
@@ -207,45 +200,63 @@ const PostModal = ({ post, onClose }) => {
               )}
 
               {/* poster row */}
-              <div className="flex items-center gap-2.5 border-t border-[var(--border-subtle)] pt-3">
-                <Image
-                  src={post.userImage || "/avatar-placeholder.svg"}
-                  alt={post.userName || "User"}
-                  width={32} height={32}
-                  className="h-8 w-8 shrink-0 rounded-full border border-[var(--border-subtle)] object-cover"
-                />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1">
-                    <p className="truncate text-[12.5px] font-bold text-[var(--text-heading)]">{post.userName}</p>
-                    {post.isVerified && <HiBadgeCheck style={{ color: accent.text }} className="shrink-0 text-[12px]" />}
+              {(() => {
+                const posterInner = (
+                  <>
+                    <Image
+                      src={post.userImage || "/avatar-placeholder.svg"}
+                      alt={post.userName || "User"}
+                      width={32} height={32}
+                      className="h-8 w-8 shrink-0 rounded-full border border-[var(--border-subtle)] object-cover"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1">
+                        <p className="truncate text-[12.5px] font-bold text-[var(--text-heading)]">{post.userName}</p>
+                        {post.isVerified && <CheckBadgeIcon style={{ color: accent.text }} className="shrink-0 h-3 w-3" />}
+                      </div>
+                      <p className="text-[10.5px] text-[var(--text-faint)]">{post.postedTime}</p>
+                    </div>
+                  </>
+                );
+
+                return authorUsername ? (
+                  <Link
+                    href={`/profile/${authorUsername}`}
+                    onClick={() => onClose?.()}
+                    className="flex items-center gap-2.5 border-t border-[var(--border-subtle)] pt-3 transition hover:opacity-80"
+                  >
+                    {posterInner}
+                  </Link>
+                ) : (
+                  <div className="flex items-center gap-2.5 border-t border-[var(--border-subtle)] pt-3">
+                    {posterInner}
                   </div>
-                  <p className="text-[10.5px] text-[var(--text-faint)]">{post.postedTime}</p>
-                </div>
-              </div>
+                );
+              })()}
             </div>
           </div>
 
           {/* sticky footer */}
-          <div className="grid shrink-0 grid-cols-3 gap-2 border-t border-[var(--border-subtle)] bg-[var(--bg-card)] p-3 shadow-[0_-2px_12px_rgba(30,20,10,0.05)] sm:grid-cols-5">
+          <div className="grid shrink-0 grid-cols-3 gap-2 border-t border-[var(--border-subtle)] bg-[var(--bg-card)] p-3 shadow-[0_-2px_12px_rgba(28,32,18,0.05)] sm:grid-cols-5">
             <Button
               variant="ghost" size="sm" className="min-h-11 border border-[var(--border-subtle)] bg-[var(--bg-secondary)]"
               onClick={handleChat}
             >
-              <HiOutlineChatAlt2 className="text-[14px]" /> Chat
+              <ChatBubbleLeftRightIcon className="h-[14px] w-[14px]" /> Chat
             </Button>
             <Button
               variant="secondary" size="sm" className="min-h-11"
               onClick={() => window.open(whatsappHref, "_blank", "noopener,noreferrer")}
               disabled={!whatsappHref}
             >
-              <FaWhatsapp className="text-[14px]" /> WhatsApp
+              <ChatBubbleOvalLeftEllipsisIcon className="h-[14px] w-[14px]" /> WhatsApp
             </Button>
             <Button
               variant="secondary" size="sm" className="min-h-11"
               onClick={handleCall}
               disabled={!post.phone}
             >
-              <HiOutlinePhone className="text-[14px]" /> Call
+              <PhoneIcon className="h-[14px] w-[14px]" /> Call
             </Button>
             <Button
               variant="ghost" size="sm"
@@ -253,18 +264,18 @@ const PostModal = ({ post, onClose }) => {
               onClick={() => setSaved((v) => !v)}
             >
               {saved
-                ? <HiHeart className="text-[14px] text-[var(--brand)]" />
-                : <HiOutlineHeart className="text-[14px]" />}
+                ? <HeartIcon className="h-[14px] w-[14px] text-[var(--brand)]" />
+                : <HeartOutlineIcon className="h-[14px] w-[14px]" />}
               Save
             </Button>
             <Button
               variant="ghost" size="sm" className="min-h-11 border border-[var(--border-subtle)] bg-[var(--bg-secondary)]"
               onClick={handleShare}
             >
-              <HiOutlineShare className="text-[14px]" /> {shareCopied ? "Copied!" : "Share"}
+              <ShareIcon className="h-[14px] w-[14px]" /> {shareCopied ? "Copied!" : "Share"}
             </Button>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </>
   );

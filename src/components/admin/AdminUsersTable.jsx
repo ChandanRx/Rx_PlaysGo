@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { HiBadgeCheck } from "react-icons/hi";
+import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { getUniqueUsers } from "../../shared/adminStore";
 
 const AdminUsersTable = ({ onSelectUser }) => {
@@ -49,7 +49,7 @@ const AdminUsersTable = ({ onSelectUser }) => {
               <td className="py-2.5 pr-4">
                 {user.isVerified ? (
                   <span className="inline-flex items-center gap-1 text-[#22C55E]">
-                    <HiBadgeCheck className="text-[14px]" /> Verified
+                    <CheckBadgeIcon className="h-[14px] w-[14px]" /> Verified
                   </span>
                 ) : (
                   <span className="text-[var(--text-faint)]">—</span>

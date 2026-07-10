@@ -2,14 +2,15 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { MapPin, Plus, Trophy, Users } from "lucide-react";
+import { m } from "framer-motion";
+import { MapPinIcon, PlusIcon, TrophyIcon, UsersIcon } from "@heroicons/react/24/outline";
+import { tapScale } from "../../shared/motionPresets";
 
 const actions = [
   {
     title: "Create Post",
     subtitle: "Find players nearby",
-    icon: Plus,
+    icon: PlusIcon,
     href: "/createpost",
     iconColor: "var(--brand)",
     iconBg: "var(--brand-soft)",
@@ -17,7 +18,7 @@ const actions = [
   {
     title: "Find Players",
     subtitle: "Join active games",
-    icon: Users,
+    icon: UsersIcon,
     href: "/posts",
     iconColor: "var(--secondary)",
     iconBg: "var(--secondary-soft)",
@@ -25,7 +26,7 @@ const actions = [
   {
     title: "Book Turf",
     subtitle: "Reserve nearby courts",
-    icon: MapPin,
+    icon: MapPinIcon,
     href: "/posts?q=turf",
     iconColor: "var(--accent)",
     iconBg: "var(--accent-soft)",
@@ -33,7 +34,7 @@ const actions = [
   {
     title: "Join Match",
     subtitle: "Discover games",
-    icon: Trophy,
+    icon: TrophyIcon,
     href: "/posts?filter=Featured",
     iconColor: "var(--success)",
     iconBg: "var(--success-soft)",
@@ -49,12 +50,12 @@ const QuickActions = () => {
 
       <div className="grid grid-cols-2 gap-3">
         {actions.map(({ title, subtitle, icon: Icon, href, iconColor, iconBg }) => (
-          <motion.button
+          <m.button
             key={title}
             type="button"
-            whileTap={{ scale: 0.96 }}
+            whileTap={tapScale}
             onClick={() => router.push(href)}
-            className="flex h-full flex-col items-start gap-3 rounded-[22px] bg-[var(--bg-card)] p-4 text-left shadow-[0_4px_20px_rgba(30,20,10,0.08)] transition-shadow duration-200 active:shadow-[0_2px_10px_rgba(30,20,10,0.10)]"
+            className="flex h-full flex-col items-start gap-3 rounded-[22px] bg-[var(--bg-card)] p-4 text-left shadow-[0_4px_20px_rgba(28,32,18,0.08)] transition-shadow duration-200 active:shadow-[0_2px_10px_rgba(28,32,18,0.10)]"
           >
             <div
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
@@ -66,7 +67,7 @@ const QuickActions = () => {
               <p className="text-[13.5px] font-bold leading-tight text-[var(--text-heading)]">{title}</p>
               <p className="mt-1 text-[11.5px] leading-snug text-[var(--text-muted)]">{subtitle}</p>
             </div>
-          </motion.button>
+          </m.button>
         ))}
       </div>
     </div>

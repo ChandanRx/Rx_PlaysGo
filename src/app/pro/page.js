@@ -1,5 +1,5 @@
 import Card from "../../components/ui/Card";
-import { Check } from "lucide-react";
+import { CheckIcon } from "@heroicons/react/24/outline";
 
 const plans = [
   {
@@ -41,14 +41,14 @@ const ProPage = () => (
       {plans.map((plan) => (
         <div
           key={plan.name}
-          className={`relative overflow-hidden rounded-sm border p-6 transition md:p-8 ${
+          className={`relative overflow-hidden rounded-2xl border p-6 transition md:p-8 ${
             plan.highlighted
-              ? "border-[var(--text-heading)] bg-[var(--text-heading)] text-white shadow-[0_8px_32px_rgba(30,20,10,0.18)]"
-              : "border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_2px_12px_rgba(30,20,10,0.06)]"
+              ? "border-[var(--text-heading)] bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-[0_8px_32px_rgba(28,32,18,0.18)]"
+              : "border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_2px_12px_rgba(28,32,18,0.06)]"
           }`}
         >
           {plan.highlighted && (
-            <span className="absolute right-4 top-4 rounded-full bg-[var(--brand)] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-white">
+            <span className="absolute right-4 top-4 rounded-full bg-[var(--brand)] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-[var(--on-brand)]">
               {plan.badge}
             </span>
           )}
@@ -57,20 +57,20 @@ const ProPage = () => (
             {plan.name}
           </p>
           <div className="mt-3 flex items-end gap-2">
-            <span className={`text-[40px] font-black leading-none ${plan.highlighted ? "text-white" : "text-[var(--text-heading)]"}`}>
+            <span className={`text-[40px] font-black leading-none ${plan.highlighted ? "text-[var(--selected-fg)]" : "text-[var(--text-heading)]"}`}>
               {plan.price}
             </span>
-            <span className={`pb-1.5 text-[13px] ${plan.highlighted ? "text-white/60" : "text-[var(--text-muted)]"}`}>
+            <span className={`pb-1.5 text-[13px] ${plan.highlighted ? "text-[var(--selected-fg)] opacity-60" : "text-[var(--text-muted)]"}`}>
               {plan.per}
             </span>
           </div>
 
           <ul className="mt-5 space-y-2.5">
             {plan.features.map((f) => (
-              <li key={f} className={`flex items-center gap-2.5 rounded-sm px-3.5 py-2.5 text-[13px] ${
-                plan.highlighted ? "bg-white/10 text-white" : "bg-[var(--bg-secondary)] text-[var(--text-body)]"
+              <li key={f} className={`flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-[13px] ${
+                plan.highlighted ? "bg-[color-mix(in_srgb,var(--selected-fg)_10%,transparent)] text-[var(--selected-fg)]" : "bg-[var(--bg-secondary)] text-[var(--text-body)]"
               }`}>
-                <Check className="h-4 w-4 shrink-0 text-[#22C55E]" strokeWidth={2.5} />
+                <CheckIcon className="h-4 w-4 shrink-0 text-[#22C55E]" strokeWidth={2.5} />
                 {f}
               </li>
             ))}
@@ -80,7 +80,7 @@ const ProPage = () => (
             type="button"
             className={`mt-6 w-full rounded-full py-3 text-[14px] font-bold transition-all ${
               plan.highlighted
-                ? "bg-[var(--brand)] text-white shadow-[0_4px_14px_rgba(255,60,31,0.35)] hover:bg-[var(--brand-hover)]"
+                ? "bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.35)] hover:bg-[var(--brand-hover)]"
                 : "border-2 border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-body)] hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]"
             }`}
           >

@@ -32,7 +32,7 @@ const About = () => (
         <h2 className="text-[17px] font-black text-[var(--text-heading)]">What PlaysGo helps people do</h2>
         <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
           {features.map(({ icon: Icon, text }) => (
-            <div key={text} className="flex items-center gap-3 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
+            <div key={text} className="flex items-center gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3">
               <Icon className="h-5 w-5 shrink-0 text-[var(--brand)]" strokeWidth={2} />
               <span className="text-[13px] font-medium text-[var(--text-body)]">{text}</span>
             </div>
@@ -66,7 +66,7 @@ const About = () => (
           const Icon = CATEGORY_ICONS[item.name] || DEFAULT_CATEGORY_ICON;
 
           return (
-          <div key={item.name} className="rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 transition hover:border-[var(--brand)] hover:shadow-[0_4px_16px_rgba(255,60,31,0.08)]">
+          <div key={item.name} className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 transition hover:border-[var(--brand)] hover:shadow-[0_4px_16px_rgba(var(--brand-rgb),0.08)]">
             <Icon className="h-7 w-7 text-[var(--brand)]" strokeWidth={2} />
             <h3 className="mt-3 text-[14px] font-black text-[var(--text-heading)]">{item.name}</h3>
             <p className="mt-1 text-[12.5px] leading-relaxed text-[var(--text-muted)]">{item.description}</p>

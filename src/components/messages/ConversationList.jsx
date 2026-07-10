@@ -21,7 +21,7 @@ const ConversationList = ({ activeChatId }) => {
               key={chat.id}
               type="button"
               onClick={() => router.push(`/messages/${chat.id}`)}
-              className={`flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-left transition-colors duration-200 ${
+              className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors duration-200 ${
                 active ? "bg-[var(--text-heading)] text-[var(--selected-fg)]" : "hover:bg-[var(--bg-input)]"
               }`}
             >
@@ -49,7 +49,7 @@ const ConversationList = ({ activeChatId }) => {
                 </p>
               </div>
               {chat.unread > 0 && (
-                <span className="flex h-5 min-w-[20px] shrink-0 items-center justify-center rounded-full bg-[var(--brand)] px-1.5 text-[10px] font-bold text-white">
+                <span className="flex h-5 min-w-[20px] shrink-0 items-center justify-center rounded-full bg-[var(--brand)] px-1.5 text-[10px] font-bold text-[var(--on-brand)]">
                   {chat.unread}
                 </span>
               )}

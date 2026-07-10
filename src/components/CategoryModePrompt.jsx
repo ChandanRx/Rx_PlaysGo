@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Trophy } from "lucide-react";
+import { ArrowRightIcon, TrophyIcon } from "@heroicons/react/24/outline";
 import { getCategoryLabel } from "../shared/appPreferences";
 import { useStoredAppCategory } from "../hooks/useClientData";
 import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from "../shared/lucideIcons";
@@ -13,9 +13,9 @@ const CategoryModePrompt = () => {
   if (!isReady || hasCategory) return null;
 
   return (
-    <div className="mb-5 flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-6 py-12 text-center">
+    <div className="mb-5 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-6 py-12 text-center">
       <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--brand-soft)] text-[var(--brand)]">
-        <Trophy className="h-7 w-7" strokeWidth={2} />
+        <TrophyIcon className="h-7 w-7" strokeWidth={2} />
       </div>
       <h2 className="text-lg font-bold text-[var(--text-heading)]">Pick a mode to get started</h2>
       <p className="mx-auto mt-1.5 max-w-sm text-[13px] text-[var(--text-muted)]">
@@ -27,7 +27,7 @@ const CategoryModePrompt = () => {
         className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--text-heading)] px-6 py-2.5 text-[13px] font-semibold text-[var(--selected-fg)] shadow-sm transition hover:bg-[var(--text-heading)]/85"
       >
         Open Settings
-        <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
+        <ArrowRightIcon className="h-4 w-4" strokeWidth={2.25} />
       </button>
     </div>
   );

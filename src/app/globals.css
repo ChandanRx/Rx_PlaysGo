@@ -1,5 +1,3 @@
-@import "@fortawesome/fontawesome-free/css/all.min.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,135 +9,203 @@
 :root {
 
   /* ── Backgrounds ── */
-  --bg-page:      #ebe3fd;   /* warm off-white, like the reference */
-  --bg-card:      #FFFFFF;
-  --bg-secondary: #F3F0EC;   /* slightly warmer panel / sidebar bg */
+  --bg-page:      #E4E9DC;   /* soft sage */
+  --bg-card:      #FAFBF5;   /* warm cream white */
+  --bg-secondary: #EFF2E8;   /* pale sage panel / sidebar bg */
   --bg-input:     #FFFFFF;
-  --bg-hover:     #EDE9E3;
+  --bg-hover:     #E8EDDD;
 
   /*==============================
     BORDER
   ==============================*/
 
-  --border-subtle: #E8E3DC;
-  --border-light:  #F0ECE6;
-  --border-strong: #D4CEC5;
+  --border-subtle: #DDE3D0;
+  --border-light:  #E9EDDE;
+  --border-strong: #BCC6A9;
 
   /*==============================
     TYPOGRAPHY
   ==============================*/
 
-  --text-heading: #111111;   /* near-black, same as reference */
-  --text-body:    #3D3835;
-  --text-muted:   #7A736A;
-  --text-faint:   #B0A89E;
+  --text-heading: #1A1D13;   /* charcoal olive-black */
+  --text-body:    #3C4132;
+  --text-muted:   #6F7562;
+  --text-faint:   #A2A992;
 
   /*==============================
-    PRIMARY  — coral / warm red-orange
+    PRIMARY  — charcoal olive (dark pills / CTAs)
   ==============================*/
 
-  --brand:        #FF3C1F;   /* vivid coral-red from reference CTAs */
-  --brand-hover:  #E82E12;
-  --brand-soft:   #FFF0ED;
-  --brand-border: #FFC9BF;
+  --brand:        #22261B;
+  --brand-hover:  #353B2A;
+  --brand-soft:   #ECF0DF;
+  --brand-border: #C6D0B0;
+  --brand-rgb:    34,38,27;   /* for rgba() glows / shadows */
 
   /*==============================
-    SECONDARY  — soft lavender / purple
+    SECONDARY  — olive lime
   ==============================*/
 
-  --secondary:        #C4A8FF;   /* lavender accent tiles */
-  --secondary-soft:   #F0EBFF;
-  --secondary-border: #D8CAFF;
+  --secondary:        #A9C93B;
+  --secondary-soft:   #F1F8D6;
+  --secondary-border: #D7E897;
 
   /*==============================
-    ACCENT  — bright orange (icon tiles, highlights)
+    ACCENT  — chartreuse (icon tiles, highlights)
   ==============================*/
 
-  --accent:      #FF6B2B;
-  --accent-soft: #FFF1E9;
+  --accent:      #DDF247;
+  --accent-soft: #F4FACF;
 
   /*==============================
     SUCCESS
   ==============================*/
 
-  --success:      #50C878;
-  --success-soft: #E8F9EE;
+  --success:      #22C55E;
+  --success-soft: #E7F9EE;
 
   /*==============================
     WARNING
   ==============================*/
 
-  --warning:      #FFC940;
-  --warning-soft: #FFF7DC;
+  --warning:      #F5B942;
+  --warning-soft: #FDF4DC;
 
   /*==============================
     INFO
   ==============================*/
 
-  --info:         #7BC9FF;
-  --info-soft:    #E8F4FF;
+  --info:         #4EA8FF;
+  --info-soft:    #E8F3FF;
 
   /*==============================
     DANGER
   ==============================*/
 
-  --danger:       #FF7B7B;
-  --danger-soft:  #FFF0F0;
+  --danger:       #F4586A;
+  --danger-soft:  #FEEDEF;
 
   /*==============================
-    SHADOWS — softer, warmer tones
+    SHADOWS — soft, cool ink tones
   ==============================*/
 
-  --shadow-xs: 0 2px 8px  rgba(30,20,10,.04);
-  --shadow-sm: 0 8px 20px rgba(30,20,10,.06);
-  --shadow-md: 0 18px 40px rgba(30,20,10,.08);
-  --shadow-lg: 0 30px 80px rgba(30,20,10,.10);
+  --shadow-xs: 0 2px 8px  rgba(28,32,18,.04);
+  --shadow-sm: 0 8px 20px rgba(28,32,18,.06);
+  --shadow-md: 0 18px 40px rgba(28,32,18,.08);
+  --shadow-lg: 0 30px 80px rgba(28,32,18,.10);
 
   /*==============================
     SELECTED FOREGROUND
     Text/icon on active dark pills
   ==============================*/
 
-  --selected-fg: #FFFFFF;   /* white on #111111 black bg — light mode */
+  --selected-fg: #FAFBF3;   /* warm white on charcoal-olive bg — light mode */
+
+  /*==============================
+    ON-BRAND FOREGROUND
+    Text/icon sitting on --brand fills
+  ==============================*/
+
+  --on-brand: #FFFFFF;   /* white on charcoal-olive — light mode */
+
+  /*==============================
+    HERO / LEGACY ALIASES
+    HeroSection consumes these names;
+    they follow the active theme.
+  ==============================*/
+
+  --hero-brand:       var(--brand);
+  --hero-brand-hover: var(--brand-hover);
+  --hero-brand-soft:  var(--brand-soft);
+
+  --text-zinc-950: var(--text-heading);
+  --text-zinc-700: var(--text-body);
+  --text-zinc-600: var(--text-body);
+  --text-zinc-500: var(--text-muted);
+  --text-zinc-400: var(--text-faint);
 
 }
 
 [data-theme="dark"]{
 
-  --bg-page:      #141210;
-  --bg-card:      #1C1917;
-  --bg-secondary: #231F1C;
-  --bg-input:     #2A2622;
-  --bg-hover:     #302B27;
+  /* True-black dashboard — charcoal cards, vivid green + orange accents */
 
-  --border-subtle:#3A342E;
-  --border-light: #443D36;
-  --border-strong:#574F46;
+  --bg-page:      #0A0A09;
+  --bg-card:      #1D1D1B;
+  --bg-secondary: #232321;
+  --bg-input:     #2A2A27;
+  --bg-hover:     #31312D;
 
-  --text-heading: #F5F2EE;
-  --text-body:    #CCC5BC;
-  --text-muted:   #968E84;
-  --text-faint:   #6E6860;
+  --border-subtle:#32322F;
+  --border-light: #3B3B37;
+  --border-strong:#4C4C47;
 
-  --brand:        #FF5B3A;
-  --brand-hover:  #FF7055;
-  --brand-soft:   rgba(255,60,31,.13);
-  --brand-border: rgba(255,60,31,.30);
+  --text-heading: #FAFAF7;
+  --text-body:    #CFCFC8;
+  --text-muted:   #93938B;
+  --text-faint:   #64645E;
 
-  --secondary:        #C9ADFF;
-  --secondary-soft:   rgba(196,168,255,.13);
-  --secondary-border: rgba(196,168,255,.28);
+  --brand:        #A6E64B;   /* vivid green pills / CTAs */
+  --brand-hover:  #B7F25D;
+  --brand-soft:   rgba(166,230,75,.14);
+  --brand-border: rgba(166,230,75,.35);
+  --brand-rgb:    166,230,75;
 
-  --accent:      #FF7A3A;
-  --accent-soft: rgba(255,122,58,.14);
+  --secondary:        #F98A1F;   /* vivid orange */
+  --secondary-soft:   rgba(249,138,31,.14);
+  --secondary-border: rgba(249,138,31,.32);
+
+  --accent:      #FFA33C;
+  --accent-soft: rgba(255,163,60,.15);
 
   /*==============================
     SELECTED FOREGROUND
     Text/icon on active near-white pills
   ==============================*/
 
-  --selected-fg: #111111;   /* dark on #F5F2EE near-white bg — dark mode */
+  --selected-fg: #121210;   /* black ink on white pills — dark mode */
 
+  --on-brand:    #131408;   /* black ink on vivid green — dark mode */
+
+}
+
+/* ═══════════════════════════════════════════
+   CATEGORY THEMES
+   applyCategoryTheme() sets data-category-theme
+   on <html>/<body>; each mode re-tints the brand.
+   "players" keeps the default indigo.
+═══════════════════════════════════════════ */
+
+[data-category-theme="local-help"]{
+  --brand:        #3E7C63;
+  --brand-hover:  #356E57;
+  --brand-soft:   #E2F0E7;
+  --brand-border: #A9D4BD;
+  --brand-rgb:    62,124,99;
+}
+
+[data-theme="dark"][data-category-theme="local-help"]{
+  --brand:        #45C48D;
+  --brand-hover:  #5BD59E;
+  --brand-soft:   rgba(69,196,141,.14);
+  --brand-border: rgba(69,196,141,.32);
+  --brand-rgb:    69,196,141;
+}
+
+[data-category-theme="for-sale"]{
+  --brand:        #A87B24;
+  --brand-hover:  #966D1D;
+  --brand-soft:   #F6EFDA;
+  --brand-border: #E2CD95;
+  --brand-rgb:    168,123,36;
+}
+
+[data-theme="dark"][data-category-theme="for-sale"]{
+  --brand:        #F98A1F;
+  --brand-hover:  #FFA33C;
+  --brand-soft:   rgba(249,138,31,.14);
+  --brand-border: rgba(249,138,31,.32);
+  --brand-rgb:    249,138,31;
 }
 
 /* ═══════════════════════════════════════════
@@ -185,15 +251,15 @@ body{
 
   background:
     radial-gradient(circle at top left,
-      rgba(255,60,31,.07),
+      rgba(221,242,71,.10),
       transparent 28%),
 
     radial-gradient(circle at top right,
-      rgba(196,168,255,.09),
+      rgba(126,154,64,.08),
       transparent 32%),
 
     radial-gradient(circle at bottom,
-      rgba(255,107,43,.05),
+      rgba(169,201,59,.05),
       transparent 40%),
 
     var(--bg-page);
@@ -206,6 +272,23 @@ body{
 
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
+}
+
+/* Dark mode — flat near-black canvas with faint green / orange glows,
+   matching the black-dashboard reference */
+[data-theme="dark"] body,
+body[data-theme="dark"]{
+
+  background:
+    radial-gradient(circle at top left,
+      rgba(166,230,75,.06),
+      transparent 26%),
+
+    radial-gradient(circle at top right,
+      rgba(249,138,31,.05),
+      transparent 30%),
+
+    var(--bg-page);
 }
 
 /*==========================================
@@ -314,7 +397,7 @@ FOCUS
   outline:none;
 
   box-shadow:
-      0 0 0 4px rgba(255,60,31,.20);
+      0 0 0 4px rgba(var(--brand-rgb),.22);
 }
 
 /*==========================================
@@ -323,7 +406,7 @@ SELECTION
 
 ::selection{
 
-  background:rgba(255,60,31,.18);
+  background:rgba(var(--brand-rgb),.20);
 
   color:var(--text-heading);
 }
@@ -357,7 +440,7 @@ GLOBAL SCROLLBAR
   scrollbar-width:thin;
 
   scrollbar-color:
-      rgba(255,60,31,.45)
+      rgba(var(--brand-rgb),.45)
       transparent;
 }
 
@@ -386,8 +469,8 @@ GLOBAL SCROLLBAR
   background:
       linear-gradient(
         180deg,
-        #FF3C1F,
-        #C4A8FF
+        var(--secondary),
+        var(--accent)
       );
 
   border-radius:999px;
@@ -397,12 +480,7 @@ GLOBAL SCROLLBAR
 
 *::-webkit-scrollbar-thumb:hover{
 
-  background:
-      linear-gradient(
-        180deg,
-        #E82E12,
-        #B394F5
-      );
+  background:var(--secondary);
 }
 
 /* Remove ALL scrollbar arrow buttons — covers all 4 directional variants */
@@ -473,8 +551,8 @@ HELPERS
   background:
       linear-gradient(
         90deg,
-        #C4A8FF 0%,
-        #FF3C1F 100%
+        var(--secondary) 0%,
+        var(--brand) 100%
       );
 
   -webkit-background-clip:text;
@@ -494,7 +572,7 @@ HELPERS
 
   border-radius:999px;
 
-  background:rgba(196,168,255,.18);
+  background:rgba(221,242,71,.20);
 
   filter:blur(100px);
 
@@ -511,9 +589,25 @@ HELPERS
 
   border-radius:999px;
 
-  background:rgba(255,60,31,.16);
+  background:rgba(126,154,64,.16);
 
   filter:blur(100px);
 
   pointer-events:none;
+}
+
+/* ── Reduced motion ──
+   Framer Motion animations are disabled centrally via MotionConfig
+   (see components/motion/MotionProvider.jsx). This guard covers the
+   remaining CSS-driven motion: keyframe animations (animate-ping,
+   animate-pulse) and transform/opacity transitions. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

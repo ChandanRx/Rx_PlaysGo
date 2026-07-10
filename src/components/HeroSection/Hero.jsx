@@ -1,11 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { BadgeCheck } from "lucide-react";
+import { m, AnimatePresence, useReducedMotion } from "framer-motion";
+import { CheckBadgeIcon } from "@heroicons/react/24/outline";
 import Card from "../ui/Card";
+import { easeOut, fadeIn, fadeUp, scaleIn } from "../../shared/motionPresets";
 
-const MotionCard = motion(Card);
+const MotionCard = m.create(Card);
+
+// Entrance choreography — each hero element fades in on a shared curve,
+// offset by `delay` so the copy reads top-to-bottom.
+const enter = (delay, duration = 0.5) => ({ delay, duration, ease: easeOut });
 
 const NEEDS = [
   "players for tonight's match",
@@ -38,89 +43,89 @@ const Hero = () => {
       as="section"
       className="mx-auto max-w-8xl px-6 py-12 md:px-12 md:py-16"
       style={{
-        background: "linear-gradient(180deg, #fbf6f3 0%, #fdf3ee 100%)",
+        background: "linear-gradient(180deg, var(--bg-secondary) 0%, var(--brand-soft) 100%)",
       }}
-      initial={{ opacity: 0, y: 32 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: "easeOut" }}
+      initial={fadeUp.initial}
+      animate={fadeUp.animate}
+      transition={enter(0, 0.7)}
     >
       <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
         {/* Copy column */}
         <div className="text-left">
-          <motion.p
+          <m.p
              className="inline-flex items-center gap-2 rounded-full border border-[var(--hero-brand)]/25 bg-[var(--hero-brand-soft)]/76 px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--hero-brand)]"
-             initial={{ opacity: 0, y: 10 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ delay: 0.1, duration: 0.5 }}
+             initial={fadeUp.initial}
+             animate={fadeUp.animate}
+             transition={enter(0.1)}
            >
              <span className="relative flex h-1.5 w-1.5">
                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--hero-brand)]/60" />
                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--hero-brand)]" />
              </span>
              1,400+ posts within 10&nbsp;km right now
-           </motion.p>
+           </m.p>
 
-           <motion.h1
+           <m.h1
              className="mt-5 text-[2.1rem] font-bold leading-[1.12] tracking-tight text-[var(--text-zinc-950)] md:text-[3.4rem]"
-             initial={{ opacity: 0, y: 18 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ delay: 0.22, duration: 0.6 }}
+             initial={fadeUp.initial}
+             animate={fadeUp.animate}
+             transition={enter(0.22, 0.6)}
            >
              Find{" "}
              <span className="relative inline-block min-h-[1.2em] align-bottom">
                <AnimatePresence mode="wait">
-                 <motion.span
+                 <m.span
                    key={NEEDS[needIndex]}
-                   initial={{ opacity: 0, y: 14 }}
-                   animate={{ opacity: 1, y: 0 }}
-                   exit={{ opacity: 0, y: -14 }}
-                   transition={{ duration: 0.4, ease: "easeOut" }}
+                   initial={fadeUp.initial}
+                   animate={fadeUp.animate}
+                   exit={fadeUp.exit}
+                   transition={enter(0, 0.4)}
                    className="inline-block text-[var(--hero-brand)]"
                  >
                    {NEEDS[needIndex]}
-                 </motion.span>
+                 </m.span>
                </AnimatePresence>
              </span>
              <br />
              without leaving your neighbourhood.
-           </motion.h1>
+           </m.h1>
 
-           <motion.p
+           <m.p
              className="mt-5 max-w-xl text-[15px] leading-relaxed text-[var(--text-zinc-600)] md:text-base"
-             initial={{ opacity: 0, y: 16 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ delay: 0.36, duration: 0.6 }}
+             initial={fadeUp.initial}
+             animate={fadeUp.animate}
+             transition={enter(0.36, 0.6)}
            >
              Plays Go turns your area into a feed. Post what you need, see
              what&apos;s close by on the map, and message someone directly — over
              chat or WhatsApp.
-           </motion.p>
+           </m.p>
 
-           <motion.div
+           <m.div
              className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center"
-             initial={{ opacity: 0, y: 14 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ delay: 0.48, duration: 0.5 }}
+             initial={fadeUp.initial}
+             animate={fadeUp.animate}
+             transition={enter(0.48)}
            >
              <Link
                href="/createpost"
-               className="inline-flex items-center justify-center rounded-sm bg-[var(--hero-brand)] px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[var(--hero-brand-hover)]"
+               className="inline-flex items-center justify-center rounded-xl bg-[var(--hero-brand)] px-5 py-3 text-sm font-semibold text-[var(--on-brand)] shadow-md transition hover:bg-[var(--hero-brand-hover)]"
              >
                Create a post
              </Link>
              <Link
                href="/search"
-               className="inline-flex items-center justify-center rounded-sm border border-[var(--hero-brand)]/30 bg-[var(--bg-card)]/88 px-5 py-3 text-sm font-semibold text-[var(--text-zinc-950)] shadow-sm transition hover:border-[var(--hero-brand)]/50 hover:bg-[var(--hero-brand-soft)]"
+               className="inline-flex items-center justify-center rounded-xl border border-[var(--hero-brand)]/30 bg-[var(--bg-card)]/88 px-5 py-3 text-sm font-semibold text-[var(--text-zinc-950)] shadow-sm transition hover:border-[var(--hero-brand)]/50 hover:bg-[var(--hero-brand-soft)]"
              >
                Browse nearby
              </Link>
-           </motion.div>
+           </m.div>
 
-           <motion.div
+           <m.div
              className="mt-8"
-             initial={{ opacity: 0 }}
-             animate={{ opacity: 1 }}
-             transition={{ delay: 0.6, duration: 0.6 }}
+             initial={fadeIn.initial}
+             animate={fadeIn.animate}
+             transition={enter(0.6, 0.6)}
            >
              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-zinc-400)]">
                Popular nearby
@@ -136,15 +141,15 @@ const Hero = () => {
                  </Link>
                ))}
              </div>
-           </motion.div>
+           </m.div>
          </div>
 
          {/* Photo column */}
-         <motion.div
+         <m.div
            className="relative mx-auto w-full max-w-md lg:max-w-none"
-           initial={{ opacity: 0, scale: 0.94 }}
-           animate={{ opacity: 1, scale: 1 }}
-           transition={{ delay: 0.3, duration: 0.7, ease: "easeOut" }}
+           initial={scaleIn.initial}
+           animate={scaleIn.animate}
+           transition={enter(0.3, 0.7)}
          >
            {/* soft ambient glow */}
            <div
@@ -152,7 +157,7 @@ const Hero = () => {
              aria-hidden
            />
 
-           <div className="relative overflow-hidden rounded-sm shadow-xl">
+           <div className="relative overflow-hidden rounded-2xl shadow-xl">
              <img
                src={HERO_PHOTO}
                alt="A group of friends playing together outdoors at golden hour"
@@ -167,21 +172,21 @@ const Hero = () => {
            </div>
 
            {/* Floating feed-card preview */}
-           <motion.div
-             className="absolute -bottom-8 -left-4 w-[230px] -rotate-3 rounded-sm border border-[var(--hero-brand)]/12 bg-[var(--bg-card)] p-3.5 shadow-2xl sm:-left-8 sm:w-[250px]"
+           <m.div
+             className="absolute -bottom-8 -left-4 w-[230px] -rotate-3 rounded-2xl border border-[var(--hero-brand)]/12 bg-[var(--bg-card)] p-3.5 shadow-2xl sm:-left-8 sm:w-[250px]"
              initial={{ opacity: 0, y: 20, rotate: -8 }}
              animate={{ opacity: 1, y: 0, rotate: -3 }}
-             transition={{ delay: 0.75, duration: 0.6, ease: "easeOut" }}
+             transition={enter(0.75, 0.6)}
            >
              <div className="flex items-center gap-2">
-               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--hero-brand)] text-[11px] font-semibold text-white">
+               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--hero-brand)] text-[11px] font-semibold text-[var(--on-brand)]">
                  RK
                </div>
                <div className="min-w-0">
                  <p className="truncate text-xs font-semibold text-[var(--text-zinc-950)]">
                    <span className="inline-flex items-center gap-1">
                      Rohan K.
-                     <BadgeCheck className="h-3.5 w-3.5 text-[var(--hero-brand)]" strokeWidth={2.25} />
+                     <CheckBadgeIcon className="h-3.5 w-3.5 text-[var(--hero-brand)]" strokeWidth={2.25} />
                    </span>
                  </p>
                  <p className="text-[10px] text-[var(--text-zinc-400)]">1.2 km · 5m ago</p>
@@ -195,12 +200,12 @@ const Hero = () => {
              </p>
              <div className="mt-1 flex items-center justify-between">
                <p className="text-[11px] text-[var(--text-zinc-500)]">Need 4 players</p>
-               <span className="rounded-full bg-[var(--hero-brand)] px-3 py-1 text-[11px] font-semibold text-white">
+               <span className="rounded-full bg-[var(--hero-brand)] px-3 py-1 text-[11px] font-semibold text-[var(--on-brand)]">
                  Contact
                </span>
              </div>
-           </motion.div>
-         </motion.div>
+           </m.div>
+         </m.div>
       </div>
     </MotionCard>
   );

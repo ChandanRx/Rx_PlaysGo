@@ -2,15 +2,17 @@
 
 import Image from "next/image";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { MapPinIcon } from "@heroicons/react/24/solid";
 import {
-  HiLocationMarker,
-  HiOutlineCog,
-  HiOutlinePencilAlt,
-  HiOutlineUser,
-} from "react-icons/hi";
+  ArrowRightOnRectangleIcon,
+  Cog6ToothIcon,
+  PencilSquareIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Data from "../shared/data";
-import { dummyUser } from "../shared/dummyPosts";
+import { signOut } from "../shared/authSession";
+import { useAuthSession } from "../hooks/useClientData";
 import Button from "./ui/Button";
 import Dropdown from "./ui/Dropdown";
 import ThemeToggle from "./ui/ThemeToggle";
@@ -22,6 +24,7 @@ const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const profileMenuRef = useRef(null);
+  const { session, isReady } = useAuthSession();
 
   const navItems = [
     { label: "Home", href: "/" },
@@ -181,7 +184,7 @@ const Header = () => {
           className={`${glassSection} flex h-[52px] items-center gap-2 px-2 py-1 sm:gap-3`}
         >
           <div className="theme-muted-chip hidden items-center gap-2 rounded-sm px-3 py-2 text-sm sm:flex">
-            <HiLocationMarker className="text-base text-[var(--text-muted)]" />
+            <MapPinIcon className="h-4 w-4 text-[var(--text-muted)]" />
             <span className="max-w-[160px] truncate text-[var(--text-muted)]">
               Mumbai community
             </span>
@@ -194,68 +197,87 @@ const Header = () => {
             className="hidden sm:inline-flex"
             onClick={() => goTo("/createpost")}
           >
-            <HiOutlinePencilAlt className="text-[18px]" />
+            <PencilSquareIcon className="h-[18px] w-[18px]" />
           </Button>
 
-          <div className="relative" ref={profileMenuRef}>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsProfileOpen((value) => !value)}
-              className={`h-11 w-11 overflow-hidden rounded-sm border p-[2px] ${
-                isProfileOpen
-                  ? "border-[var(--border-subtle)] bg-[var(--bg-input)]"
-                  : "border-[var(--border-subtle)] hover:border-[var(--border-subtle)]"
-              }`}
-              title={dummyUser.name}
-            >
-              <Image
-                src={dummyUser.image}
-                alt="demo user"
-                className="h-8 w-8 rounded-sm object-cover"
-                width={32}
-                height={32}
-              />
+          {isReady && !session && (
+            <Button variant="primary" onClick={() => goTo("/signin")}>
+              Sign in
             </Button>
+          )}
 
-            {isProfileOpen && (
-              <div className="theme-float absolute right-0 mt-3 w-64 overflow-hidden rounded-sm p-2 text-[var(--text-heading)]">
-                <div className="border-b border-[var(--border-subtle)] px-3 py-2">
-                  <p className="truncate text-sm font-semibold text-[var(--text-heading)]">
-                    {dummyUser.name}
-                  </p>
-                  <p className="truncate text-xs text-[var(--text-faint)]">
-                    @{dummyUser.username}
-                  </p>
+          {isReady && session && (
+            <div className="relative" ref={profileMenuRef}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsProfileOpen((value) => !value)}
+                className={`h-11 w-11 overflow-hidden rounded-sm border p-[2px] ${
+                  isProfileOpen
+                    ? "border-[var(--border-subtle)] bg-[var(--bg-input)]"
+                    : "border-[var(--border-subtle)] hover:border-[var(--border-subtle)]"
+                }`}
+                title={session.name}
+              >
+                <Image
+                  src={session.image}
+                  alt={session.name}
+                  className="h-8 w-8 rounded-sm object-cover"
+                  width={32}
+                  height={32}
+                />
+              </Button>
+
+              {isProfileOpen && (
+                <div className="theme-float absolute right-0 mt-3 w-64 overflow-hidden rounded-sm p-2 text-[var(--text-heading)]">
+                  <div className="border-b border-[var(--border-subtle)] px-3 py-2">
+                    <p className="truncate text-sm font-semibold text-[var(--text-heading)]">
+                      {session.name}
+                    </p>
+                    <p className="truncate text-xs text-[var(--text-faint)]">
+                      @{session.username}
+                    </p>
+                  </div>
+
+                  <Button
+                    variant="ghost"
+                    className="mt-2 w-full justify-start rounded-sm px-3 text-[var(--text-body)] hover:text-[var(--text-heading)]"
+                    onClick={() => goTo("/profile")}
+                  >
+                    <UserIcon className="h-[18px] w-[18px]" />
+                    My profile
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start rounded-sm px-3 text-[var(--text-body)] hover:text-[var(--text-heading)]"
+                    onClick={() => goTo("/createpost")}
+                  >
+                    <PencilSquareIcon className="h-[18px] w-[18px]" />
+                    Create post
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start rounded-sm px-3 text-[var(--text-body)] hover:text-[var(--text-heading)]"
+                    onClick={() => goTo("/settings")}
+                  >
+                    <Cog6ToothIcon className="h-[18px] w-[18px]" />
+                    Settings
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start rounded-sm px-3 text-[var(--text-body)] hover:text-[var(--text-heading)]"
+                    onClick={() => {
+                      setIsProfileOpen(false);
+                      signOut();
+                    }}
+                  >
+                    <ArrowRightOnRectangleIcon className="h-[18px] w-[18px]" />
+                    Sign out
+                  </Button>
                 </div>
-
-                <Button
-                  variant="ghost"
-                  className="mt-2 w-full justify-start rounded-sm px-3 text-[var(--text-body)] hover:text-[var(--text-heading)]"
-                  onClick={() => goTo("/profile")}
-                >
-                  <HiOutlineUser className="text-[18px]" />
-                  My profile
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start rounded-sm px-3 text-[var(--text-body)] hover:text-[var(--text-heading)]"
-                  onClick={() => goTo("/createpost")}
-                >
-                  <HiOutlinePencilAlt className="text-[18px]" />
-                  Create post
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start rounded-sm px-3 text-[var(--text-body)] hover:text-[var(--text-heading)]"
-                  onClick={() => setIsProfileOpen(false)}
-                >
-                  <HiOutlineCog className="text-[18px]" />
-                  Settings
-                </Button>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </header>
