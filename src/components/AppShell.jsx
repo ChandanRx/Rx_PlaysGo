@@ -2,31 +2,32 @@
 
 import React, { Suspense, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  HiChatAlt2,
-  HiHome,
-  HiLocationMarker,
-  HiOutlinePlus,
-  HiUser,
-} from "react-icons/hi";
+import { AnimatePresence, m } from "framer-motion";
+import { ChatBubbleLeftRightIcon, HomeIcon, MapPinIcon, UserIcon } from "@heroicons/react/24/solid";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 import DashboardHeader from "./DashboardHeader";
 import LeftSidebar from "./LeftSidebar";
 import RightSidebar from "./RightSidebar";
+import { pageTransition, springSnappy } from "../shared/motionPresets";
 
 // Only the feed pages need their scroll position remembered across a
 // details-view visit; every other route always starts at the top.
 const FEED_PATHS = ["/", "/posts"];
 const SCROLL_KEY_PREFIX = "quibly_scroll_";
 
+// Auth pages and the admin dashboard render outside the member app chrome —
+// no sidebars, feed header, or floating bottom tabs. The dashboard brings its
+// own standalone layout (src/app/dashboard/layout.js).
+const STANDALONE_PATHS = ["/signin", "/signup", "/dashboard"];
+
 // Admin dashboard is desktop/admin use only — deliberately not a mobile tab.
 const bottomNav = [
-  { label: "Home", href: "/", icon: HiHome },
-  { label: "Explore", href: "/posts", icon: HiLocationMarker },
-  { label: "Create", href: "/createpost", icon: HiOutlinePlus },
-  { label: "Chat", href: "/messages", icon: HiChatAlt2 },
-  { label: "Profile", href: "/profile", icon: HiUser },
+  { label: "Home", href: "/", icon: HomeIcon },
+  { label: "Explore", href: "/posts", icon: MapPinIcon },
+  { label: "Create", href: "/createpost", icon: PlusIcon },
+  { label: "Chat", href: "/messages", icon: ChatBubbleLeftRightIcon },
+  { label: "Profile", href: "/profile", icon: UserIcon },
 ];
 
 const AppShell = ({ children }) => {
@@ -76,6 +77,14 @@ const AppShell = ({ children }) => {
   // across the whole messages section instead of keying on every chatId.
   const transitionKey = isMessagesSection ? "/messages" : pathname;
 
+  const isStandalone = STANDALONE_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
+
+  if (isStandalone) {
+    return <div className="min-h-screen bg-[var(--bg-page)]">{children}</div>;
+  }
+
   return (
     <div className="min-h-screen bg-[var(--bg-page)]">
 
@@ -94,7 +103,7 @@ const AppShell = ({ children }) => {
 
         <div
           ref={contentRef}
-          className={`mx-auto rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_2px_16px_rgba(30,20,10,0.06)] ${
+          className={`mx-auto rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_1px_2px_rgba(28,32,18,0.04),0_12px_40px_rgba(28,32,18,0.06)] ${
             isMessagesSection
               ? `${isChatDetailPage ? "h-[calc(100vh-4rem)] overflow-hidden" : "min-h-[calc(100vh-4rem)] overflow-y-auto"} lg:h-[calc(100vh-2rem)] lg:overflow-hidden`
               : "min-h-[calc(100vh-4rem)] overflow-y-auto px-4 py-4 md:px-5 md:py-5 lg:min-h-[calc(100vh-2rem)] lg:px-6 lg:py-5"
@@ -108,16 +117,13 @@ const AppShell = ({ children }) => {
           )}
 
           <AnimatePresence mode="wait" initial={false}>
-            <motion.div
+            <m.div
               key={transitionKey}
-              initial={{ opacity: 0, x: 14 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -14 }}
-              transition={{ duration: 0.22, ease: "easeInOut" }}
+              {...pageTransition}
               className={isMessagesSection ? (isChatDetailPage ? "h-full min-h-0" : "lg:h-full lg:min-h-0") : ""}
             >
               {children}
-            </motion.div>
+            </m.div>
           </AnimatePresence>
 
         </div>
@@ -132,7 +138,7 @@ const AppShell = ({ children }) => {
           style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
         >
 
-          <div className="mx-auto flex max-w-md items-stretch gap-1 rounded-[28px] border border-white/40 bg-[var(--bg-card)]/75 p-1.5 shadow-[0_8px_28px_rgba(30,20,10,0.14)] backdrop-blur-xl">
+          <div className="mx-auto flex max-w-md items-stretch gap-1 rounded-[28px] border border-white/40 bg-[var(--bg-card)]/75 p-1.5 shadow-[0_8px_28px_rgba(28,32,18,0.14)] backdrop-blur-xl">
 
             {bottomNav.map(({ label, href, icon: Icon }) => {
 
@@ -149,22 +155,22 @@ const AppShell = ({ children }) => {
                 >
 
                   {active && (
-                    <motion.span
+                    <m.span
                       layoutId="bottom-nav-active-pill"
-                      transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                      className="absolute inset-0 rounded-full bg-[var(--brand)] shadow-[0_4px_14px_rgba(255,60,31,0.35)]"
+                      transition={springSnappy}
+                      className="absolute inset-0 rounded-full bg-[var(--brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.35)]"
                     />
                   )}
 
-                  <motion.span
+                  <m.span
                     animate={{ scale: active ? 1.08 : 1 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                    transition={springSnappy}
                     className={`relative z-10 flex flex-col items-center gap-0.5 transition-colors duration-200 ${
-                      active ? "text-white" : "text-[var(--text-muted)]"
+                      active ? "text-[var(--on-brand)]" : "text-[var(--text-muted)]"
                     }`}
                   >
-                    <Icon className="text-[19px]" />
-                  </motion.span>
+                    <Icon className="h-[19px] w-[19px]" />
+                  </m.span>
 
                 </button>
 

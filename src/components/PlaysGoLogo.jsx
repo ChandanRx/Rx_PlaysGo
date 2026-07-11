@@ -9,22 +9,32 @@ const PlaysGoLogo = ({ variant = "dark", iconOnly = false, className = "" }) => 
     <div className={`flex items-center gap-2.5 ${className}`}>
       {/* Icon mark */}
       <div
-        className="flex h-10 w-10 items-center justify-center rounded-sm shadow-sm"
-        style={{ background: "linear-gradient(135deg,#FF3C1F,#FF6B2B)" }}
+        className="flex h-10 w-10 items-center justify-center rounded-xl shadow-sm"
+        style={{ background: "linear-gradient(135deg,var(--brand),var(--secondary))" }}
       >
-        <svg width="22" height="22" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M32 6C22 6 14 14 14 24C14 39 32 58 32 58C32 58 50 39 50 24C50 14 42 6 32 6Z" fill="white" />
-          <circle cx="32" cy="22" r="5" fill="#FF3C1F" />
-          <path d="M24 36C26 31 30 29 32 29C34 29 38 31 40 36" stroke="#FF3C1F" strokeWidth="3" strokeLinecap="round" />
+        <svg width="24" height="24" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text
+            x="32"
+            y="34"
+            textAnchor="middle"
+            dominantBaseline="central"
+            fontFamily="inherit"
+            fontSize="34"
+            fontWeight="900"
+            letterSpacing="-2"
+            fill="white"
+          >
+            P<tspan opacity="0.75">G</tspan>
+          </text>
         </svg>
       </div>
 
       {!iconOnly && (
         <div className="leading-none">
-          <p className="text-[20px] font-black tracking-tight" style={{ color: isDark ? "#111111" : "#FFFFFF" }}>
-            Plays<span style={{ color: "#FF3C1F" }}>Go</span>
+          <p className="text-[20px] font-black tracking-tight" style={{ color: isDark ? "var(--text-heading)" : "#FFFFFF" }}>
+            Plays<span style={{ color: "var(--brand)" }}>Go</span>
           </p>
-          <p className="text-[9px] font-semibold uppercase tracking-[0.22em]" style={{ color: isDark ? "#7A736A" : "#FFCABF" }}>
+          <p className="text-[9px] font-semibold uppercase tracking-[0.22em]" style={{ color: isDark ? "var(--text-muted)" : "rgba(255,255,255,.75)" }}>
             FIND · PLAY · CONNECT
           </p>
         </div>

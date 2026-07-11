@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Trash2 } from "lucide-react";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { deletePost, getPostById } from "../../shared/dummyPosts";
 import { dismissReport, getReports } from "../../shared/adminStore";
 
@@ -35,7 +35,7 @@ const AdminReportsTable = ({ onDataChange }) => {
         return (
           <div
             key={report.id}
-            className="flex flex-col gap-2.5 rounded-sm border border-[var(--border-subtle)] p-3.5 sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-2.5 rounded-xl border border-[var(--border-subtle)] p-3.5 sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="min-w-0">
               <p className="truncate text-[13px] font-semibold text-[var(--text-heading)]">
@@ -47,7 +47,7 @@ const AdminReportsTable = ({ onDataChange }) => {
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <span
-                className={`rounded-sm px-2 py-1 text-[10.5px] font-semibold ${
+                className={`rounded-md px-2 py-1 text-[10.5px] font-semibold ${
                   report.status === "Pending" ? "bg-amber-100 text-amber-700" : "bg-[var(--bg-input)] text-[var(--text-faint)]"
                 }`}
               >
@@ -58,7 +58,7 @@ const AdminReportsTable = ({ onDataChange }) => {
                   <button
                     type="button"
                     onClick={() => handleDismiss(report.id)}
-                    className="rounded-sm border border-[var(--border-subtle)] px-3 py-1.5 text-[12px] font-semibold text-[var(--text-body)] transition hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]"
+                    className="rounded-lg border border-[var(--border-subtle)] px-3 py-1.5 text-[12px] font-semibold text-[var(--text-body)] transition hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]"
                   >
                     Dismiss
                   </button>
@@ -66,9 +66,9 @@ const AdminReportsTable = ({ onDataChange }) => {
                     type="button"
                     onClick={() => handleRemovePost(report)}
                     disabled={!post}
-                    className="inline-flex items-center gap-1 rounded-sm border border-red-200 bg-red-50 px-3 py-1.5 text-[12px] font-semibold text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-[12px] font-semibold text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"
                   >
-                    <Trash2 className="h-3.5 w-3.5" strokeWidth={2.25} />
+                    <TrashIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
                     Remove post
                   </button>
                 </>

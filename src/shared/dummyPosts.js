@@ -35,7 +35,10 @@ const matchesCategory = (postCategory, selectedCategory) => {
   return aliases.includes(normalizedPostCategory);
 };
 
+export const CURRENT_USER_ID = "u-chandan";
+
 export const dummyUser = {
+  id: CURRENT_USER_ID,
   name: "Chandan Pargi",
   username: "chandan.pargi",
   email: "chandan@quibly.local",
@@ -46,6 +49,111 @@ export const dummyUser = {
   verified: true,
   image: DEFAULT_AVATAR_IMAGE,
 };
+
+// Every distinct author appearing in initialPosts gets a stable record here so
+// /profile/[username] can address them. `following` holds user ids; followers
+// are always derived by inverting `following` so the two never disagree.
+export const dummyUsers = [
+  { ...dummyUser, followers: [], following: ["u-riya", "u-rahul"] },
+  {
+    id: "u-riya",
+    name: "Riya Kapoor",
+    username: "riya.kapoor",
+    email: "riya@quibly.local",
+    mobile: "+91 91234 56780",
+    city: "Pune",
+    state: "Maharashtra",
+    bio: "Parent and weekend cricketer. Usually posting about tutors and Sunday matches.",
+    verified: true,
+    image: DEFAULT_AVATAR_IMAGE,
+    followers: [],
+    following: ["u-chandan", "u-sneha"],
+  },
+  {
+    id: "u-aman",
+    name: "Aman Verma",
+    username: "aman.verma",
+    email: "aman@quibly.local",
+    mobile: "+91 92345 67890",
+    city: "Bengaluru",
+    state: "Karnataka",
+    bio: "Software engineer in Koramangala. Looking for flatmates and football games.",
+    verified: false,
+    image: DEFAULT_AVATAR_IMAGE,
+    followers: [],
+    following: ["u-rahul"],
+  },
+  {
+    id: "u-priya",
+    name: "Priya Nair",
+    username: "priya.nair",
+    email: "priya@quibly.local",
+    mobile: "+91 93456 78901",
+    city: "Mumbai",
+    state: "Maharashtra",
+    bio: "Freelance designer helping local businesses with branding and social creatives.",
+    verified: true,
+    image: DEFAULT_AVATAR_IMAGE,
+    followers: [],
+    following: ["u-chandan", "u-neha"],
+  },
+  {
+    id: "u-kabir",
+    name: "Kabir Singh",
+    username: "kabir.singh",
+    email: "kabir@quibly.local",
+    mobile: "+91 94567 89012",
+    city: "New Delhi",
+    state: "Delhi",
+    bio: "Budget traveller planning weekend trips out of Delhi. Always up for a road trip.",
+    verified: false,
+    image: DEFAULT_AVATAR_IMAGE,
+    followers: [],
+    following: [],
+  },
+  {
+    id: "u-neha",
+    name: "Neha Joshi",
+    username: "neha.joshi",
+    email: "neha@quibly.local",
+    mobile: "+91 95678 90123",
+    city: "Bengaluru",
+    state: "Karnataka",
+    bio: "Decluttering one room at a time — furniture and home finds listed here first.",
+    verified: true,
+    image: DEFAULT_AVATAR_IMAGE,
+    followers: [],
+    following: ["u-priya"],
+  },
+  {
+    id: "u-rahul",
+    name: "Rahul Mehta",
+    username: "rahul.mehta",
+    email: "rahul@quibly.local",
+    mobile: "+91 99001 23456",
+    city: "Mumbai",
+    state: "Maharashtra",
+    bio: "Organizing 7-a-side football at Juhu every Saturday. All skill levels welcome.",
+    verified: true,
+    image: DEFAULT_AVATAR_IMAGE,
+    followers: [],
+    following: ["u-chandan", "u-aman"],
+  },
+  {
+    id: "u-sneha",
+    name: "Sneha Iyer",
+    username: "sneha.iyer",
+    email: "sneha@quibly.local",
+    mobile: "+91 98112 34567",
+    city: "Mumbai",
+    state: "Maharashtra",
+    bio: "Badminton doubles regular at Kandivali Sports Club. Intermediate and improving.",
+    verified: false,
+    image: DEFAULT_AVATAR_IMAGE,
+    followers: [],
+    following: ["u-riya"],
+  },
+];
 
 const initialPosts = [
   {
@@ -469,4 +577,116 @@ export const updateUserProfile = (patch = {}) => {
   }
 
   return next;
+};
+
+/* ───────────────────────── multi-user + follow graph ──────────────────────
+ * Users are seeded from dummyUsers. Follow edges are the only mutable part, so
+ * only those are persisted: a { [userId]: followingIds[] } map in localStorage,
+ * layered over each user's seed `following`. `followers` is always derived by
+ * inverting the graph so the two directions can never disagree. Same mock /
+ * localStorage pattern as getStoredUserProfile above — no backend.
+ */
+const FOLLOW_GRAPH_KEY = "quibly_follow_graph";
+export const FOLLOW_CHANGE_EVENT = "quibly-follow-change";
+
+const readFollowGraph = () => {
+  const seed = {};
+  dummyUsers.forEach((user) => {
+    seed[user.id] = [...(user.following || [])];
+  });
+
+  if (!isBrowser()) return seed;
+
+  try {
+    const saved = window.localStorage.getItem(FOLLOW_GRAPH_KEY);
+    return saved ? { ...seed, ...JSON.parse(saved) } : seed;
+  } catch {
+    return seed;
+  }
+};
+
+const writeFollowGraph = (graph) => {
+  if (!isBrowser()) return;
+  window.localStorage.setItem(FOLLOW_GRAPH_KEY, JSON.stringify(graph));
+  window.dispatchEvent(new CustomEvent(FOLLOW_CHANGE_EVENT, { detail: graph }));
+};
+
+// Resolve a seed user into a full record: live following/followers from the
+// graph, plus any locally-saved profile edits for the current user so their
+// public profile matches what they edited on /profile.
+const withFollowData = (user, graph = readFollowGraph()) => {
+  if (!user) return null;
+
+  const base =
+    user.id === CURRENT_USER_ID ? { ...user, ...getStoredUserProfile() } : { ...user };
+
+  const following = graph[user.id] || [];
+  const followers = dummyUsers
+    .filter((other) => (graph[other.id] || []).includes(user.id))
+    .map((other) => other.id);
+
+  return { ...base, id: user.id, following, followers };
+};
+
+export const getUsers = () => {
+  const graph = readFollowGraph();
+  return dummyUsers.map((user) => withFollowData(user, graph));
+};
+
+export const getUserById = (id) => {
+  const user = dummyUsers.find((u) => u.id === id);
+  return user ? withFollowData(user) : null;
+};
+
+export const getUserByUsername = (username = "") => {
+  const target = String(username).trim().toLowerCase();
+  const user = dummyUsers.find((u) => u.username.toLowerCase() === target);
+  return user ? withFollowData(user) : null;
+};
+
+// Maps a post back to its author record via email (stable) then display name.
+export const getUserForPost = (post) => {
+  if (!post) return null;
+  const email = post.email?.trim().toLowerCase();
+  const name = post.userName?.trim().toLowerCase();
+  const user = dummyUsers.find(
+    (u) =>
+      (email && u.email.toLowerCase() === email) ||
+      (name && u.name.toLowerCase() === name),
+  );
+  return user ? withFollowData(user) : null;
+};
+
+// Convenience for author links: the username to route to, or null if the
+// author isn't a known user (nothing to link to).
+export const getUsernameForPost = (post) => getUserForPost(post)?.username || null;
+
+export const getUsernameForUserName = (userName = "") => {
+  const name = String(userName).trim().toLowerCase();
+  return dummyUsers.find((u) => u.name.toLowerCase() === name)?.username || null;
+};
+
+export const isFollowing = (currentUserId, targetUserId) =>
+  (readFollowGraph()[currentUserId] || []).includes(targetUserId);
+
+export const followUser = (currentUserId, targetUserId) => {
+  if (!currentUserId || !targetUserId || currentUserId === targetUserId) {
+    return getUserById(targetUserId);
+  }
+  const graph = readFollowGraph();
+  const following = new Set(graph[currentUserId] || []);
+  following.add(targetUserId);
+  graph[currentUserId] = [...following];
+  writeFollowGraph(graph);
+  return getUserById(targetUserId);
+};
+
+export const unfollowUser = (currentUserId, targetUserId) => {
+  if (!currentUserId || !targetUserId) return getUserById(targetUserId);
+  const graph = readFollowGraph();
+  graph[currentUserId] = (graph[currentUserId] || []).filter(
+    (id) => id !== targetUserId,
+  );
+  writeFollowGraph(graph);
+  return getUserById(targetUserId);
 };

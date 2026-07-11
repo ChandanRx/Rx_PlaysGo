@@ -2,14 +2,16 @@
 
 import Image from "next/image";
 import React from "react";
-import { HiBell } from "react-icons/hi";
+import { BellIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowUturnLeftIcon, CheckBadgeIcon, ChatBubbleLeftIcon, SignalIcon,
+} from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
-import { BadgeCheck, MessageCircle, Radio, Reply } from "lucide-react";
 import { dummyUser } from "../shared/dummyPosts";
 import { useNotifications } from "../hooks/useClientData";
 import { markAllNotificationsRead, markNotificationRead } from "../shared/notifications";
 
-const ICONS = { reply: Reply, message: MessageCircle, live: Radio, badge: BadgeCheck };
+const ICONS = { reply: ArrowUturnLeftIcon, message: ChatBubbleLeftIcon, live: SignalIcon, badge: CheckBadgeIcon };
 
 const RightSidebar = () => {
   const router = useRouter();
@@ -22,7 +24,7 @@ const RightSidebar = () => {
 
   return (
     <aside className="fixed right-4 top-4 bottom-4 z-30 hidden w-[300px] lg:flex">
-      <div className="flex h-full w-full flex-col overflow-hidden rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_8px_32px_rgba(30,20,10,0.07)]">
+      <div className="flex h-full w-full flex-col overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_1px_2px_rgba(28,32,18,0.04),0_12px_40px_rgba(28,32,18,0.06)]">
 
         {/* ── Profile header ── */}
         <button
@@ -55,7 +57,7 @@ const RightSidebar = () => {
                   Mark all read
                 </button>
               )}
-              <HiBell className="text-[18px] text-[var(--brand)]" />
+              <BellIcon className="h-[18px] w-[18px] text-[var(--brand)]" />
             </div>
           </div>
 
@@ -64,17 +66,17 @@ const RightSidebar = () => {
               <p className="px-2 py-8 text-center text-[12.5px] text-[var(--text-muted)]">No notifications yet</p>
             ) : (
               notifications.map((notification) => {
-                const Icon = ICONS[notification.icon] || HiBell;
+                const Icon = ICONS[notification.icon] || BellIcon;
                 return (
                   <button
                     key={notification.id}
                     type="button"
                     onClick={() => handleSelect(notification)}
-                    className={`flex w-full items-start gap-2.5 rounded-sm px-3 py-2.5 text-left transition-colors duration-200 hover:bg-[var(--bg-input)] ${
+                    className={`flex w-full items-start gap-2.5 rounded-xl px-3 py-2.5 text-left transition-colors duration-200 hover:bg-[var(--bg-input)] ${
                       !notification.read ? "bg-[var(--brand-soft)]/40" : ""
                     }`}
                   >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-[var(--brand-soft)] text-[var(--brand)]">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--brand-soft)] text-[var(--brand)]">
                       <Icon className="h-4 w-4" strokeWidth={2.25} />
                     </span>
                     <span className="min-w-0 flex-1">

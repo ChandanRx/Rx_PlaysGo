@@ -1,10 +1,14 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Ban, Eye, Search, Sparkles, Trash2, X } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
+import {
+  EyeIcon, MagnifyingGlassIcon, NoSymbolIcon, SparklesIcon, TrashIcon, XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { deletePost, getPosts, POST_STATUSES } from "../../shared/dummyPosts";
 import { featurePost, updatePostStatus } from "../../shared/adminStore";
+import ConfirmDialog from "../ui/ConfirmDialog";
+import Dropdown from "../ui/Dropdown";
 
 const CATEGORY_OPTIONS = ["All", "Players", "Local Help", "For Sale"];
 const STATUS_OPTIONS = ["All", ...POST_STATUSES];
@@ -15,42 +19,6 @@ const STATUS_STYLES = {
   Closed: "bg-[var(--text-heading)]/10 text-[var(--text-heading)]",
   Expired: "bg-red-100 text-red-600",
 };
-
-const ConfirmDeleteDialog = ({ title, onCancel, onConfirm }) => (
-  <>
-    <motion.div
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      transition={{ duration: 0.18 }}
-      className="fixed inset-0 z-[100] bg-[var(--text-heading)]/40 backdrop-blur-sm"
-      onClick={onCancel}
-    />
-    <div className="fixed inset-0 z-[101] flex items-center justify-center p-4" onClick={onCancel}>
-      <motion.div
-        role="alertdialog"
-        aria-modal="true"
-        initial={{ opacity: 0, scale: 0.96, y: 8 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.97, y: 6 }}
-        transition={{ type: "spring", damping: 26, stiffness: 320 }}
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm rounded-sm bg-[var(--bg-card)] p-5 shadow-[0_20px_60px_rgba(30,20,10,0.18)]"
-      >
-        <h3 className="text-[16px] font-black text-[var(--text-heading)]">Delete this post?</h3>
-        <p className="mt-1.5 text-[13px] text-[var(--text-muted)]">
-          &quot;{title}&quot; will be permanently removed. This can&apos;t be undone.
-        </p>
-        <div className="mt-5 flex justify-end gap-2">
-          <button type="button" onClick={onCancel} className="rounded-sm px-4 py-2 text-[13px] font-semibold text-[var(--text-muted)] transition hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]">
-            Cancel
-          </button>
-          <button type="button" onClick={onConfirm} className="rounded-sm border border-red-200 bg-red-50 px-4 py-2 text-[13px] font-semibold text-red-600 transition hover:bg-red-100">
-            Delete
-          </button>
-        </div>
-      </motion.div>
-    </div>
-  </>
-);
 
 const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, onDataChange }) => {
   const [posts, setPosts] = useState([]);
@@ -90,8 +58,8 @@ const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, on
     <div>
       {/* filters */}
       <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:flex-wrap">
-        <div className="flex min-w-0 flex-1 items-center gap-2 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 py-2 sm:max-w-[240px]">
-          <Search className="h-3.5 w-3.5 shrink-0 text-[var(--text-faint)]" strokeWidth={2.25} />
+        <div className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 py-2 sm:max-w-[240px]">
+          <MagnifyingGlassIcon className="h-3.5 w-3.5 shrink-0 text-[var(--text-faint)]" strokeWidth={2.25} />
           <input
             type="search"
             value={search}
@@ -101,27 +69,29 @@ const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, on
           />
         </div>
 
-        <select
+        <Dropdown
+          variant="field"
+          options={CATEGORY_OPTIONS}
           value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          className="shrink-0 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2 text-[12.5px] font-semibold text-[var(--text-body)] outline-none"
-        >
-          {CATEGORY_OPTIONS.map((c) => <option key={c} value={c}>{c}</option>)}
-        </select>
+          onChange={setCategoryFilter}
+          className="shrink-0"
+          buttonClassName="border border-[var(--border-subtle)] bg-[var(--bg-card)] py-2 text-[12.5px] font-semibold"
+        />
 
-        <select
+        <Dropdown
+          variant="field"
+          options={STATUS_OPTIONS}
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="shrink-0 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2 text-[12.5px] font-semibold text-[var(--text-body)] outline-none"
-        >
-          {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
-        </select>
+          onChange={setStatusFilter}
+          className="shrink-0"
+          buttonClassName="border border-[var(--border-subtle)] bg-[var(--bg-card)] py-2 text-[12.5px] font-semibold"
+        />
 
         {authorEmail && (
-          <span className="flex shrink-0 items-center gap-1.5 rounded-sm bg-[var(--brand-soft)] px-3 py-2 text-[12px] font-semibold text-[var(--brand)]">
+          <span className="flex shrink-0 items-center gap-1.5 rounded-lg bg-[var(--brand-soft)] px-3 py-2 text-[12px] font-semibold text-[var(--brand)]">
             Author: {authorEmail}
             <button type="button" onClick={onClearAuthorFilter} aria-label="Clear author filter">
-              <X className="h-3.5 w-3.5" strokeWidth={2.5} />
+              <XMarkIcon className="h-3.5 w-3.5" strokeWidth={2.5} />
             </button>
           </span>
         )}
@@ -150,14 +120,14 @@ const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, on
                   <td className="max-w-[220px] truncate py-2.5 pr-4 font-semibold text-[var(--text-heading)]">
                     {post.title}
                     {post.featurePost && (
-                      <Sparkles className="ml-1.5 inline-block h-3 w-3 text-[var(--brand)]" strokeWidth={2.5} />
+                      <SparklesIcon className="ml-1.5 inline-block h-3 w-3 text-[var(--brand)]" strokeWidth={2.5} />
                     )}
                   </td>
                   <td className="py-2.5 pr-4 text-[var(--text-muted)]">{post.category}</td>
                   <td className="max-w-[160px] truncate py-2.5 pr-4 text-[var(--text-body)]">{post.userName}</td>
                   <td className="max-w-[160px] truncate py-2.5 pr-4 text-[var(--text-muted)]">{post.location}</td>
                   <td className="py-2.5 pr-4">
-                    <span className={`rounded-sm px-2 py-1 text-[10.5px] font-semibold ${STATUS_STYLES[post.status] || STATUS_STYLES.Active}`}>
+                    <span className={`rounded-md px-2 py-1 text-[10.5px] font-semibold ${STATUS_STYLES[post.status] || STATUS_STYLES.Active}`}>
                       {post.status || "Active"}
                     </span>
                   </td>
@@ -168,35 +138,35 @@ const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, on
                         type="button"
                         aria-label="View post"
                         onClick={() => onOpenPost(post)}
-                        className="flex h-7 w-7 items-center justify-center rounded-sm border border-[var(--border-subtle)] text-[var(--text-muted)] transition hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--border-subtle)] text-[var(--text-muted)] transition hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]"
                       >
-                        <Eye className="h-3.5 w-3.5" strokeWidth={2.25} />
+                        <EyeIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
                       </button>
                       <button
                         type="button"
                         aria-label="Feature post"
                         onClick={() => handleFeature(post.id)}
                         disabled={post.featurePost}
-                        className="flex h-7 w-7 items-center justify-center rounded-sm border border-[var(--border-subtle)] text-[var(--text-muted)] transition hover:border-[var(--brand)] hover:text-[var(--brand)] disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--border-subtle)] text-[var(--text-muted)] transition hover:border-[var(--brand)] hover:text-[var(--brand)] disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        <Sparkles className="h-3.5 w-3.5" strokeWidth={2.25} />
+                        <SparklesIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
                       </button>
                       <button
                         type="button"
                         aria-label="Close post"
                         onClick={() => handleClose(post.id)}
                         disabled={post.status === "Closed"}
-                        className="flex h-7 w-7 items-center justify-center rounded-sm border border-[var(--border-subtle)] text-[var(--text-muted)] transition hover:border-[var(--text-heading)] hover:text-[var(--text-heading)] disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--border-subtle)] text-[var(--text-muted)] transition hover:border-[var(--text-heading)] hover:text-[var(--text-heading)] disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        <Ban className="h-3.5 w-3.5" strokeWidth={2.25} />
+                        <NoSymbolIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
                       </button>
                       <button
                         type="button"
                         aria-label="Delete post"
                         onClick={() => setConfirmingDelete(post)}
-                        className="flex h-7 w-7 items-center justify-center rounded-sm border border-red-200 bg-red-50 text-red-600 transition hover:bg-red-100"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-red-200 bg-red-50 text-red-600 transition hover:bg-red-100"
                       >
-                        <Trash2 className="h-3.5 w-3.5" strokeWidth={2.25} />
+                        <TrashIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
                       </button>
                     </div>
                   </td>
@@ -209,8 +179,9 @@ const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, on
 
       <AnimatePresence>
         {confirmingDelete && (
-          <ConfirmDeleteDialog
-            title={confirmingDelete.title}
+          <ConfirmDialog
+            title="Delete this post?"
+            description={`"${confirmingDelete.title}" will be permanently removed. This can't be undone.`}
             onCancel={() => setConfirmingDelete(null)}
             onConfirm={() => handleDelete(confirmingDelete.id)}
           />

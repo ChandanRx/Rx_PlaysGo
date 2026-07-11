@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Card from "../../components/ui/Card";
 import Data from "../../shared/data";
-import { Check, Moon, Sun } from "lucide-react";
+import { CheckIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from "../../shared/lucideIcons";
 import {
   getCategoryLabel, getCategoryThemeValue,
@@ -58,21 +58,21 @@ const SettingsPage = () => {
             <button
               type="button"
               onClick={() => applyTheme("light")}
-              className={`relative flex flex-col items-center gap-2.5 rounded-sm border-2 px-4 py-5 transition-all duration-200 ${
+              className={`relative flex flex-col items-center gap-2.5 rounded-2xl border-2 px-4 py-5 transition-all duration-200 ${
                 theme === "light"
-                  ? "border-[var(--brand)] bg-[var(--brand-soft)] shadow-[0_4px_16px_rgba(255,60,31,0.15)]"
+                  ? "border-[var(--brand)] bg-[var(--brand-soft)] shadow-[0_4px_16px_rgba(var(--brand-rgb),0.15)]"
                   : "border-[var(--border-subtle)] bg-[var(--bg-secondary)] hover:border-[var(--brand)]"
               }`}
             >
               {theme === "light" && (
                 <span className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--brand)]">
-                  <Check className="h-3 w-3 text-white" strokeWidth={3} />
+                  <CheckIcon className="h-3 w-3 text-[var(--on-brand)]" strokeWidth={3} />
                 </span>
               )}
               <div className={`flex h-11 w-11 items-center justify-center rounded-full ${
-                theme === "light" ? "bg-[var(--brand)] text-white" : "bg-[var(--bg-hover)] text-[var(--text-muted)]"
+                theme === "light" ? "bg-[var(--brand)] text-[var(--on-brand)]" : "bg-[var(--bg-hover)] text-[var(--text-muted)]"
               }`}>
-                <Sun className="h-6 w-6" strokeWidth={2} />
+                <SunIcon className="h-6 w-6" strokeWidth={2} />
               </div>
               <span className={`text-[13px] font-bold ${theme === "light" ? "text-[var(--brand)]" : "text-[var(--text-body)]"}`}>
                 Light
@@ -83,21 +83,21 @@ const SettingsPage = () => {
             <button
               type="button"
               onClick={() => applyTheme("dark")}
-              className={`relative flex flex-col items-center gap-2.5 rounded-sm border-2 px-4 py-5 transition-all duration-200 ${
+              className={`relative flex flex-col items-center gap-2.5 rounded-2xl border-2 px-4 py-5 transition-all duration-200 ${
                 theme === "dark"
-                  ? "border-[var(--brand)] bg-[var(--brand-soft)] shadow-[0_4px_16px_rgba(255,60,31,0.15)]"
+                  ? "border-[var(--brand)] bg-[var(--brand-soft)] shadow-[0_4px_16px_rgba(var(--brand-rgb),0.15)]"
                   : "border-[var(--border-subtle)] bg-[var(--bg-secondary)] hover:border-[var(--brand)]"
               }`}
             >
               {theme === "dark" && (
                 <span className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--brand)]">
-                  <Check className="h-3 w-3 text-white" strokeWidth={3} />
+                  <CheckIcon className="h-3 w-3 text-[var(--on-brand)]" strokeWidth={3} />
                 </span>
               )}
               <div className={`flex h-11 w-11 items-center justify-center rounded-full ${
-                theme === "dark" ? "bg-[var(--brand)] text-white" : "bg-[var(--bg-hover)] text-[var(--text-muted)]"
+                theme === "dark" ? "bg-[var(--brand)] text-[var(--on-brand)]" : "bg-[var(--bg-hover)] text-[var(--text-muted)]"
               }`}>
-                <Moon className="h-6 w-6" strokeWidth={2} />
+                <MoonIcon className="h-6 w-6" strokeWidth={2} />
               </div>
               <span className={`text-[13px] font-bold ${theme === "dark" ? "text-[var(--brand)]" : "text-[var(--text-body)]"}`}>
                 Dark
@@ -132,10 +132,10 @@ const SettingsPage = () => {
           return (
             <div
               key={item.name}
-              className={`category-theme--${getCategoryThemeValue(item.name)} relative overflow-hidden rounded-sm border-2 bg-gradient-to-br p-5 transition-all duration-200 ${CATEGORY_BG[item.name] || "from-gray-50 to-slate-50"} ${
+              className={`category-theme--${getCategoryThemeValue(item.name)} relative overflow-hidden rounded-2xl border-2 bg-gradient-to-br p-5 transition-all duration-200 ${CATEGORY_BG[item.name] || "from-gray-50 to-slate-50"} ${
                 active
-                  ? "border-[var(--text-heading)] shadow-[0_4px_20px_rgba(30,20,10,0.14)]"
-                  : "border-[var(--border-subtle)] hover:border-[var(--brand)] hover:shadow-[0_4px_16px_rgba(255,60,31,0.12)]"
+                  ? "border-[var(--text-heading)] shadow-[0_4px_20px_rgba(28,32,18,0.14)]"
+                  : "border-[var(--border-subtle)] hover:border-[var(--brand)] hover:shadow-[0_4px_16px_rgba(var(--brand-rgb),0.12)]"
               }`}
             >
               {active && (
@@ -153,12 +153,12 @@ const SettingsPage = () => {
                 className={`mt-4 w-full rounded-full py-2.5 text-[13px] font-bold transition-all ${
                   active
                     ? "bg-[var(--text-heading)] text-[var(--selected-fg)]"
-                    : "bg-[var(--brand)] text-white shadow-[0_4px_12px_rgba(255,60,31,0.28)] hover:bg-[var(--brand-hover)]"
+                    : "bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_4px_12px_rgba(var(--brand-rgb),0.28)] hover:bg-[var(--brand-hover)]"
                 }`}
               >
                 {active ? (
                   <span className="inline-flex items-center justify-center gap-1.5">
-                    <Check className="h-4 w-4" strokeWidth={2.25} />
+                    <CheckIcon className="h-4 w-4" strokeWidth={2.25} />
                     Currently active
                   </span>
                 ) : `Use ${getCategoryLabel(item.name)}`}

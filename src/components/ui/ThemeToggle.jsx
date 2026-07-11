@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { HiMoon, HiSun } from "react-icons/hi";
+import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import Button from "./Button";
 
 const STORAGE_KEY = "quibly_theme";
@@ -59,7 +59,7 @@ const ThemeToggle = () => {
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
       className="theme-toggle-btn"
     >
-      {isDark ? <HiSun className="text-[18px]" /> : <HiMoon className="text-[18px]" />}
+      {isDark ? <SunIcon className="h-[18px] w-[18px]" /> : <MoonIcon className="h-[18px] w-[18px]" />}
     </Button>
   );
 };

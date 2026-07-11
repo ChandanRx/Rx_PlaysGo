@@ -1,16 +1,23 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import {
-  HiBadgeCheck, HiHeart, HiOutlineHeart,
-  HiLocationMarker, HiOutlineCalendar,
-  HiOutlineChatAlt2, HiOutlineUserAdd,
-  HiClock, HiUsers, HiTag,
-} from "react-icons/hi";
-import { motion } from "framer-motion";
-import { MapPin } from "lucide-react";
+  CheckBadgeIcon, ClockIcon, HeartIcon, MapPinIcon, TagIcon, UsersIcon,
+} from "@heroicons/react/24/solid";
+import {
+  CalendarIcon, ChatBubbleLeftRightIcon,
+  HeartIcon as HeartOutlineIcon,
+  MapPinIcon as MapPinOutlineIcon,
+  UserPlusIcon,
+} from "@heroicons/react/24/outline";
+import { m } from "framer-motion";
 import { DEFAULT_CATEGORY_ICON, SUBCATEGORY_ICONS } from "../shared/lucideIcons";
+import { getUsernameForPost } from "../shared/dummyPosts";
+import {
+  fadeUp, hoverScale, hoverScaleIcon, tapScale, tapScaleSmall, tweenFast,
+} from "../shared/motionPresets";
 
 /* ── helpers ── */
 const getCategoryThemeClass = (c) => {
@@ -34,16 +41,16 @@ const getPrimaryLabel = (category) => {
 };
 
 const getPrimaryIcon = (category) => {
-  if (category === "Players") return HiOutlineChatAlt2;
-  return HiOutlineUserAdd;
+  if (category === "Players") return ChatBubbleLeftRightIcon;
+  return UserPlusIcon;
 };
 
 const getChips = (post) => {
   const chips = [];
-  if (post?.subCategory)    chips.push({ icon: HiTag,            label: post.subCategory });
-  if (post?.requiredPeople) chips.push({ icon: HiUsers,          label: getMetaText(post) });
-  if (post?.duration)       chips.push({ icon: HiClock,          label: post.duration });
-  if (post?.date)           chips.push({ icon: HiOutlineCalendar, label: post.date });
+  if (post?.subCategory)    chips.push({ icon: TagIcon,            label: post.subCategory });
+  if (post?.requiredPeople) chips.push({ icon: UsersIcon,          label: getMetaText(post) });
+  if (post?.duration)       chips.push({ icon: ClockIcon,          label: post.duration });
+  if (post?.date)           chips.push({ icon: CalendarIcon, label: post.date });
   return chips.slice(0, 3);
 };
 
@@ -65,13 +72,32 @@ const PostItems = ({ post, onClick }) => {
   const PrimaryIcon  = getPrimaryIcon(post?.category);
   const chips        = getChips(post);
   const metaText     = getMetaText(post);
+  const authorUsername = getUsernameForPost(post);
+
+  // avatar + name, shared between the linked and plain (unknown author) cases.
+  const authorInner = (
+    <>
+      <span className="relative shrink-0">
+        <Image
+          src={post?.userImage || "/avatar-placeholder.svg"}
+          width={26} height={26}
+          alt={post?.userName || "User"}
+          className="h-[22px] w-[22px] rounded-full border border-[var(--border-subtle)] object-cover lg:h-[26px] lg:w-[26px]"
+        />
+        {post?.isVerified && (
+          <CheckBadgeIcon className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 text-[var(--brand)] drop-shadow-[0_0_2px_var(--bg-card)]" />
+        )}
+      </span>
+      <span className="truncate text-[11px] font-semibold text-[var(--text-body)] lg:text-[11.5px]">{post?.userName}</span>
+    </>
+  );
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-      className={`group flex flex-col h-full w-full bg-[var(--bg-card)] rounded-sm overflow-hidden border border-[var(--border-subtle)] shadow-[0_2px_12px_rgba(30,20,10,0.06)] lg:hover:shadow-[0_10px_32px_rgba(30,20,10,0.11)] lg:hover:-translate-y-1 active:scale-[0.98] lg:active:scale-100 transition-[transform,box-shadow] duration-200 cursor-pointer select-none transform-gpu will-change-transform ${themeClass}`}
+    <m.div
+      initial={fadeUp.initial}
+      animate={fadeUp.animate}
+      transition={tweenFast}
+      className={`group flex flex-col h-full w-full bg-[var(--bg-card)] rounded-2xl overflow-hidden border border-[var(--border-subtle)] shadow-[0_2px_12px_rgba(28,32,18,0.06)] lg:hover:shadow-[0_10px_32px_rgba(28,32,18,0.11)] lg:hover:-translate-y-1 active:scale-[0.98] lg:active:scale-100 transition-[transform,box-shadow] duration-200 cursor-pointer select-none transform-gpu will-change-transform ${themeClass}`}
       onClick={onClick}
       onKeyDown={handleKeyDown}
       role={onClick ? "button" : undefined}
@@ -94,21 +120,21 @@ const PostItems = ({ post, onClick }) => {
         </span>
 
         {/* save — top right */}
-        <motion.button
-          whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+        <m.button
+          whileHover={hoverScaleIcon} whileTap={tapScaleSmall}
           onClick={(e) => { e.stopPropagation(); setSaved((v) => !v); }}
           aria-label={saved ? "Unsave" : "Save"}
           className="absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-card)]/95 shadow-sm backdrop-blur-sm transition hover:bg-[var(--bg-card)] lg:right-3 lg:top-3"
         >
           {saved
-            ? <HiHeart className="text-[15px] text-[var(--brand)]" />
-            : <HiOutlineHeart className="text-[15px] text-[var(--text-muted)]" />}
-        </motion.button>
+            ? <HeartIcon className="h-[15px] w-[15px] text-[var(--brand)]" />
+            : <HeartOutlineIcon className="h-[15px] w-[15px] text-[var(--text-muted)]" />}
+        </m.button>
 
         {/* distance — bottom right */}
         {post?.distance && (
           <span className="absolute bottom-2 right-2.5 inline-flex items-center gap-1 rounded-full bg-[var(--text-heading)]/45 px-2.5 py-0.5 text-[10px] font-semibold text-[var(--selected-fg)] backdrop-blur-sm lg:bottom-2.5 lg:right-3">
-            <MapPin className="h-3 w-3 shrink-0" strokeWidth={2.25} />
+            <MapPinOutlineIcon className="h-3 w-3 shrink-0" strokeWidth={2.25} />
             {post.distance}
           </span>
         )}
@@ -124,24 +150,23 @@ const PostItems = ({ post, onClick }) => {
 
         {/* location */}
         <div className="mt-1 flex items-center gap-1.5 text-[11px] text-[var(--text-muted)] lg:mt-1.5 lg:text-[12px]">
-          <HiLocationMarker className="shrink-0 text-[12px] text-[var(--brand)]" />
+          <MapPinIcon className="shrink-0 h-3 w-3 text-[var(--brand)]" />
           <span className="truncate">{post?.location || "Location not set"}</span>
         </div>
 
         {/* user row */}
         <div className="mt-2.5 flex items-center gap-2 lg:mt-3">
-          <div className="relative shrink-0">
-            <Image
-              src={post?.userImage || "/avatar-placeholder.svg"}
-              width={26} height={26}
-              alt={post?.userName || "User"}
-              className="h-[22px] w-[22px] rounded-full border border-[var(--border-subtle)] object-cover lg:h-[26px] lg:w-[26px]"
-            />
-            {post?.isVerified && (
-              <HiBadgeCheck className="absolute -bottom-0.5 -right-0.5 text-[10px] text-[var(--brand)] drop-shadow-[0_0_2px_var(--bg-card)]" />
-            )}
-          </div>
-          <span className="truncate text-[11px] font-semibold text-[var(--text-body)] lg:text-[11.5px]">{post?.userName}</span>
+          {authorUsername ? (
+            <Link
+              href={`/profile/${authorUsername}`}
+              onClick={(e) => e.stopPropagation()}
+              className="flex min-w-0 items-center gap-2 hover:underline"
+            >
+              {authorInner}
+            </Link>
+          ) : (
+            <div className="flex min-w-0 items-center gap-2">{authorInner}</div>
+          )}
           <span className="ml-auto shrink-0 text-[10px] text-[var(--text-faint)] lg:text-[10.5px]">{post?.postedTime}</span>
         </div>
 
@@ -153,7 +178,7 @@ const PostItems = ({ post, onClick }) => {
           <div className="mb-2.5 flex flex-wrap items-center gap-1.5 lg:mb-3">
             {chips.map(({ icon: Icon, label }, i) => (
               <span key={i} className="inline-flex items-center gap-1 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-input)] px-2 py-0.5 text-[10.5px] font-medium text-[var(--text-body)] lg:px-2.5 lg:text-[11px]">
-                <Icon className="text-[11px] text-[var(--text-faint)]" />
+                <Icon className="h-[11px] w-[11px] text-[var(--text-faint)]" />
                 {label}
               </span>
             ))}
@@ -178,17 +203,17 @@ const PostItems = ({ post, onClick }) => {
             )}
           </div>
 
-          <motion.button
-             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+          <m.button
+             whileHover={hoverScale} whileTap={tapScale}
              onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-             className="flex h-11 shrink-0 items-center gap-1.5 rounded-sm bg-gradient-to-r from-[var(--brand)] to-[#FF7A47] px-4 text-[12.5px] font-bold text-white shadow-[0_4px_14px_rgba(255,60,31,0.30)] transition-[background-color] hover:bg-[var(--brand-hover)] lg:h-auto lg:bg-none lg:bg-[var(--brand)] lg:py-2 lg:shadow-none"
+             className="flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-[var(--brand)] to-[var(--brand-hover)] px-4 text-[12.5px] font-bold text-[var(--on-brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.30)] transition-[background-color] hover:bg-[var(--brand-hover)] lg:h-auto lg:bg-none lg:bg-[var(--brand)] lg:py-2 lg:shadow-none"
            >
-            <PrimaryIcon className="text-[13px]" />
+            <PrimaryIcon className="h-[13px] w-[13px]" />
             {primaryLabel}
-          </motion.button>
+          </m.button>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 };
 

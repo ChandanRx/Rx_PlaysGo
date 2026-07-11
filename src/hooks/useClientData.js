@@ -10,6 +10,10 @@ import {
   NOTIFICATIONS_CHANGE_EVENT,
   getNotifications,
 } from "../shared/notifications";
+import {
+  AUTH_CHANGE_EVENT,
+  getStoredSession,
+} from "../shared/authSession";
 
 export const useClientSearchPosts = (searchText = "", category = "", enabled = true) => {
   const [posts, setPosts] = useState([]);
@@ -60,6 +64,29 @@ export const useNotifications = () => {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return { notifications, unreadCount, isReady };
+};
+
+export const useAuthSession = () => {
+  const [session, setSession] = useState(null);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const sync = () => {
+      setSession(getStoredSession());
+      setIsReady(true);
+    };
+
+    sync();
+    window.addEventListener(AUTH_CHANGE_EVENT, sync);
+    return () => window.removeEventListener(AUTH_CHANGE_EVENT, sync);
+  }, []);
+
+  return {
+    session,
+    isReady,
+    isSignedIn: Boolean(session),
+    isAdmin: session?.role === "admin",
+  };
 };
 
 export const useClientGreeting = () => {

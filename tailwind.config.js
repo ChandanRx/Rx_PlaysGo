@@ -13,52 +13,54 @@ module.exports = {
         sans: ["var(--font-jakarta)", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       colors: {
-        /* Design-system tokens — matches the coral + lavender palette */
+        /* Design-system tokens — sage + charcoal + chartreuse palette.
+           Values resolve through the CSS variables in globals.css so
+           they follow dark mode and category re-tints automatically. */
         brand: {
-          DEFAULT: "#FF3C1F",   /* vivid coral-red */
-          hover:   "#E82E12",
-          soft:    "#FFF0ED",
-          border:  "#FFC9BF",
+          DEFAULT: "var(--brand)",        /* charcoal olive */
+          hover:   "var(--brand-hover)",
+          soft:    "var(--brand-soft)",
+          border:  "var(--brand-border)",
         },
         secondary: {
-          DEFAULT: "#C4A8FF",   /* soft lavender */
-          soft:    "#F0EBFF",
-          border:  "#D8CAFF",
+          DEFAULT: "var(--secondary)",    /* olive lime */
+          soft:    "var(--secondary-soft)",
+          border:  "var(--secondary-border)",
         },
         accent: {
-          DEFAULT: "#FF6B2B",   /* warm orange for tiles / highlights */
+          DEFAULT: "var(--accent)",       /* chartreuse for tiles / highlights */
         },
         surface: {
-          bg:     "#F9F7F4",    /* warm off-white page background */
-          card:   "#FFFFFF",
-          input:  "#FFFFFF",
-          border: "#E8E3DC",
-          hover:  "#EDE9E3",
+          bg:     "var(--bg-page)",       /* soft sage page background */
+          card:   "var(--bg-card)",
+          input:  "var(--bg-input)",
+          border: "var(--border-subtle)",
+          hover:  "var(--bg-hover)",
         },
         ink: {
-          DEFAULT: "#111111",   /* near-black headings */
-          body:    "#3D3835",
-          muted:   "#7A736A",
-          faint:   "#B0A89E",
+          DEFAULT: "var(--text-heading)", /* charcoal olive headings */
+          body:    "var(--text-body)",
+          muted:   "var(--text-muted)",
+          faint:   "var(--text-faint)",
         },
       },
       borderRadius: {
         "pill":    "999px",
-        "card":    "18px",
-        "card-lg": "24px",
+        "card":    "20px",
+        "card-lg": "28px",
       },
       boxShadow: {
-        card:          "0 2px 12px rgba(30,20,10,0.06)",
-        "card-hover":  "0 8px 32px rgba(30,20,10,0.10)",
-        brand:         "0 4px 14px rgba(255,60,31,0.32)",
-        "brand-hover": "0 6px 20px rgba(255,60,31,0.42)",
-        sidebar:       "0 8px 32px rgba(30,20,10,0.07)",
+        card:          "0 2px 12px rgba(28,32,18,0.06)",
+        "card-hover":  "0 8px 32px rgba(28,32,18,0.10)",
+        brand:         "0 4px 14px rgba(var(--brand-rgb),0.32)",
+        "brand-hover": "0 6px 20px rgba(var(--brand-rgb),0.42)",
+        sidebar:       "0 8px 32px rgba(28,32,18,0.07)",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":  "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-        /* Coral → Lavender diagonal — use as bg-[image:var(--...)] or via className */
-        "brand-gradient":  "linear-gradient(135deg, #FF3C1F 0%, #C4A8FF 100%)",
+        /* Indigo → Teal diagonal — use as bg-[image:var(--...)] or via className */
+        "brand-gradient":  "linear-gradient(135deg, var(--brand) 0%, var(--secondary) 100%)",
       },
       transitionDuration: {
         400: "400ms",

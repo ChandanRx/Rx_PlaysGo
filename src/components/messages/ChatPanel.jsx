@@ -1,16 +1,20 @@
 "use client";
 
 import React from "react";
-import { ArrowLeft } from "lucide-react";
-import { HiChatAlt2 } from "react-icons/hi";
+import Link from "next/link";
+import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
+import { getUsernameForUserName } from "../../shared/dummyPosts";
 
 const ChatPanel = ({ chat, post, showBack = false, onBack }) => {
+  const authorUsername = chat ? getUsernameForUserName(chat.name) : null;
+
   if (!chat) {
     return (
       <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-2 px-6 text-center">
-        <HiChatAlt2 className="text-[32px] text-[var(--text-faint)]" />
+        <ChatBubbleLeftRightIcon className="h-[32px] w-[32px] text-[var(--text-faint)]" />
         <p className="text-[13px] text-[var(--text-muted)]">Select a conversation to start chatting</p>
       </div>
     );
@@ -27,7 +31,7 @@ const ChatPanel = ({ chat, post, showBack = false, onBack }) => {
             aria-label="Back to conversations"
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[var(--text-heading)] transition hover:bg-[var(--bg-input)]"
           >
-            <ArrowLeft className="h-[18px] w-[18px]" strokeWidth={2.25} />
+            <ArrowLeftIcon className="h-[18px] w-[18px]" strokeWidth={2.25} />
           </button>
         )}
 
@@ -39,7 +43,16 @@ const ChatPanel = ({ chat, post, showBack = false, onBack }) => {
         </div>
 
         <div className="min-w-0 flex-1">
-          <h3 className="truncate text-[15px] font-bold text-[var(--text-heading)]">{chat.name}</h3>
+          {authorUsername ? (
+            <Link
+              href={`/profile/${authorUsername}`}
+              className="block truncate text-[15px] font-bold text-[var(--text-heading)] hover:underline"
+            >
+              {chat.name}
+            </Link>
+          ) : (
+            <h3 className="truncate text-[15px] font-bold text-[var(--text-heading)]">{chat.name}</h3>
+          )}
           <p className="text-[11px] text-[var(--text-muted)]">
             {chat.online ? <span className="font-medium text-[#22C55E]">● Online</span> : "Offline"}
           </p>

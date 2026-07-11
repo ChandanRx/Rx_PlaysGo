@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { CircleCheck, ClipboardList, Flag, Users } from "lucide-react";
+import { CheckCircleIcon, ClipboardDocumentListIcon, FlagIcon, UsersIcon } from "@heroicons/react/24/outline";
 import Card from "../ui/Card";
 import { getAdminStats } from "../../shared/adminStore";
 
@@ -13,10 +13,10 @@ const AdminStats = () => {
   }, []);
 
   const items = [
-    { label: "Total posts", value: stats.totalPosts, icon: ClipboardList },
-    { label: "Active posts", value: stats.activePosts, icon: CircleCheck },
-    { label: "Unique users", value: stats.uniqueUsers, icon: Users },
-    { label: "Pending reports", value: stats.pendingReports, icon: Flag },
+    { label: "Total posts", value: stats.totalPosts, icon: ClipboardDocumentListIcon },
+    { label: "Active posts", value: stats.activePosts, icon: CheckCircleIcon },
+    { label: "Unique users", value: stats.uniqueUsers, icon: UsersIcon },
+    { label: "Pending reports", value: stats.pendingReports, icon: FlagIcon },
   ];
 
   return (

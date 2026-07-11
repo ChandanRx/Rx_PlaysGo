@@ -2,20 +2,30 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
-import { Bookmark, CircleCheck, ClipboardList, Handshake, Inbox } from "lucide-react";
+import { AnimatePresence, m } from "framer-motion";
+import {
+  EyeIcon,
+  InboxIcon,
+  PencilSquareIcon,
+  PlusIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import { springSnappy, staggerContainer, staggerItem } from "../../shared/motionPresets";
 import PostItems from "../../components/PostItems";
 import PostModal from "../../components/PostModal";
 import ProfileHeader from "../../components/profile/ProfileHeader";
-import ProfileStats from "../../components/profile/ProfileStats";
+import FollowListModal from "../../components/profile/FollowListModal";
 import EditProfileModal from "../../components/profile/EditProfileModal";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import {
+  CURRENT_USER_ID,
   POST_STATUSES,
   deletePost,
   dummyUser,
   getStoredUserProfile,
+  getUserById,
   getUserPosts,
   updateUserProfile,
 } from "../../shared/dummyPosts";
@@ -27,66 +37,20 @@ const EMPTY_STATE_COPY = {
   Expired: { title: "No expired posts", desc: "Posts past their date will show up here." },
 };
 
-const ConfirmDeleteDialog = ({ onCancel, onConfirm }) => (
-  <>
-    <motion.div
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      transition={{ duration: 0.18 }}
-      className="fixed inset-0 z-[100] bg-[var(--text-heading)]/40 backdrop-blur-sm"
-      onClick={onCancel}
-    />
-    <div className="fixed inset-0 z-[101] flex items-center justify-center p-4" onClick={onCancel}>
-      <motion.div
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby="confirm-delete-title"
-        initial={{ opacity: 0, scale: 0.96, y: 8 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.97, y: 6 }}
-        transition={{ type: "spring", damping: 26, stiffness: 320 }}
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm rounded-sm bg-[var(--bg-card)] p-5 shadow-[0_20px_60px_rgba(30,20,10,0.18)]"
-      >
-        <h3 id="confirm-delete-title" className="text-[16px] font-black text-[var(--text-heading)]">Delete this post?</h3>
-        <p className="mt-1.5 text-[13px] text-[var(--text-muted)]">
-          This can&apos;t be undone. The post will be permanently removed from your listings.
-        </p>
-        <div className="mt-5 flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded-sm px-4 py-2 text-[13px] font-semibold text-[var(--text-muted)] transition hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="rounded-sm border border-red-200 bg-red-50 px-4 py-2 text-[13px] font-semibold text-red-600 transition hover:bg-red-100"
-          >
-            Delete
-          </button>
-        </div>
-      </motion.div>
-    </div>
-  </>
-);
-
 const Profile = () => {
   const router = useRouter();
-  // Matches the server-rendered default so hydration doesn't flash blank;
-  // the effect below swaps in any locally-edited profile right after mount.
   const [profile, setProfile] = useState(dummyUser);
   const [userPosts, setUserPosts] = useState([]);
   const [activeTab, setActiveTab] = useState("Active");
   const [selectedPost, setSelectedPost] = useState(null);
   const [editing, setEditing] = useState(false);
   const [confirmingDeleteId, setConfirmingDeleteId] = useState(null);
+  const [followList, setFollowList] = useState(null);
 
   useEffect(() => {
-    const storedProfile = getStoredUserProfile();
-    setProfile(storedProfile);
-    setUserPosts(getUserPosts(storedProfile.email));
+    const me = getUserById(CURRENT_USER_ID) || getStoredUserProfile();
+    setProfile(me);
+    setUserPosts(getUserPosts(me.email));
   }, []);
 
   const tabCounts = useMemo(() => {
@@ -103,19 +67,27 @@ const Profile = () => {
     [userPosts, activeTab],
   );
 
-  const stats = useMemo(() => [
-    { label: "Total posts",  value: userPosts.length,  icon: ClipboardList },
-    { label: "Active posts", value: tabCounts.Active,  icon: CircleCheck },
-    { label: "Joined posts", value: 0, icon: Handshake, hint: "Coming soon" },
-    { label: "Saved posts",  value: 0, icon: Bookmark,  hint: "Coming soon" },
-  ], [userPosts, tabCounts]);
-
   const refreshPosts = () => setUserPosts(getUserPosts(profile.email));
 
   const handleSaveProfile = (form) => {
-    setProfile(updateUserProfile(form));
+    updateUserProfile(form);
+    setProfile(getUserById(CURRENT_USER_ID) || getStoredUserProfile());
     setEditing(false);
   };
+
+  const stats = [
+    {
+      label: "Followers",
+      value: profile.followers?.length ?? 0,
+      onClick: () => setFollowList("followers"),
+    },
+    {
+      label: "Following",
+      value: profile.following?.length ?? 0,
+      onClick: () => setFollowList("following"),
+    },
+    { label: "Posts", value: userPosts.length },
+  ];
 
   const handleDelete = (id) => {
     deletePost(id);
@@ -127,90 +99,117 @@ const Profile = () => {
 
   return (
     <div className="space-y-5">
+      <ProfileHeader
+        profile={profile}
+        stats={stats}
+        onEditProfile={() => setEditing(true)}
+      />
 
-      <ProfileHeader profile={profile} onEditProfile={() => setEditing(true)} />
-
-      <ProfileStats stats={stats} />
-
-      {/* ── Posts ── */}
       <Card className="p-4 sm:p-5 md:p-6" hover={false} padding={false}>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 border-b border-[var(--border-subtle)] pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--brand)]">My Posts</p>
-            <h2 className="mt-0.5 text-[18px] font-black text-[var(--text-heading)]">Manage your listings</h2>
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              Post center
+            </p>
+            <h2 className="mt-1 text-[18px] font-black text-[var(--text-heading)]">Manage your posts</h2>
           </div>
 
-          <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1 scrollbar-none sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
+          <Button variant="yellow" size="md" className="w-full sm:w-auto" onClick={() => router.push("/createpost")}>
+            <PlusIcon className="h-4 w-4" strokeWidth={2.25} />
+            New post
+          </Button>
+        </div>
+
+        <div className="mt-4 overflow-x-auto rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-1 scrollbar-none">
+          <div className="flex min-w-max gap-1">
             {POST_STATUSES.map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
-                className={`flex shrink-0 items-center gap-1.5 rounded-sm px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
+                className={`relative inline-flex h-10 shrink-0 items-center gap-2 rounded-xl px-4 text-[13px] font-bold transition-colors ${
                   activeTab === tab
-                    ? "bg-[var(--text-heading)] text-[var(--selected-fg)]"
-                    : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]"
+                    ? "bg-[var(--bg-card)] text-[var(--text-heading)] shadow-[var(--shadow-xs)]"
+                    : "text-[var(--text-muted)] hover:bg-[var(--bg-card)]/70 hover:text-[var(--text-heading)]"
                 }`}
               >
                 {tab}
-                <span
-                  className={`rounded-sm px-1.5 text-[10.5px] ${
-                    activeTab === tab ? "bg-[var(--selected-fg)]/20" : "bg-[var(--bg-input)] text-[var(--text-faint)]"
-                  }`}
-                >
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
+                  activeTab === tab
+                    ? "bg-[var(--brand-soft)] text-[var(--brand)]"
+                    : "bg-[var(--bg-card)] text-[var(--text-faint)]"
+                }`}>
                   {tabCounts[tab]}
                 </span>
+                {activeTab === tab && (
+                  <m.span
+                    layoutId="profile-tab-underline"
+                    transition={springSnappy}
+                    className="absolute inset-x-3 bottom-1 h-[2px] rounded-full bg-[var(--brand)]"
+                  />
+                )}
               </button>
             ))}
           </div>
         </div>
 
         {filteredPosts.length === 0 ? (
-          <div className="mt-10 flex flex-col items-center text-center">
-            <Inbox className="mb-3 h-12 w-12 text-[var(--text-faint)]" strokeWidth={1.75} />
+          <div className="mt-5 flex flex-col items-center rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--bg-secondary)]/60 px-5 py-12 text-center">
+            <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--bg-card)] text-[var(--text-faint)] shadow-[var(--shadow-xs)]">
+              <InboxIcon className="h-7 w-7" strokeWidth={1.75} />
+            </span>
             <p className="text-[15px] font-bold text-[var(--text-heading)]">{emptyCopy.title}</p>
-            <p className="mt-1 text-[13px] text-[var(--text-muted)]">{emptyCopy.desc}</p>
+            <p className="mt-1 max-w-sm text-[13px] text-[var(--text-muted)]">{emptyCopy.desc}</p>
             {activeTab === "Active" && (
-              <Button variant="yellow" size="sm" className="mt-4" onClick={() => router.push("/createpost")}>
+              <Button variant="yellow" size="sm" className="mt-5" onClick={() => router.push("/createpost")}>
+                <PlusIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
                 Create a post
               </Button>
             )}
           </div>
         ) : (
-          <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+          <m.div
+            key={activeTab}
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+            className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
+          >
             {filteredPosts.map((item) => (
-              <div key={item.id} className="flex h-full flex-col gap-2">
+              <m.div key={item.id} variants={staggerItem} className="flex h-full flex-col gap-2">
                 <div className="flex-1">
                   <PostItems post={item} onClick={() => setSelectedPost(item)} />
                 </div>
 
-                {/* action bar */}
-                <div className="flex items-center gap-1.5">
+                <div className="grid grid-cols-[1fr_1fr_auto] items-center gap-1.5 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-1">
                   <button
                     type="button"
                     onClick={() => setSelectedPost(item)}
-                    className="flex-1 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] py-2 text-[12px] font-semibold text-[var(--text-body)] transition hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]"
+                    className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--bg-card)] py-2 text-[12px] font-semibold text-[var(--text-body)] shadow-[var(--shadow-xs)] transition hover:text-[var(--text-heading)] active:scale-[0.97]"
                   >
+                    <EyeIcon className="h-3.5 w-3.5" strokeWidth={2} />
                     View
                   </button>
                   <button
                     type="button"
                     onClick={() => router.push(`/createpost?edit=${item.id}`)}
-                    className="flex-1 rounded-sm border border-[var(--border-subtle)] bg-[var(--bg-card)] py-2 text-[12px] font-semibold text-[var(--text-body)] transition hover:border-[var(--brand)] hover:text-[var(--brand)]"
+                    className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--bg-card)] py-2 text-[12px] font-semibold text-[var(--text-body)] shadow-[var(--shadow-xs)] transition hover:text-[var(--brand)] active:scale-[0.97]"
                   >
+                    <PencilSquareIcon className="h-3.5 w-3.5" strokeWidth={2} />
                     Edit
                   </button>
                   <button
                     type="button"
                     onClick={() => setConfirmingDeleteId(item.id)}
-                    className="flex-1 rounded-sm border border-red-200 bg-red-50 py-2 text-[12px] font-semibold text-red-600 transition hover:bg-red-100"
+                    aria-label="Delete post"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--danger-soft)] text-[var(--danger)] transition hover:ring-1 hover:ring-[var(--danger)] active:scale-[0.97]"
                   >
-                    Delete
+                    <TrashIcon className="h-3.5 w-3.5" strokeWidth={2} />
                   </button>
                 </div>
-              </div>
+              </m.div>
             ))}
-          </div>
+          </m.div>
         )}
       </Card>
 
@@ -226,9 +225,21 @@ const Profile = () => {
 
       <AnimatePresence>
         {confirmingDeleteId && (
-          <ConfirmDeleteDialog
+          <ConfirmDialog
+            title="Delete this post?"
+            description="This can't be undone. The post will be permanently removed from your listings."
             onCancel={() => setConfirmingDeleteId(null)}
             onConfirm={() => handleDelete(confirmingDeleteId)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {followList && (
+          <FollowListModal
+            title={followList === "followers" ? "Followers" : "Following"}
+            userIds={followList === "followers" ? profile.followers : profile.following}
+            onClose={() => setFollowList(null)}
           />
         )}
       </AnimatePresence>

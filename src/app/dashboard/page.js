@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheckIcon } from "@heroicons/react/24/outline";
 import PostModal from "../../components/PostModal";
 import Card from "../../components/ui/Card";
 import AdminStats from "../../components/admin/AdminStats";
@@ -33,8 +33,8 @@ const AdminDashboardPage = () => {
       <Card className="p-5 md:p-6" hover={false}>
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--brand)]">Admin</p>
-          <span className="inline-flex items-center gap-1 rounded-sm bg-[var(--text-heading)] px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-[var(--selected-fg)]">
-            <ShieldCheck className="h-3 w-3" strokeWidth={2.5} />
+          <span className="inline-flex items-center gap-1 rounded-md bg-[var(--text-heading)] px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-[var(--selected-fg)]">
+            <ShieldCheckIcon className="h-3 w-3" strokeWidth={2.5} />
             Admin
           </span>
         </div>
@@ -52,7 +52,7 @@ const AdminDashboardPage = () => {
               key={tab}
               type="button"
               onClick={() => setActiveTab(tab)}
-              className={`shrink-0 rounded-sm px-4 py-1.5 text-[12.5px] font-semibold transition-colors ${
+              className={`shrink-0 rounded-full px-4 py-1.5 text-[12.5px] font-semibold transition-colors ${
                 activeTab === tab
                   ? "bg-[var(--text-heading)] text-[var(--selected-fg)]"
                   : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]"

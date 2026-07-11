@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import AppShell from "../components/AppShell";
 import CategoryThemeSync from "../components/CategoryThemeSync";
+import MotionProvider from "../components/motion/MotionProvider";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -27,10 +28,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={jakarta.variable}>
       <body className="min-h-screen flex flex-col font-sans antialiased">
-        <Suspense fallback={null}>
-          <CategoryThemeSync />
-          <AppShell>{children}</AppShell>
-        </Suspense>
+        <MotionProvider>
+          <Suspense fallback={null}>
+            <CategoryThemeSync />
+            <AppShell>{children}</AppShell>
+          </Suspense>
+        </MotionProvider>
       </body>
     </html>
   );
