@@ -16,10 +16,10 @@ import ThemeToggle from "./ui/ThemeToggle";
 import PlaysGoLogo from "./PlaysGoLogo";
 
 const navItems = [
-  { label: "Home", href: "/", icon: HomeIcon },
-  { label: "Messages", href: "/messages", icon: ChatBubbleLeftRightIcon },
-  { label: "Profile", href: "/profile", icon: UserIcon },
-  { label: "Pro", href: "/pro", icon: SparklesIcon },
+  { label: "Home", href: "/", icon: HiHome },
+  { label: "Messages", href: "/messages", icon: HiChatAlt2 },
+  { label: "Profile", href: "/profile", icon: HiUser },
+  { label: "Pro", href: "/pro", icon: HiSparkles },
 ];
 
 /* Floating tooltip shown to the right of each icon (replaces native title) */
