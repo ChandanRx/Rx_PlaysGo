@@ -4,6 +4,7 @@ import Link from "next/link";
 import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { CheckBadgeIcon } from "@heroicons/react/24/outline";
 import Card from "../ui/Card";
+import { ACTIVE_APP_CATEGORIES } from "../../shared/appPreferences";
 import { easeOut, fadeIn, fadeUp, scaleIn } from "../../shared/motionPresets";
 
 const MotionCard = m.create(Card);
@@ -20,7 +21,8 @@ const NEEDS = [
   "a nearby item for sale",
 ];
 
-const QUICK_FILTERS = ["Players", "Local Help", "For Sale"];
+// Only surface categories that are currently live (see ACTIVE_APP_CATEGORIES).
+const QUICK_FILTERS = ACTIVE_APP_CATEGORIES;
 
 // Free to use under the Unsplash License — swap for your own shot anytime.
 const HERO_PHOTO =

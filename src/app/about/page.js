@@ -1,5 +1,6 @@
 import Card from "../../components/ui/Card";
 import Data from "../../shared/data";
+import { isCategoryActive } from "../../shared/appPreferences";
 import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON, FEATURE_ICONS } from "../../shared/lucideIcons";
 
 const features = [
@@ -62,7 +63,7 @@ const About = () => (
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {Data.CategoryData.map((item) => {
+        {Data.CategoryData.filter((item) => isCategoryActive(item.name)).map((item) => {
           const Icon = CATEGORY_ICONS[item.name] || DEFAULT_CATEGORY_ICON;
 
           return (

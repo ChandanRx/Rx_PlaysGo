@@ -3,10 +3,31 @@ export const CATEGORY_CHANGE_EVENT = "playsgo-category-change";
 
 export const APP_CATEGORIES = ["Players", "Local Help", "For Sale"];
 
+// The only categories exposed to end users right now. Keep APP_CATEGORIES as the
+// full list of everything that exists; flip this back to APP_CATEGORIES (or add
+// entries) to bring Helper/Sale back everywhere — no other code changes needed.
+export const ACTIVE_APP_CATEGORIES = ["Players"];
+
 export const CATEGORY_LABELS = {
   Players: "Sports",
   "Local Help": "Helper",
   "For Sale": "Sale",
+};
+
+export const isCategoryActive = (category) =>
+  ACTIVE_APP_CATEGORIES.includes(category);
+
+// Human-readable list of the active modes, e.g. "Sports" or "Sports, Helper,
+// or Sale" — lets copy stay in sync with ACTIVE_APP_CATEGORIES automatically.
+export const getActiveCategoryLabels = () =>
+  ACTIVE_APP_CATEGORIES.map((category) => CATEGORY_LABELS[category] || category);
+
+export const formatActiveCategoryList = (conjunction = "or") => {
+  const labels = getActiveCategoryLabels();
+  if (labels.length === 0) return "";
+  if (labels.length === 1) return labels[0];
+  if (labels.length === 2) return `${labels[0]} ${conjunction} ${labels[1]}`;
+  return `${labels.slice(0, -1).join(", ")}, ${conjunction} ${labels[labels.length - 1]}`;
 };
 
 export const getCategoryThemeValue = (category) => {

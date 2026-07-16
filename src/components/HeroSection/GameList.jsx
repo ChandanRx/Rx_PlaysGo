@@ -3,9 +3,12 @@
 import React from "react";
 import { m } from "framer-motion";
 import Data from "../../shared/data";
+import { formatActiveCategoryList, isCategoryActive } from "../../shared/appPreferences";
 import { hoverScale, staggerContainer, staggerItem } from "../../shared/motionPresets";
 
 const GameList = ({ activeCategory, onSelectCategory }) => {
+  const categories = Data.CategoryData.filter((item) => isCategoryActive(item.name));
+
   return (
     <section>
       <div className="mb-4 flex items-end justify-between gap-3">
@@ -14,11 +17,11 @@ const GameList = ({ activeCategory, onSelectCategory }) => {
             Categories V1
           </p>
           <h3 className="mt-1 text-xl font-semibold tracking-tight text-[var(--text-zinc-950)] md:text-2xl">
-            Browse the three core Plays Go categories
+            Browse Plays Go categories
           </h3>
         </div>
         <p className="hidden text-sm text-[var(--text-zinc-600)] md:block">
-          Players, local help, and nearby items for sale.
+          {formatActiveCategoryList("and")}.
         </p>
       </div>
 
@@ -28,7 +31,7 @@ const GameList = ({ activeCategory, onSelectCategory }) => {
         initial="hidden"
         animate="show"
       >
-        {Data.CategoryData.map((item) => {
+        {categories.map((item) => {
           const isActive = activeCategory === item.name;
 
           return (

@@ -7,8 +7,9 @@ import Data from "../../shared/data";
 import { CheckIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from "../../shared/lucideIcons";
 import {
+  ACTIVE_APP_CATEGORIES, formatActiveCategoryList,
   getCategoryLabel, getCategoryThemeValue,
-  getStoredAppCategory, setStoredAppCategory,
+  getStoredAppCategory, isCategoryActive, setStoredAppCategory,
 } from "../../shared/appPreferences";
 
 const STORAGE_KEY = "quibly_theme";
@@ -111,9 +112,11 @@ const SettingsPage = () => {
       {/* header card */}
       <Card className="p-5 md:p-6" hover={false}>
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--text-faint)]">Settings</p>
-        <h1 className="mt-1.5 text-[22px] font-black text-[var(--text-heading)]">Choose your app mode</h1>
+        <h1 className="mt-1.5 text-[22px] font-black text-[var(--text-heading)]">
+          {ACTIVE_APP_CATEGORIES.length > 1 ? "Choose your app mode" : "Your app mode"}
+        </h1>
         <p className="mt-1.5 max-w-xl text-[13.5px] leading-relaxed text-[var(--text-muted)]">
-          PlaysGo shows one category at a time — Sports, Helper, or Sale. Your feed, posts, and theme match your selection.
+          PlaysGo focuses on {formatActiveCategoryList()} for now — your feed, posts, and theme match your selection.
         </p>
         {activeCategory && (
           <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--bg-secondary)] px-3 py-1 text-[12px] font-semibold text-[var(--text-heading)]">
@@ -123,9 +126,9 @@ const SettingsPage = () => {
         )}
       </Card>
 
-      {/* mode cards */}
+      {/* mode cards — only active categories are selectable */}
       <div className="grid gap-4 md:grid-cols-3">
-        {Data.CategoryData.map((item) => {
+        {Data.CategoryData.filter((item) => isCategoryActive(item.name)).map((item) => {
           const active = activeCategory === item.name;
           const Icon = CATEGORY_ICONS[item.name] || DEFAULT_CATEGORY_ICON;
 
@@ -167,6 +170,12 @@ const SettingsPage = () => {
           );
         })}
       </div>
+
+      {ACTIVE_APP_CATEGORIES.length <= 1 && (
+        <p className="text-center text-[12.5px] font-medium text-[var(--text-faint)]">
+          More modes coming soon
+        </p>
+      )}
 
       {/* footer */}
       <div className="flex justify-center pt-2">

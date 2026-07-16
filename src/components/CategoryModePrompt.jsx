@@ -1,16 +1,31 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRightIcon, TrophyIcon } from "@heroicons/react/24/outline";
-import { getCategoryLabel } from "../shared/appPreferences";
+import {
+  ACTIVE_APP_CATEGORIES,
+  formatActiveCategoryList,
+  getCategoryLabel,
+  setStoredAppCategory,
+} from "../shared/appPreferences";
 import { useStoredAppCategory } from "../hooks/useClientData";
 import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from "../shared/lucideIcons";
 
 const CategoryModePrompt = () => {
   const router = useRouter();
   const { hasCategory, isReady } = useStoredAppCategory();
-  if (!isReady || hasCategory) return null;
+  const singleMode = ACTIVE_APP_CATEGORIES.length === 1;
+
+  // With only one active category there's nothing to choose — auto-apply it on
+  // first load instead of asking the user to pick.
+  useEffect(() => {
+    if (isReady && !hasCategory && singleMode) {
+      setStoredAppCategory(ACTIVE_APP_CATEGORIES[0]);
+    }
+  }, [isReady, hasCategory, singleMode]);
+
+  if (!isReady || hasCategory || singleMode) return null;
 
   return (
     <div className="mb-5 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-6 py-12 text-center">
@@ -19,7 +34,7 @@ const CategoryModePrompt = () => {
       </div>
       <h2 className="text-lg font-bold text-[var(--text-heading)]">Pick a mode to get started</h2>
       <p className="mx-auto mt-1.5 max-w-sm text-[13px] text-[var(--text-muted)]">
-        PlaysGo shows one category at a time — Sports, Helper, or Sale. Choose yours in Settings.
+        PlaysGo shows one category at a time — {formatActiveCategoryList()}. Choose yours in Settings.
       </p>
       <button
         type="button"
