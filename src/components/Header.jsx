@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Data from "../shared/data";
+import { isCategoryActive } from "../shared/appPreferences";
 import { signOut } from "../shared/authSession";
 import { useAuthSession } from "../hooks/useClientData";
 import Button from "./ui/Button";
@@ -35,7 +36,10 @@ const Header = () => {
   const activeCategory = searchParams.get("category") || "Nearby";
 
   const categoryOptions = useMemo(
-    () => [{ name: "All categories", value: "Nearby" }, ...Data.CategoryData],
+    () => [
+      { name: "All categories", value: "Nearby" },
+      ...Data.CategoryData.filter((item) => isCategoryActive(item.name)),
+    ],
     [],
   );
 

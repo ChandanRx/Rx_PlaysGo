@@ -129,25 +129,25 @@ const Profile = () => {
                 onClick={() => setActiveTab(tab)}
                 className={`relative inline-flex h-10 shrink-0 items-center gap-2 rounded-xl px-4 text-[13px] font-bold transition-colors ${
                   activeTab === tab
-                    ? "bg-[var(--bg-card)] text-[var(--text-heading)] shadow-[var(--shadow-xs)]"
-                    : "text-[var(--text-muted)] hover:bg-[var(--bg-card)]/70 hover:text-[var(--text-heading)]"
+                    ? "text-[var(--text-heading)]"
+                    : "text-[var(--text-muted)] hover:text-[var(--text-heading)]"
                 }`}
               >
-                {tab}
-                <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
+                {activeTab === tab && (
+                  <m.span
+                    layoutId="profile-tab-pill"
+                    transition={springSnappy}
+                    className="absolute inset-0 rounded-xl bg-[var(--bg-card)] shadow-[var(--shadow-xs)]"
+                  />
+                )}
+                <span className="relative z-10">{tab}</span>
+                <span className={`relative z-10 rounded-full px-2 py-0.5 text-[10px] font-black ${
                   activeTab === tab
                     ? "bg-[var(--brand-soft)] text-[var(--brand)]"
                     : "bg-[var(--bg-card)] text-[var(--text-faint)]"
                 }`}>
                   {tabCounts[tab]}
                 </span>
-                {activeTab === tab && (
-                  <m.span
-                    layoutId="profile-tab-underline"
-                    transition={springSnappy}
-                    className="absolute inset-x-3 bottom-1 h-[2px] rounded-full bg-[var(--brand)]"
-                  />
-                )}
               </button>
             ))}
           </div>

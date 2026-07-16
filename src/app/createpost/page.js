@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createPost } from "../../shared/dummyPosts";
 import Data from "../../shared/data";
-import { getCategoryLabel, getStoredAppCategory } from "../../shared/appPreferences";
+import { formatActiveCategoryList, getCategoryLabel, getStoredAppCategory } from "../../shared/appPreferences";
 import { Input, Textarea } from "../../components/ui/FormControls";
 import Dropdown from "../../components/ui/Dropdown";
 import DatePicker from "../../components/ui/DatePicker";
@@ -61,7 +61,7 @@ const CreatePost = () => {
     <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-12 text-center shadow-[0_2px_12px_rgba(28,32,18,0.06)]">
       <Cog6ToothIcon className="mb-3 h-12 w-12 text-[var(--brand)]" strokeWidth={1.75} />
       <h2 className="text-[18px] font-black text-[var(--text-heading)]">Choose a mode first</h2>
-      <p className="mt-2 text-[13px] text-[var(--text-muted)]">Go to Settings and pick Sports, Helper, or Sale before creating a post.</p>
+      <p className="mt-2 text-[13px] text-[var(--text-muted)]">Go to Settings and pick {formatActiveCategoryList()} before creating a post.</p>
       <button type="button" onClick={() => router.push("/settings")} className="mt-5 inline-flex items-center justify-center gap-1.5 rounded-full bg-[var(--brand)] px-6 py-2.5 text-[13px] font-bold text-[var(--on-brand)] shadow-[0_4px_12px_rgba(var(--brand-rgb),0.28)] transition hover:bg-[var(--brand-hover)]">
         Open Settings
         <ArrowRightIcon className="h-4 w-4" strokeWidth={2.25} />
