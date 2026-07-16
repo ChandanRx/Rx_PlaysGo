@@ -7,7 +7,9 @@ import { ShieldCheckIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import Button from "../../components/ui/Button";
 import { Input } from "../../components/ui/FormControls";
 import PlaysGoLogo from "../../components/PlaysGoLogo";
+import FloatingOrbs from "../../components/FloatingOrbs";
 import { signIn } from "../../shared/authSession";
+import styles from "./signin.module.css";
 
 const EMAIL_PATTERN = /^\S+@\S+\.\S+$/;
 
@@ -84,12 +86,14 @@ const SignInPage = () => {
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       {/* ── Hero panel (left) ── */}
       <aside className="relative hidden overflow-hidden bg-[var(--brand)] p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-[var(--secondary)]/40 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-[var(--accent)]/25 blur-3xl" />
+        {/* Ambient, cursor-reactive background orbs */}
+        <FloatingOrbs />
 
-        <PlaysGoLogo variant="light" />
+        <div className="relative z-10">
+          <PlaysGoLogo variant="light" />
+        </div>
 
-        <div className="relative">
+        <div className="relative z-10">
           <p className="text-[12px] font-bold uppercase tracking-[0.2em] text-white/60">
             Welcome back
           </p>
@@ -102,7 +106,7 @@ const SignInPage = () => {
           </p>
         </div>
 
-        <div className="relative flex gap-8">
+        <div className="relative z-10 flex gap-8">
           {HERO_STATS.map(({ value, label }) => (
             <div key={label}>
               <p className="text-[26px] font-black leading-none text-white">{value}</p>
@@ -115,8 +119,15 @@ const SignInPage = () => {
       </aside>
 
       {/* ── Form (right) ── */}
-      <main className="flex min-h-screen items-center justify-center px-4 py-10">
-        <div className="w-full max-w-sm">
+      <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10">
+        {/* Floating color orbs */}
+        <div className={`${styles.formBg} pointer-events-none absolute inset-0`}>
+          <div className={`${styles.orb} ${styles.orb1}`} />
+          <div className={`${styles.orb} ${styles.orb2}`} />
+          <div className={`${styles.orb} ${styles.orb3}`} />
+        </div>
+
+        <div className="relative z-10 w-full max-w-sm">
           <div className="mb-8 flex justify-center lg:hidden">
             <PlaysGoLogo />
           </div>
