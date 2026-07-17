@@ -165,8 +165,8 @@ const UserProfile = () => {
       <AnimatePresence>
         {followList && (
           <FollowListModal
-            title={followList === "followers" ? "Followers" : "Following"}
-            userIds={followList === "followers" ? profile.followers : profile.following}
+            ownerId={profile.id}
+            type={followList}
             onClose={() => setFollowList(null)}
           />
         )}

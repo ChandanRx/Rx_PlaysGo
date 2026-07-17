@@ -1,14 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { m } from "framer-motion";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { backdropFade, modalDialog } from "../../shared/motionPresets";
 import { Input, Textarea } from "../ui/FormControls";
+import AvatarPicker from "./AvatarPicker";
 
 const FIELD_LABEL = "mb-1.5 block text-[12.5px] font-semibold text-[var(--text-body)]";
+const MAX_UPLOAD_BYTES = 2 * 1024 * 1024; // 2 MB — keeps the data URL in localStorage sane.
 
 const EditProfileModal = ({ profile, onClose, onSave }) => {
+  const fileInputRef = useRef(null);
   const [form, setForm] = useState({
     name: profile.name || "",
     username: profile.username || "",
@@ -16,7 +19,9 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
     city: profile.city || "",
     state: profile.state || "",
     mobile: profile.mobile || "",
+    image: profile.image || "",
   });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const prevOverflow = document.body.style.overflow;
@@ -30,11 +35,52 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
-  const onChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+  const setField = (name, value) => {
+    setForm((p) => ({ ...p, [name]: value }));
+    setErrors((p) => (p[name] ? { ...p, [name]: undefined } : p));
+  };
+
+  const onChange = (e) => setField(e.target.name, e.target.value);
+
+  const handleUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setErrors((p) => ({ ...p, image: "Please choose an image file." }));
+      return;
+    }
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setErrors((p) => ({ ...p, image: "Image must be under 2 MB." }));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setField("image", reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  const validate = () => {
+    const next = {};
+    const name = form.name.trim();
+    const username = form.username.trim();
+
+    if (!name) next.name = "Name is required.";
+    if (!username) next.username = "Username is required.";
+    else if (/\s/.test(username)) next.username = "Username can't contain spaces.";
+    else if (!/^[a-zA-Z0-9._]+$/.test(username))
+      next.username = "Use only letters, numbers, dots or underscores.";
+
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(form);
+    if (!validate()) return;
+    onSave({
+      ...form,
+      name: form.name.trim(),
+      username: form.username.trim().toLowerCase(),
+    });
   };
 
   return (
@@ -67,14 +113,60 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
             </button>
           </div>
 
-          <form id="edit-profile-form" onSubmit={handleSubmit} className="flex-1 space-y-4 overflow-y-auto px-5 py-4">
+          <form id="edit-profile-form" onSubmit={handleSubmit} noValidate className="flex-1 space-y-4 overflow-y-auto px-5 py-4">
+            {/* Profile photo — upload or pick a ready-made avatar */}
+            <div>
+              <span className={FIELD_LABEL}>Profile photo</span>
+              <div className="flex items-center gap-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={form.image}
+                  alt="Selected avatar"
+                  className="h-16 w-16 shrink-0 rounded-full border border-[var(--border-subtle)] object-cover ring-2 ring-[var(--brand)] ring-offset-2 ring-offset-[var(--bg-card)]"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="inline-flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--bg-card)] px-3.5 py-2 text-[13px] font-bold text-[var(--text-body)] transition hover:bg-[var(--bg-input)]"
+                >
+                  <ArrowUpTrayIcon className="h-4 w-4" strokeWidth={2.25} />
+                  Upload photo
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleUpload}
+                  className="hidden"
+                />
+              </div>
+              {errors.image && (
+                <p className="mt-2 text-[12px] font-semibold text-[var(--danger)]">{errors.image}</p>
+              )}
+
+              <p className="mt-3 mb-1.5 text-[11px] font-semibold text-[var(--text-faint)]">
+                Or pick a ready-made avatar
+              </p>
+              <AvatarPicker
+                compact
+                value={form.image}
+                onChange={(picked) => setField("image", picked.url)}
+              />
+            </div>
+
             <div>
               <label className={FIELD_LABEL}>Name</label>
-              <Input name="name" value={form.name} onChange={onChange} required />
+              <Input name="name" value={form.name} onChange={onChange} aria-invalid={!!errors.name} />
+              {errors.name && (
+                <p className="mt-1.5 text-[12px] font-semibold text-[var(--danger)]">{errors.name}</p>
+              )}
             </div>
             <div>
               <label className={FIELD_LABEL}>Username</label>
-              <Input name="username" value={form.username} onChange={onChange} />
+              <Input name="username" value={form.username} onChange={onChange} aria-invalid={!!errors.username} />
+              {errors.username && (
+                <p className="mt-1.5 text-[12px] font-semibold text-[var(--danger)]">{errors.username}</p>
+              )}
             </div>
             <div>
               <label className={FIELD_LABEL}>Bio</label>

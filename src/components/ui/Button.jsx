@@ -10,8 +10,8 @@ const baseClasses =
 const variantClasses = {
   /* ── Dark pill — EdTech "Dashboard" active nav style ── */
   primary:
-    "rounded-full bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-sm " +
-    "hover:bg-[var(--text-heading)]/90 hover:shadow-md",
+    "rounded-full bg-[var(--btn-solid-bg)] text-[var(--btn-solid-fg)] shadow-sm " +
+    "hover:bg-[var(--btn-solid-hover)] hover:shadow-md",
 
   /* ── Brand CTA ── */
   yellow:
@@ -35,7 +35,7 @@ const variantClasses = {
 
   /* ── Dark (same as primary) ── */
   dark:
-    "rounded-full bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-sm hover:bg-[var(--text-heading)]/90",
+    "rounded-full bg-[var(--btn-solid-bg)] text-[var(--btn-solid-fg)] shadow-sm hover:bg-[var(--btn-solid-hover)]",
 
   /* ── Light tinted ── */
   light:

@@ -37,7 +37,7 @@ const RightSidebar = () => {
           <div className="absolute right-6 top-8 h-16 w-16 rounded-full bg-[var(--brand)]/10 opacity-80" />
 
           <div className="relative mx-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-[3px] border-[var(--bg-card)] shadow-md">
-            <Image src={dummyUser.image} alt={dummyUser.name} width={64} height={64} className="h-full w-full object-cover" />
+            <Image src={dummyUser.image} alt={dummyUser.name} width={64} height={64} unoptimized={dummyUser.image?.startsWith("data:")} className="h-full w-full object-cover" />
           </div>
           <h2 className="relative mt-3 text-center text-[15px] font-bold text-[var(--text-heading)]">{dummyUser.name}</h2>
           <p className="relative text-center text-[12px] text-[var(--text-muted)]">@{dummyUser.username} · Mumbai</p>

@@ -207,6 +207,7 @@ const PostModal = ({ post, onClose }) => {
                       src={post.userImage || "/avatar-placeholder.svg"}
                       alt={post.userName || "User"}
                       width={32} height={32}
+                      unoptimized={post.userImage?.startsWith("data:")}
                       className="h-8 w-8 shrink-0 rounded-full border border-[var(--border-subtle)] object-cover"
                     />
                     <div className="min-w-0 flex-1">

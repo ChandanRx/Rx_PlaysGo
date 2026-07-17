@@ -29,14 +29,14 @@ import {
 const DEFAULT_ORBS = [
   {
     className:
-      "absolute -right-16 -top-16 h-72 w-72 rounded-full bg-[var(--secondary)]/40 blur-3xl",
+      "absolute -right-16 -top-16 h-72 w-72 rounded-full bg-[rgba(var(--secondary-rgb),0.4)] blur-3xl",
     keyframes: { x: [0, 26, -14, 0], y: [0, -22, 16, 0], scale: [1, 1.08, 0.96, 1] },
     duration: 8,
     parallax: 28,
   },
   {
     className:
-      "absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-[var(--accent)]/25 blur-3xl",
+      "absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-[rgba(var(--accent-rgb),0.25)] blur-3xl",
     keyframes: { x: [0, -24, 14, 0], y: [0, 18, -12, 0], scale: [1, 0.95, 1.07, 1] },
     duration: 11,
     parallax: 20,

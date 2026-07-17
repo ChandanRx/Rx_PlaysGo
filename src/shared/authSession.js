@@ -1,7 +1,10 @@
+import { getGenderAvatar } from "./doodleAvatars";
+
 const SESSION_KEY = "quibly_auth_session";
 export const AUTH_CHANGE_EVENT = "quibly-auth-change";
 
-const DEFAULT_AVATAR_IMAGE = "/avatar-placeholder.svg";
+// Fallback for sign-ins that don't pick an avatar (e.g. the Google demo flow).
+const DEFAULT_AVATAR_IMAGE = getGenderAvatar("neutral", 3);
 
 const isBrowser = () => typeof window !== "undefined";
 
@@ -36,7 +39,14 @@ const persistSession = (session) => {
 
 // Mock auth — no backend yet. Any credentials are accepted; the "session" is
 // just a profile blob in localStorage, same idea as getStoredUserProfile().
-export const signIn = ({ email, name = "", image = "", asAdmin = false }) => {
+export const signIn = ({
+  email,
+  name = "",
+  image = "",
+  mobile = "",
+  gender = "",
+  asAdmin = false,
+}) => {
   if (!isBrowser()) return null;
 
   const cleanEmail = email.trim().toLowerCase();
@@ -47,11 +57,14 @@ export const signIn = ({ email, name = "", image = "", asAdmin = false }) => {
     email: cleanEmail,
     role: asAdmin ? "admin" : "member",
     image: image || DEFAULT_AVATAR_IMAGE,
+    mobile: mobile.trim(),
+    gender,
     signedInAt: new Date().toISOString(),
   });
 };
 
-export const signUp = ({ name, email, image }) => signIn({ name, email, image });
+export const signUp = ({ name, email, image, mobile, gender }) =>
+  signIn({ name, email, image, mobile, gender });
 
 export const signOut = () => {
   if (!isBrowser()) return;
