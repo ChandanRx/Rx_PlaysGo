@@ -1,20 +1,19 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   ShieldCheckIcon,
   ArrowRightIcon,
-  ArrowUpTrayIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 import Button from "../../components/ui/Button";
 import { Input } from "../../components/ui/FormControls";
 import PlaysGoLogo from "../../components/PlaysGoLogo";
 import FloatingOrbs from "../../components/FloatingOrbs";
-import { signIn, signUp } from "../../shared/authSession";
-import { AVATAR_PRESETS } from "../../shared/avatarPresets";
+import SignUpForm from "../../components/auth/SignUpForm";
+import { signIn } from "../../shared/authSession";
 
 const EMAIL_PATTERN = /^\S+@\S+\.\S+$/;
 
@@ -64,29 +63,15 @@ const GoogleIcon = (props) => (
 const AuthPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const fileInputRef = useRef(null);
 
   const [isSignIn, setIsSignIn] = useState(true);
 
-  // Sign in state
+  // Sign in state — sign-up state lives inside <SignUpForm />.
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [asAdmin, setAsAdmin] = useState(false);
 
-  // Sign up state
-  const [name, setName] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [avatar, setAvatar] = useState(AVATAR_PRESETS[0].url);
-
   const [errors, setErrors] = useState({});
-
-  const handleUpload = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setAvatar(reader.result);
-    reader.readAsDataURL(file);
-  };
 
   const handleSignIn = (event) => {
     event.preventDefault();
@@ -106,30 +91,6 @@ const AuthPage = () => {
     router.push(searchParams.get("next") || (asAdmin ? "/dashboard" : "/"));
   };
 
-  const handleSignUp = (event) => {
-    event.preventDefault();
-
-    const nextErrors = {};
-    if (!name.trim()) {
-      nextErrors.name = "Enter your name.";
-    }
-    if (!EMAIL_PATTERN.test(email.trim())) {
-      nextErrors.email = "Enter a valid email address.";
-    }
-    if (password.length < 6) {
-      nextErrors.password = "Password must be at least 6 characters.";
-    }
-    if (confirmPassword !== password) {
-      nextErrors.confirmPassword = "Passwords don't match.";
-    }
-
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
-
-    signUp({ name, email, image: avatar });
-    router.push("/");
-  };
-
   const handleGoogleSignIn = () => {
     signIn({ email: "member@gmail.com", name: "Google Member" });
     router.push(searchParams.get("next") || "/");
@@ -140,8 +101,6 @@ const AuthPage = () => {
     setErrors({});
     setEmail("");
     setPassword("");
-    setConfirmPassword("");
-    setName("");
   };
 
   return (
@@ -242,105 +201,7 @@ const AuthPage = () => {
                 </button>
               </p>
 
-              <form onSubmit={handleSignUp} noValidate className="mt-5 space-y-3">
-                <div>
-                  <span className="mb-1 block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                    Profile photo
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={avatar}
-                      alt="Selected avatar"
-                      className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-[var(--brand)] ring-offset-2 ring-offset-[var(--bg-card)]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="inline-flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--bg-card)] px-3 py-1.5 text-[12px] font-bold text-[var(--text-body)] transition hover:bg-[var(--bg-hover)]"
-                    >
-                      <ArrowUpTrayIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
-                      Upload
-                    </button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleUpload}
-                      className="hidden"
-                    />
-                  </div>
-
-                  <p className="mt-2 mb-1 text-[10px] font-semibold text-[var(--text-faint)]">
-                    Or pick avatar
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {AVATAR_PRESETS.map((preset) => {
-                      const active = avatar === preset.url;
-                      return (
-                        <button
-                          key={preset.id}
-                          type="button"
-                          onClick={() => setAvatar(preset.url)}
-                          aria-label={`Choose ${preset.id} avatar`}
-                          aria-pressed={active}
-                          className={`h-10 w-10 overflow-hidden rounded-full transition ${
-                            active
-                              ? "ring-2 ring-[var(--brand)] ring-offset-2 ring-offset-[var(--bg-card)]"
-                              : "opacity-80 hover:opacity-100"
-                          }`}
-                        >
-                          <img src={preset.url} alt="" className="h-full w-full object-cover" />
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <Field label="Full name" error={errors.name}>
-                  <Input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Your full name"
-                    autoComplete="name"
-                  />
-                </Field>
-
-                <Field label="Email" error={errors.email}>
-                  <Input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    autoComplete="email"
-                  />
-                </Field>
-
-                <Field label="Password" error={errors.password}>
-                  <Input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="At least 6 characters"
-                    autoComplete="new-password"
-                  />
-                </Field>
-
-                <Field label="Confirm password" error={errors.confirmPassword}>
-                  <Input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Repeat your password"
-                    autoComplete="new-password"
-                  />
-                </Field>
-
-                <Button type="submit" variant="yellow" size="lg" className="w-full">
-                  Create account
-                  <ArrowRightIcon className="h-4 w-4" strokeWidth={2.25} />
-                </Button>
-              </form>
+              <SignUpForm />
 
               <p className="mt-6 text-center text-[11.5px] text-[var(--text-faint)]">
                 Demo mode — no real authentication yet; your session lives in this browser.

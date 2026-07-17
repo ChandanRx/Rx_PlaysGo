@@ -122,6 +122,7 @@ const ProfileHeader = ({
               alt={profile.name}
               width={112}
               height={112}
+              unoptimized={profile.image?.startsWith("data:")}
               className="h-24 w-24 rounded-full border-4 border-[var(--bg-card)] bg-[var(--bg-secondary)] object-cover shadow-[var(--shadow-md)] sm:h-28 sm:w-28"
             />
             {profile.verified && (

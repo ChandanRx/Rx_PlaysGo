@@ -39,6 +39,7 @@ const AdminUsersTable = ({ onSelectUser }) => {
                     alt={user.name}
                     width={28}
                     height={28}
+                    unoptimized={user.image?.startsWith("data:")}
                     className="h-7 w-7 shrink-0 rounded-full object-cover"
                   />
                   <span className="font-semibold text-[var(--text-heading)]">{user.name}</span>

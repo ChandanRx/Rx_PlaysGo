@@ -81,6 +81,7 @@ const PostItems = ({ post, onClick }) => {
         <Image
           src={post?.userImage || "/avatar-placeholder.svg"}
           width={26} height={26}
+          unoptimized={post?.userImage?.startsWith("data:")}
           alt={post?.userName || "User"}
           className="h-[22px] w-[22px] rounded-full border border-[var(--border-subtle)] object-cover lg:h-[26px] lg:w-[26px]"
         />

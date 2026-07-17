@@ -229,6 +229,7 @@ const Header = () => {
                   className="h-8 w-8 rounded-sm object-cover"
                   width={32}
                   height={32}
+                  unoptimized={session.image?.startsWith("data:")}
                 />
               </Button>
 

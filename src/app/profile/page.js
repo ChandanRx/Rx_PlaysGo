@@ -21,6 +21,7 @@ import Card from "../../components/ui/Card";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import {
   CURRENT_USER_ID,
+  FOLLOW_CHANGE_EVENT,
   POST_STATUSES,
   deletePost,
   dummyUser,
@@ -48,9 +49,16 @@ const Profile = () => {
   const [followList, setFollowList] = useState(null);
 
   useEffect(() => {
-    const me = getUserById(CURRENT_USER_ID) || getStoredUserProfile();
-    setProfile(me);
-    setUserPosts(getUserPosts(me.email));
+    const load = () => {
+      const me = getUserById(CURRENT_USER_ID) || getStoredUserProfile();
+      setProfile(me);
+      setUserPosts(getUserPosts(me.email));
+    };
+
+    load();
+    // Keep follower / following counts live when follow state changes anywhere.
+    window.addEventListener(FOLLOW_CHANGE_EVENT, load);
+    return () => window.removeEventListener(FOLLOW_CHANGE_EVENT, load);
   }, []);
 
   const tabCounts = useMemo(() => {
@@ -237,8 +245,8 @@ const Profile = () => {
       <AnimatePresence>
         {followList && (
           <FollowListModal
-            title={followList === "followers" ? "Followers" : "Following"}
-            userIds={followList === "followers" ? profile.followers : profile.following}
+            ownerId={profile.id}
+            type={followList}
             onClose={() => setFollowList(null)}
           />
         )}

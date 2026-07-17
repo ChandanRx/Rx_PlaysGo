@@ -1,29 +1,12 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { ArrowRightIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
-import Button from "../../components/ui/Button";
-import { Input } from "../../components/ui/FormControls";
 import PlaysGoLogo from "../../components/PlaysGoLogo";
 import FloatingOrbs from "../../components/FloatingOrbs";
-import { signUp } from "../../shared/authSession";
-import { AVATAR_PRESETS } from "../../shared/avatarPresets";
+import SignUpForm from "../../components/auth/SignUpForm";
 import styles from "./signup.module.css";
-
-const EMAIL_PATTERN = /^\S+@\S+\.\S+$/;
-
-const Field = ({ label, error, children }) => (
-  <label className="block">
-    <span className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-      {label}
-    </span>
-    {children}
-    {error && <p className="mt-1.5 text-[12px] font-medium text-red-500">{error}</p>}
-  </label>
-);
 
 const HERO_BENEFITS = [
   "Post opportunities, items & events in minutes",
@@ -32,47 +15,6 @@ const HERO_BENEFITS = [
 ];
 
 const SignUpPage = () => {
-  const router = useRouter();
-  const fileInputRef = useRef(null);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [avatar, setAvatar] = useState(AVATAR_PRESETS[0].url);
-  const [errors, setErrors] = useState({});
-
-  const handleUpload = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setAvatar(reader.result);
-    reader.readAsDataURL(file);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    const nextErrors = {};
-    if (!name.trim()) {
-      nextErrors.name = "Enter your name.";
-    }
-    if (!EMAIL_PATTERN.test(email.trim())) {
-      nextErrors.email = "Enter a valid email address.";
-    }
-    if (password.length < 6) {
-      nextErrors.password = "Password must be at least 6 characters.";
-    }
-    if (confirmPassword !== password) {
-      nextErrors.confirmPassword = "Passwords don't match.";
-    }
-
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
-
-    signUp({ name, email, image: avatar });
-    router.push("/");
-  };
-
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       {/* Hero panel (left) */}
@@ -135,105 +77,7 @@ const SignUpPage = () => {
             </Link>
           </p>
 
-          <form onSubmit={handleSubmit} noValidate className="mt-7 space-y-4">
-            <div>
-              <span className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                Profile photo
-              </span>
-              <div className="flex items-center gap-4">
-                <img
-                  src={avatar}
-                  alt="Selected avatar"
-                  className="h-16 w-16 shrink-0 rounded-full object-cover ring-2 ring-[var(--brand)] ring-offset-2 ring-offset-[var(--bg-card)]"
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--bg-card)] px-3.5 py-2 text-[13px] font-bold text-[var(--text-body)] transition hover:bg-[var(--bg-hover)]"
-                >
-                  <ArrowUpTrayIcon className="h-4 w-4" strokeWidth={2.25} />
-                  Upload photo
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleUpload}
-                  className="hidden"
-                />
-              </div>
-
-              <p className="mt-3 mb-1.5 text-[11px] font-semibold text-[var(--text-faint)]">
-                Or pick a ready-made avatar
-              </p>
-              <div className="flex flex-wrap gap-2.5">
-                {AVATAR_PRESETS.map((preset) => {
-                  const active = avatar === preset.url;
-                  return (
-                    <button
-                      key={preset.id}
-                      type="button"
-                      onClick={() => setAvatar(preset.url)}
-                      aria-label={`Choose ${preset.id} avatar`}
-                      aria-pressed={active}
-                      className={`h-10 w-10 overflow-hidden rounded-full transition ${
-                        active
-                          ? "ring-2 ring-[var(--brand)] ring-offset-2 ring-offset-[var(--bg-card)]"
-                          : "opacity-80 hover:opacity-100"
-                      }`}
-                    >
-                      <img src={preset.url} alt="" className="h-full w-full object-cover" />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <Field label="Full name" error={errors.name}>
-              <Input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your full name"
-                autoComplete="name"
-              />
-            </Field>
-
-            <Field label="Email" error={errors.email}>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                autoComplete="email"
-              />
-            </Field>
-
-            <Field label="Password" error={errors.password}>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 6 characters"
-                autoComplete="new-password"
-              />
-            </Field>
-
-            <Field label="Confirm password" error={errors.confirmPassword}>
-              <Input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Repeat your password"
-                autoComplete="new-password"
-              />
-            </Field>
-
-            <Button type="submit" variant="yellow" size="lg" className="w-full">
-              Create account
-              <ArrowRightIcon className="h-4 w-4" strokeWidth={2.25} />
-            </Button>
-          </form>
+          <SignUpForm />
 
           <p className="mt-6 text-center text-[11.5px] text-[var(--text-faint)]">
             Demo mode — no real authentication yet; your session lives in this browser.

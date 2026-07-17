@@ -1,7 +1,12 @@
+import { getGenderAvatar } from "./doodleAvatars";
+
 const STORAGE_KEY = "quibly_dummy_posts";
 const LEGACY_STORAGE_KEY = "playsgo_dummy_posts";
 const DEFAULT_POST_IMAGE = "/placeholder-post.svg";
-const DEFAULT_AVATAR_IMAGE = "/avatar-placeholder.svg";
+
+// Every seeded user gets a doodle avatar matching their gender; indexes are
+// spread so neighbouring users in lists look clearly different.
+const DEFAULT_AVATAR_IMAGE = getGenderAvatar("neutral", 0);
 
 const legacyCategoryMap = {
   Sports: "Players",
@@ -47,7 +52,7 @@ export const dummyUser = {
   state: "Maharashtra",
   bio: "Building local connections through opportunities, events, and trusted community posts.",
   verified: true,
-  image: DEFAULT_AVATAR_IMAGE,
+  image: getGenderAvatar("male", 2),
 };
 
 // Every distinct author appearing in initialPosts gets a stable record here so
@@ -65,7 +70,7 @@ export const dummyUsers = [
     state: "Maharashtra",
     bio: "Parent and weekend cricketer. Usually posting about tutors and Sunday matches.",
     verified: true,
-    image: DEFAULT_AVATAR_IMAGE,
+    image: getGenderAvatar("female", 4),
     followers: [],
     following: ["u-chandan", "u-sneha"],
   },
@@ -79,7 +84,7 @@ export const dummyUsers = [
     state: "Karnataka",
     bio: "Software engineer in Koramangala. Looking for flatmates and football games.",
     verified: false,
-    image: DEFAULT_AVATAR_IMAGE,
+    image: getGenderAvatar("male", 9),
     followers: [],
     following: ["u-rahul"],
   },
@@ -93,7 +98,7 @@ export const dummyUsers = [
     state: "Maharashtra",
     bio: "Freelance designer helping local businesses with branding and social creatives.",
     verified: true,
-    image: DEFAULT_AVATAR_IMAGE,
+    image: getGenderAvatar("female", 11),
     followers: [],
     following: ["u-chandan", "u-neha"],
   },
@@ -107,7 +112,7 @@ export const dummyUsers = [
     state: "Delhi",
     bio: "Budget traveller planning weekend trips out of Delhi. Always up for a road trip.",
     verified: false,
-    image: DEFAULT_AVATAR_IMAGE,
+    image: getGenderAvatar("male", 16),
     followers: [],
     following: [],
   },
@@ -121,7 +126,7 @@ export const dummyUsers = [
     state: "Karnataka",
     bio: "Decluttering one room at a time — furniture and home finds listed here first.",
     verified: true,
-    image: DEFAULT_AVATAR_IMAGE,
+    image: getGenderAvatar("female", 19),
     followers: [],
     following: ["u-priya"],
   },
@@ -135,7 +140,7 @@ export const dummyUsers = [
     state: "Maharashtra",
     bio: "Organizing 7-a-side football at Juhu every Saturday. All skill levels welcome.",
     verified: true,
-    image: DEFAULT_AVATAR_IMAGE,
+    image: getGenderAvatar("male", 23),
     followers: [],
     following: ["u-chandan", "u-aman"],
   },
@@ -149,7 +154,7 @@ export const dummyUsers = [
     state: "Maharashtra",
     bio: "Badminton doubles regular at Kandivali Sports Club. Intermediate and improving.",
     verified: false,
-    image: DEFAULT_AVATAR_IMAGE,
+    image: getGenderAvatar("female", 26),
     followers: [],
     following: ["u-riya"],
   },
@@ -395,6 +400,16 @@ export const POST_STATUSES = ["Active", "Draft", "Closed", "Expired"];
 
 const isBrowser = () => typeof window !== "undefined";
 
+// Posts denormalize the author's avatar into `userImage`. Resolve it from the
+// author's user record on every read so all posts — seeded, stored, or legacy
+// ones cached with the old placeholder — always show the author's current
+// avatar (including the signed-in user's latest pick).
+const resolveAuthorImage = (email) => {
+  if (!email) return null;
+  if (email === dummyUser.email) return getStoredUserProfile().image;
+  return dummyUsers.find((user) => user.email === email)?.image || null;
+};
+
 const normalizePost = (post, index = 0) => {
   const category = normalizeCategory(post.category || post.game);
   const subCategory = post.subCategory || post.game || "General";
@@ -420,7 +435,7 @@ const normalizePost = (post, index = 0) => {
     imageUrl: post.imageUrl?.trim() || DEFAULT_POST_IMAGE,
     videoUrl: post.videoUrl?.trim() || "",
     userName: post.userName || dummyUser.name,
-    userImage: post.userImage || dummyUser.image,
+    userImage: resolveAuthorImage(post.email) || post.userImage || dummyUser.image,
     email: post.email || dummyUser.email,
     phone: post.phone || dummyUser.mobile,
     whatsapp: post.whatsapp || post.phone || dummyUser.mobile,
@@ -435,7 +450,7 @@ const normalizePost = (post, index = 0) => {
 };
 
 // Bump this version string whenever initialPosts changes — forces a cache reset
-const DATA_VERSION = "v5-post-status-profile-posts";
+const DATA_VERSION = "v6-doodle-avatars";
 const VERSION_KEY  = "quibly_data_version";
 
 const readPosts = () => {
@@ -551,7 +566,7 @@ export const updatePost = (id, patch = {}) => {
 };
 
 const USER_PROFILE_KEY = "quibly_user_profile";
-const EDITABLE_PROFILE_FIELDS = ["name", "username", "bio", "city", "state", "mobile"];
+const EDITABLE_PROFILE_FIELDS = ["name", "username", "bio", "city", "state", "mobile", "image"];
 
 // The public dummyUser stays the static fallback/defaults; anything the user
 // edits on the Profile page is layered on top of it in localStorage.

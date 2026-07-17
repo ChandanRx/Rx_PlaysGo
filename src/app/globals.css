@@ -36,11 +36,11 @@
     PRIMARY  — charcoal olive (dark pills / CTAs)
   ==============================*/
 
-  --brand:        #22261B;
-  --brand-hover:  #353B2A;
-  --brand-soft:   #ECF0DF;
-  --brand-border: #C6D0B0;
-  --brand-rgb:    34,38,27;   /* for rgba() glows / shadows */
+  --brand:        #89F336;   /* vivid lime — light-mode buttons / CTAs */
+  --brand-hover:  #79E024;
+  --brand-soft:   #EAFBD4;
+  --brand-border: #C5EE8F;
+  --brand-rgb:    137,243,54;   /* for rgba() glows / shadows */
 
   /*==============================
     SECONDARY  — olive lime
@@ -49,6 +49,7 @@
   --secondary:        #A9C93B;
   --secondary-soft:   #F1F8D6;
   --secondary-border: #D7E897;
+  --secondary-rgb:    169,201,59;
 
   /*==============================
     ACCENT  — chartreuse (icon tiles, highlights)
@@ -56,6 +57,7 @@
 
   --accent:      #DDF247;
   --accent-soft: #F4FACF;
+  --accent-rgb:  221,242,71;
 
   /*==============================
     SUCCESS
@@ -106,7 +108,17 @@
     Text/icon sitting on --brand fills
   ==============================*/
 
-  --on-brand: #FFFFFF;   /* white on charcoal-olive — light mode */
+  --on-brand: #14210A;   /* deep ink on vivid lime — light mode */
+
+  /*==============================
+    SOLID PILL BUTTON  (primary / dark variants)
+    Light: vivid lime so black pills read green.
+    Dark: overridden below to keep the near-white pill.
+  ==============================*/
+
+  --btn-solid-bg:    #89F336;
+  --btn-solid-hover: #79E024;
+  --btn-solid-fg:    #14210A;
 
   /*==============================
     HERO / LEGACY ALIASES
@@ -154,9 +166,11 @@
   --secondary:        #F98A1F;   /* vivid orange */
   --secondary-soft:   rgba(249,138,31,.14);
   --secondary-border: rgba(249,138,31,.32);
+  --secondary-rgb:    249,138,31;
 
   --accent:      #FFA33C;
   --accent-soft: rgba(255,163,60,.15);
+  --accent-rgb:  255,163,60;
 
   /*==============================
     SELECTED FOREGROUND
@@ -166,6 +180,11 @@
   --selected-fg: #121210;   /* black ink on white pills — dark mode */
 
   --on-brand:    #131408;   /* black ink on vivid green — dark mode */
+
+  /* Keep the solid pill buttons as the near-white dashboard pill in dark mode */
+  --btn-solid-bg:    var(--text-heading);
+  --btn-solid-hover: #E7E7E2;
+  --btn-solid-fg:    var(--selected-fg);
 
 }
 
