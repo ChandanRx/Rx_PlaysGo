@@ -367,16 +367,22 @@ const flowerAt = (x, y, petal, centre) =>
  * glasses and hats stay shared across all of them.
  */
 const HAIR_POOLS = {
-  female: ["long", "bob", "bun", "ponytail", "pigtails", "afro", "curly", "cloud", "hijab", "locs"],
-  male: ["short", "buzz", "spiky", "sidepart", "afro", "curly", "locs", "bald", "topknot"],
+  // Female avatars use clearly feminine silhouettes only — flowing/tied hair.
+  // The androgynous rounded shapes (afro/curly/cloud/locs) read as male even
+  // with earrings, and top-knot shapes (bun/topknot) read as a turban, so both
+  // are kept out of the female pool. `long` is listed twice for a soft bias.
+  female: ["long", "long", "bob", "bob", "ponytail", "pigtails"],
+  male: ["short", "buzz", "spiky", "sidepart", "afro", "curly", "locs", "bald"],
   neutral: ["short", "buzz", "curly", "afro", "cloud", "locs", "topknot", "bob"],
 };
 // What a fitted hat (cap/bucket/beanie) falls back to over big hair.
 const FITTED_HAT_HAIR = {
-  female: ["long", "bob", "short"],
+  female: ["long", "bob"],
   male: ["short", "buzz", "bald"],
   neutral: ["short", "buzz", "bob"],
 };
+// Hairstyles that read clearly feminine on their own.
+const FEMININE_HAIR = ["long", "bob", "bun", "ponytail", "pigtails", "hijab"];
 
 /* ── assemble one avatar from a seed ── */
 function buildAvatar(seed, presentation = "neutral") {
@@ -388,17 +394,25 @@ function buildAvatar(seed, presentation = "neutral") {
   const hairColor = grayHair ? pick(rng, HAIR_GRAY) : pick(rng, HAIR_DARK);
 
   let style = pick(rng, HAIR_POOLS[presentation]);
-  // Accessories stay occasional so bare faces remain the norm.
-  let hat = chance(rng, presentation === "male" ? 0.35 : 0.25)
-    ? pick(rng, ["cap", "bucket", "beanie", "headphones", "headband", "flower"])
+  // Accessories stay occasional so bare faces remain the norm. Female avatars
+  // only ever wear soft feminine accents (headband/flower) — the hat-shaped
+  // covers (cap/bucket/beanie/headphones) hide the hair and read as a turban on
+  // a rounded head, so they're kept to male/neutral avatars only.
+  const HAT_POOL =
+    presentation === "female"
+      ? ["headband", "flower", "flower"]
+      : ["cap", "bucket", "beanie", "headphones", "headband", "flower"];
+  let hat = chance(rng, presentation === "male" ? 0.2 : 0.25)
+    ? pick(rng, HAT_POOL)
     : "none";
   let earring = "none";
   if (presentation === "female" && chance(rng, 0.45)) earring = pick(rng, ["stud", "hoop"]);
   else if (presentation === "neutral" && chance(rng, 0.2)) earring = "stud";
-  else if (presentation === "male" && chance(rng, 0.12)) earring = "stud";
+  // Clean & friendly: most men are clean-shaven; when they do have facial hair
+  // it leans to light stubble rather than a heavy beard.
   let beard =
-    presentation === "male" && chance(rng, 0.45)
-      ? pick(rng, ["beard", "mustache", "stubble"])
+    presentation === "male" && chance(rng, 0.35)
+      ? pick(rng, ["stubble", "stubble", "beard", "mustache"])
       : "none";
 
   // Constraints so combinations stay coherent.
@@ -412,15 +426,61 @@ function buildAvatar(seed, presentation = "neutral") {
   }
   // Flower / headband / headphones can layer over anything.
 
+  // Gender-clarity guarantees. Some hairstyles (afro/curly/cloud/locs/topknot,
+  // or a fitted-hat fallback) read androgynous on their own, so make sure each
+  // avatar carries a presentation cue:
+  //   • female → any non-feminine hairstyle always wears an earring
+  //   • male   → androgynous hair always carries facial hair; never an earring
+  // This keeps every avatar clearly the gender it was generated for.
+  const ANDROGYNOUS_HAIR = ["afro", "curly", "cloud", "locs", "topknot"];
+  // A fitted hat (cap/bucket/beanie) hides most of the hair, so the hairstyle
+  // can no longer carry the feminine cue — force an earring in that case too.
+  const hidesHair = HATS_NEED_SHORT.includes(hat);
+  if (
+    presentation === "female" &&
+    earring === "none" &&
+    (!FEMININE_HAIR.includes(style) || hidesHair)
+  ) {
+    earring = pick(rng, ["stud", "hoop"]);
+  }
+  if (presentation === "male") {
+    earring = "none";
+    if (ANDROGYNOUS_HAIR.includes(style) && beard === "none") {
+      // Keep the light-stubble bias so androgynous hair still reads male
+      // without looking heavily bearded.
+      beard = pick(rng, ["stubble", "stubble", "beard"]);
+    }
+  }
+
   const fabric = pick(rng, FABRIC);
   const hair = HAIR[style](style === "hijab" ? fabric : hairColor);
 
-  const eyes = pick(rng, Object.keys(EYES));
-  const brow = pick(rng, ["none", "none", "flat", "raised"]);
+  // Gendered expression pools. Female → soft, pretty (gentle eyes + a smile);
+  // the startled "wide" / flat "neutral" combos read awkward, not beautiful.
+  // Male → confident and friendly (clear eyes, a smile/smirk, defined brows);
+  // the droopy "sleepy" / blank "neutral" / surprised "o" combos read tired.
+  const eyes =
+    presentation === "female"
+      ? pick(rng, ["happy", "ovals", "dots", "happy", "ovals"])
+      : presentation === "male"
+      ? pick(rng, ["dots", "ovals", "happy", "dots"])
+      : pick(rng, Object.keys(EYES));
+  const brow =
+    presentation === "male"
+      ? pick(rng, ["none", "flat", "raised", "flat"])
+      : pick(rng, ["none", "none", "flat", "raised"]);
   const nose = pick(rng, Object.keys(NOSES));
-  const mouth = pick(rng, Object.keys(MOUTHS));
+  const mouth =
+    presentation === "female"
+      ? pick(rng, ["smile", "soft", "smile"])
+      : presentation === "male"
+      ? pick(rng, ["smile", "soft", "smile", "soft"])
+      : pick(rng, Object.keys(MOUTHS));
   const glasses = pick(rng, ["none", "none", "none", "none", "none", "none", "round", "square", "sun"]);
-  const showBlush = chance(rng, presentation === "female" ? 0.35 : 0.2);
+  const showBlush = chance(
+    rng,
+    presentation === "female" ? 0.55 : presentation === "male" ? 0 : 0.2
+  );
   const showFreckles = chance(rng, 0.18);
 
   // Tags power the optional search box.
@@ -453,10 +513,21 @@ function buildAvatar(seed, presentation = "neutral") {
     presentation === "female" ? 0.18 : presentation === "neutral" ? 0.08 : 0.03;
   const flowerEls =
     hat === "flower" ||
-    (chance(rng, extraFlowerChance) && !HATS_NEED_SHORT.includes(hat) && style !== "hijab")
+    // Only tuck an extra flower onto an otherwise bare head — never stack it on
+    // top of a headband/hat, which looks cluttered.
+    (hat === "none" && chance(rng, extraFlowerChance) && style !== "hijab")
       ? flowerAt(30, 30, pick(rng, FLOWER), "#E9C15E")
       : "";
   if (flowerEls) tags.push("flower");
+
+  // A pair of eyelashes at the outer corners — a soft, pretty feminine cue.
+  const lashEls =
+    presentation === "female"
+      ? `<path d="M${EYE_L - 4} ${EYE_Y - 3}l-2.4 -2" fill="none" ${STROKE}/>` +
+        `<path d="M${EYE_L - 4.5} ${EYE_Y - 1}l-2.6 -0.6" fill="none" ${STROKE}/>` +
+        `<path d="M${EYE_R + 4} ${EYE_Y - 3}l2.4 -2" fill="none" ${STROKE}/>` +
+        `<path d="M${EYE_R + 4.5} ${EYE_Y - 1}l2.6 -0.6" fill="none" ${STROKE}/>`
+      : "";
 
   const inner =
     hair.back +
@@ -466,6 +537,7 @@ function buildAvatar(seed, presentation = "neutral") {
     hair.front +
     BROWS[brow]() +
     EYES[eyes]() +
+    lashEls +
     NOSES[nose]() +
     BEARDS[beard](hairColor) +
     MOUTHS[mouth]() +
@@ -475,8 +547,13 @@ function buildAvatar(seed, presentation = "neutral") {
     hatEls +
     flowerEls;
 
+  // Features are drawn on a 100×100 grid but only ink the middle ~60% of it,
+  // which made avatars float small and off-centre inside circular frames. The
+  // tighter viewBox crops the canvas to the head (centre ≈ 50,48) so faces
+  // fill the frame consistently; explicit width/height give the SVG a real
+  // intrinsic size so object-fit sizing behaves the same in every browser.
   const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">${inner}</svg>`;
+    `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="10 8 80 80" fill="none">${inner}</svg>`;
 
   return {
     id: `doodle-${presentation}-${seed}`,
@@ -487,21 +564,19 @@ function buildAvatar(seed, presentation = "neutral") {
 }
 
 /* ── the published avatar set ──
- * Equal female/male representation plus a neutral band that shows up in every
- * filtered view. Seeds are spread apart so consecutive avatars look clearly
- * different; the total sits comfortably in the requested 50–100 range.
+ * Exactly 10 female + 10 male avatars (20 total). Seeds are spread apart so
+ * consecutive avatars look clearly different, and every one carries a clear
+ * gender cue (see the clarity guarantees in buildAvatar).
  */
-const FEMALE_AVATARS = Array.from({ length: 30 }, (_, i) => buildAvatar(i * 1013 + 101, "female"));
-const MALE_AVATARS = Array.from({ length: 30 }, (_, i) => buildAvatar(i * 2027 + 419, "male"));
-const NEUTRAL_AVATARS = Array.from({ length: 12 }, (_, i) => buildAvatar(i * 3041 + 787, "neutral"));
+const FEMALE_AVATARS = Array.from({ length: 10 }, (_, i) => buildAvatar(i * 1013 + 101, "female"));
+const MALE_AVATARS = Array.from({ length: 10 }, (_, i) => buildAvatar(i * 2027 + 419, "male"));
 
 // Interleave the pools so the unfiltered grid reads as a mixed crowd.
 const interleaved = [];
-const maxLen = Math.max(FEMALE_AVATARS.length, MALE_AVATARS.length, NEUTRAL_AVATARS.length);
+const maxLen = Math.max(FEMALE_AVATARS.length, MALE_AVATARS.length);
 for (let i = 0; i < maxLen; i++) {
   if (FEMALE_AVATARS[i]) interleaved.push(FEMALE_AVATARS[i]);
   if (MALE_AVATARS[i]) interleaved.push(MALE_AVATARS[i]);
-  if (NEUTRAL_AVATARS[i]) interleaved.push(NEUTRAL_AVATARS[i]);
 }
 export const DOODLE_AVATARS = interleaved;
 
@@ -516,14 +591,29 @@ export const avatarsForGender = (genderLabel = "") => {
   return DOODLE_AVATARS;
 };
 
-/** Stable avatar URL from a specific presentation pool — used for seed data. */
+/** Stable avatar URL from a specific presentation pool — used for seed data.
+ *  Anything other than "female"/"male" (e.g. an unknown gender) draws from the
+ *  full mixed set. */
 export const getGenderAvatar = (presentation, index = 0) => {
   const list =
     presentation === "female" ? FEMALE_AVATARS
     : presentation === "male" ? MALE_AVATARS
-    : NEUTRAL_AVATARS;
+    : DOODLE_AVATARS;
   return list[index % list.length].url;
 };
 
 export const getDoodleAvatarById = (id) =>
   DOODLE_AVATARS.find((a) => a.id === id) || null;
+
+/**
+ * Upgrade a doodle data-URI saved before the tighter avatar framing (the old
+ * `viewBox="0 0 100 100"` emit) to the current framing, so stored profile
+ * images stay pixel-identical to freshly generated ones. Non-doodle images
+ * (uploads, http URLs) pass through untouched.
+ */
+const OLD_SVG_ATTRS = encodeURIComponent('viewBox="0 0 100 100"');
+const NEW_SVG_ATTRS = encodeURIComponent('width="100" height="100" viewBox="10 8 80 80"');
+export const upgradeDoodleAvatarUrl = (url) =>
+  typeof url === "string" && url.startsWith("data:image/svg+xml,")
+    ? url.replace(OLD_SVG_ATTRS, NEW_SVG_ATTRS)
+    : url;

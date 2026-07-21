@@ -103,7 +103,7 @@ const AppShell = ({ children }) => {
 
         <div
           ref={contentRef}
-          className={`mx-auto rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_1px_2px_rgba(28,32,18,0.04),0_12px_40px_rgba(28,32,18,0.06)] ${
+          className={`mx-auto rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_1px_2px_rgba(28,32,18,0.04),0_12px_40px_rgba(28,32,18,0.06)] ${
             isMessagesSection
               ? `${isChatDetailPage ? "h-[calc(100vh-4rem)] overflow-hidden" : "min-h-[calc(100vh-4rem)] overflow-y-auto"} lg:h-[calc(100vh-2rem)] lg:overflow-hidden`
               : "min-h-[calc(100vh-4rem)] overflow-y-auto px-4 py-4 md:px-5 md:py-5 lg:min-h-[calc(100vh-2rem)] lg:px-6 lg:py-5"

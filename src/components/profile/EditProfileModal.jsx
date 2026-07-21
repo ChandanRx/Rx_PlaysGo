@@ -149,6 +149,7 @@ const EditProfileModal = ({ profile, onClose, onSave }) => {
               </p>
               <AvatarPicker
                 compact
+                gender={profile.gender}
                 value={form.image}
                 onChange={(picked) => setField("image", picked.url)}
               />

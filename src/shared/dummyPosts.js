@@ -1,4 +1,4 @@
-import { getGenderAvatar } from "./doodleAvatars";
+import { getGenderAvatar, upgradeDoodleAvatarUrl } from "./doodleAvatars";
 
 const STORAGE_KEY = "quibly_dummy_posts";
 const LEGACY_STORAGE_KEY = "playsgo_dummy_posts";
@@ -52,6 +52,7 @@ export const dummyUser = {
   state: "Maharashtra",
   bio: "Building local connections through opportunities, events, and trusted community posts.",
   verified: true,
+  gender: "Male",
   image: getGenderAvatar("male", 2),
 };
 
@@ -566,7 +567,7 @@ export const updatePost = (id, patch = {}) => {
 };
 
 const USER_PROFILE_KEY = "quibly_user_profile";
-const EDITABLE_PROFILE_FIELDS = ["name", "username", "bio", "city", "state", "mobile", "image"];
+const EDITABLE_PROFILE_FIELDS = ["name", "username", "bio", "city", "state", "mobile", "gender", "image"];
 
 // The public dummyUser stays the static fallback/defaults; anything the user
 // edits on the Profile page is layered on top of it in localStorage.
@@ -575,7 +576,11 @@ export const getStoredUserProfile = () => {
 
   try {
     const saved = window.localStorage.getItem(USER_PROFILE_KEY);
-    return saved ? { ...dummyUser, ...JSON.parse(saved) } : { ...dummyUser };
+    if (!saved) return { ...dummyUser };
+    const profile = { ...dummyUser, ...JSON.parse(saved) };
+    // Doodle avatars saved before the tighter framing get re-framed on read.
+    profile.image = upgradeDoodleAvatarUrl(profile.image);
+    return profile;
   } catch {
     return { ...dummyUser };
   }
@@ -679,6 +684,13 @@ export const getUsernameForPost = (post) => getUserForPost(post)?.username || nu
 export const getUsernameForUserName = (userName = "") => {
   const name = String(userName).trim().toLowerCase();
   return dummyUsers.find((u) => u.name.toLowerCase() === name)?.username || null;
+};
+
+// Avatar image for a display name (used by Messages so a contact's chat avatar
+// matches their profile). Null when the name isn't a known user.
+export const getAvatarForUserName = (userName = "") => {
+  const name = String(userName).trim().toLowerCase();
+  return dummyUsers.find((u) => u.name.toLowerCase() === name)?.image || null;
 };
 
 export const isFollowing = (currentUserId, targetUserId) =>

@@ -98,7 +98,7 @@ const PostItems = ({ post, onClick }) => {
       initial={fadeUp.initial}
       animate={fadeUp.animate}
       transition={tweenFast}
-      className={`group flex flex-col h-full w-full bg-[var(--bg-card)] rounded-2xl overflow-hidden border border-[var(--border-subtle)] shadow-[0_2px_12px_rgba(28,32,18,0.06)] lg:hover:shadow-[0_10px_32px_rgba(28,32,18,0.11)] lg:hover:-translate-y-1 active:scale-[0.98] lg:active:scale-100 transition-[transform,box-shadow] duration-200 cursor-pointer select-none transform-gpu will-change-transform ${themeClass}`}
+      className={`group flex flex-col h-full w-full bg-[var(--bg-card)] rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md overflow-hidden border border-[var(--border-subtle)] shadow-[0_2px_12px_rgba(28,32,18,0.06)] lg:hover:shadow-[0_10px_32px_rgba(28,32,18,0.11)] lg:hover:-translate-y-1 active:scale-[0.98] lg:active:scale-100 transition-[transform,box-shadow] duration-200 cursor-pointer select-none transform-gpu will-change-transform ${themeClass}`}
       onClick={onClick}
       onKeyDown={handleKeyDown}
       role={onClick ? "button" : undefined}
@@ -125,7 +125,7 @@ const PostItems = ({ post, onClick }) => {
           whileHover={hoverScaleIcon} whileTap={tapScaleSmall}
           onClick={(e) => { e.stopPropagation(); setSaved((v) => !v); }}
           aria-label={saved ? "Unsave" : "Save"}
-          className="absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-card)]/95 shadow-sm backdrop-blur-sm transition hover:bg-[var(--bg-card)] lg:right-3 lg:top-3"
+          className="absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[var(--bg-card)]/95 shadow-sm backdrop-blur-sm transition hover:bg-[var(--bg-card)] lg:right-3 lg:top-3"
         >
           {saved
             ? <HeartIcon className="h-[15px] w-[15px] text-[var(--brand)]" />
@@ -134,7 +134,7 @@ const PostItems = ({ post, onClick }) => {
 
         {/* distance — bottom right */}
         {post?.distance && (
-          <span className="absolute bottom-2 right-2.5 inline-flex items-center gap-1 rounded-full bg-[var(--text-heading)]/45 px-2.5 py-0.5 text-[10px] font-semibold text-[var(--selected-fg)] backdrop-blur-sm lg:bottom-2.5 lg:right-3">
+          <span className="absolute bottom-2 right-2.5 inline-flex items-center gap-1 rounded-full bg-[var(--text-heading)]/45 px-2.5 py-0.5 text-[10px] font-semibold text-[var(--bg-card)] backdrop-blur-sm lg:bottom-2.5 lg:right-3">
             <MapPinOutlineIcon className="h-3 w-3 shrink-0" strokeWidth={2.25} />
             {post.distance}
           </span>
@@ -178,7 +178,7 @@ const PostItems = ({ post, onClick }) => {
         {chips.length > 0 && (
           <div className="mb-2.5 flex flex-wrap items-center gap-1.5 lg:mb-3">
             {chips.map(({ icon: Icon, label }, i) => (
-              <span key={i} className="inline-flex items-center gap-1 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-input)] px-2 py-0.5 text-[10.5px] font-medium text-[var(--text-body)] lg:px-2.5 lg:text-[11px]">
+              <span key={i} className="inline-flex items-center gap-1 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md border border-[var(--border-subtle)] bg-[var(--bg-input)] px-2 py-0.5 text-[10.5px] font-medium text-[var(--text-body)] lg:px-2.5 lg:text-[11px]">
                 <Icon className="h-[11px] w-[11px] text-[var(--text-faint)]" />
                 {label}
               </span>
@@ -207,7 +207,7 @@ const PostItems = ({ post, onClick }) => {
           <m.button
              whileHover={hoverScale} whileTap={tapScale}
              onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-             className="flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-[var(--brand)] to-[var(--brand-hover)] px-4 text-[12.5px] font-bold text-[var(--on-brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.30)] transition-[background-color] hover:bg-[var(--brand-hover)] lg:h-auto lg:bg-none lg:bg-[var(--brand)] lg:py-2 lg:shadow-none"
+             className="flex h-11 shrink-0 items-center gap-1.5 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-gradient-to-r from-[var(--brand)] to-[var(--brand-hover)] px-4 text-[12.5px] font-bold text-[var(--on-brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.30)] transition-[background-color] hover:bg-[var(--brand-hover)] lg:h-auto lg:bg-none lg:bg-[var(--brand)] lg:py-2 lg:shadow-none"
            >
             <PrimaryIcon className="h-[13px] w-[13px]" />
             {primaryLabel}

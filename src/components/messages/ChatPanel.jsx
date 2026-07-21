@@ -1,15 +1,17 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
-import { getUsernameForUserName } from "../../shared/dummyPosts";
+import { getAvatarForUserName, getUsernameForUserName } from "../../shared/dummyPosts";
 
 const ChatPanel = ({ chat, post, showBack = false, onBack }) => {
   const authorUsername = chat ? getUsernameForUserName(chat.name) : null;
+  const avatar = chat ? getAvatarForUserName(chat.name) : null;
 
   if (!chat) {
     return (
@@ -35,8 +37,19 @@ const ChatPanel = ({ chat, post, showBack = false, onBack }) => {
           </button>
         )}
 
-        <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--bg-input)] text-sm font-bold text-[var(--text-body)]">
-          {chat.name[0]}
+        <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--bg-input)] text-sm font-bold text-[var(--text-body)]">
+          {avatar ? (
+            <Image
+              src={avatar}
+              alt={chat.name}
+              width={40}
+              height={40}
+              unoptimized
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            chat.name[0]
+          )}
           {chat.online && (
             <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[var(--bg-card)] bg-[#22C55E]" />
           )}

@@ -11,7 +11,7 @@ import { easeOut } from "../../shared/motionPresets";
 
 const POSTS_PER_PAGE = 12;
 
-const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
+const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSport = "" }) => {
   const [page, setPage]         = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
   const router                  = useRouter();
@@ -24,7 +24,9 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
   const paginated  = useMemo(() => posts.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE), [page, posts]);
   const pageStart  = posts.length === 0 ? 0 : (page - 1) * POSTS_PER_PAGE + 1;
   const pageEnd    = posts.length === 0 ? 0 : Math.min(page * POSTS_PER_PAGE, posts.length);
-  const feedLabel  = activeFilter === "Nearby" ? "Nearby posts" : `${activeFilter} posts`;
+  const feedLabel  = activeSport
+    ? `${activeSport} posts`
+    : activeFilter === "Nearby" ? "Nearby posts" : `${activeFilter} posts`;
 
   return (
     <section className="space-y-4">
@@ -57,7 +59,7 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
         <button
           type="button"
           onClick={() => router.push("/pro")}
-          className="flex items-center gap-1 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 py-1 text-[11px] font-semibold text-[var(--text-body)] transition hover:bg-[var(--text-heading)] hover:text-[var(--selected-fg)] hover:border-[var(--text-heading)]"
+          className="flex items-center gap-1 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 py-1 text-[11px] font-semibold text-[var(--text-body)] transition hover:bg-[var(--text-heading)] hover:text-[var(--bg-card)] hover:border-[var(--text-heading)]"
         >
           <SparklesIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
           Go Pro
@@ -120,7 +122,7 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby" }) => {
                 return (
                   <button key={p} onClick={() => setPage(p)}
                     className={`flex h-8 min-w-[32px] items-center justify-center rounded-lg px-2.5 text-[12px] font-semibold transition-colors ${
-                      active ? "bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-sm" : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]"
+                      active ? "bg-[var(--selected-bg)] text-[var(--selected-fg)] shadow-sm" : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]"
                     }`}
                   >{p}</button>
                 );

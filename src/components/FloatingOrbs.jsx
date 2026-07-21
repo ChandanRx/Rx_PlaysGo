@@ -26,20 +26,44 @@ import {
  * `relative overflow-hidden` container — no per-page handler wiring.
  */
 
+// Fixed, saturated colors (not theme-var greens) so the orbs actually pop
+// against the lime brand panel and read as "floating colors" rather than a
+// flat wash. Each orb drifts on its own path, scale, and duration.
 const DEFAULT_ORBS = [
   {
     className:
-      "absolute -right-16 -top-16 h-72 w-72 rounded-full bg-[rgba(var(--secondary-rgb),0.4)] blur-3xl",
-    keyframes: { x: [0, 26, -14, 0], y: [0, -22, 16, 0], scale: [1, 1.08, 0.96, 1] },
+      "absolute -right-16 -top-20 h-80 w-80 rounded-full bg-[rgba(15,118,110,0.6)] blur-3xl",
+    keyframes: { x: [0, 60, -34, 0], y: [0, -46, 34, 0], scale: [1, 1.16, 0.9, 1] },
     duration: 8,
-    parallax: 28,
+    parallax: 30,
   },
   {
     className:
-      "absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-[rgba(var(--accent-rgb),0.25)] blur-3xl",
-    keyframes: { x: [0, -24, 14, 0], y: [0, 18, -12, 0], scale: [1, 0.95, 1.07, 1] },
+      "absolute -bottom-24 -left-12 h-80 w-80 rounded-full bg-[rgba(157,23,77,0.55)] blur-3xl",
+    keyframes: { x: [0, -52, 32, 0], y: [0, 40, -30, 0], scale: [1, 0.88, 1.14, 1] },
     duration: 11,
-    parallax: 20,
+    parallax: 22,
+  },
+  {
+    className:
+      "absolute left-1/3 top-1/4 h-64 w-64 rounded-full bg-[rgba(180,83,9,0.55)] blur-3xl",
+    keyframes: { x: [0, 44, -50, 0], y: [0, -34, 44, 0], scale: [1, 1.14, 0.9, 1] },
+    duration: 9,
+    parallax: 26,
+  },
+  {
+    className:
+      "absolute -bottom-16 right-1/4 h-56 w-56 rounded-full bg-[rgba(76,29,149,0.55)] blur-3xl",
+    keyframes: { x: [0, -40, 48, 0], y: [0, 34, -42, 0], scale: [1, 1.15, 0.92, 1] },
+    duration: 12,
+    parallax: 18,
+  },
+  {
+    className:
+      "absolute -top-10 left-1/4 h-52 w-52 rounded-full bg-[rgba(30,58,138,0.5)] blur-3xl",
+    keyframes: { x: [0, 38, -34, 0], y: [0, 40, -30, 0], scale: [1, 0.9, 1.14, 1] },
+    duration: 14,
+    parallax: 14,
   },
 ];
 

@@ -49,7 +49,7 @@ const ConfirmDialog = ({
           <button
             type="button"
             onClick={onConfirm}
-            className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-[13px] font-semibold text-red-600 transition hover:bg-red-100"
+            className="rounded-xl border border-[var(--danger-border)] bg-[var(--danger-soft)] px-4 py-2 text-[13px] font-semibold text-[var(--danger)] transition hover:bg-[var(--danger-border)]"
           >
             {confirmLabel}
           </button>

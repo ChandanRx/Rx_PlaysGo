@@ -159,7 +159,7 @@ const PostModal = ({ post, onClose }) => {
               </button>
 
               {post.distance && (
-                <span className="absolute bottom-2.5 right-2.5 rounded-full bg-[var(--text-heading)]/50 px-2.5 py-1 text-[10px] font-semibold text-[var(--selected-fg)] backdrop-blur-sm">
+                <span className="absolute bottom-2.5 right-2.5 rounded-full bg-[var(--text-heading)]/50 px-2.5 py-1 text-[10px] font-semibold text-[var(--bg-card)] backdrop-blur-sm">
                   {post.distance}
                 </span>
               )}

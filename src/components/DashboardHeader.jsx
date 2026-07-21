@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { BellIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { ChevronDownIcon, HandRaisedIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, ChevronDownIcon, HandRaisedIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { AnimatePresence, m } from "framer-motion";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CategoryModeBadge } from "./CategoryModePrompt";
@@ -40,6 +40,8 @@ const DashboardHeader = () => {
 
   const currentQuery      = searchParams.get("q")      || "";
   const activeFilter      = searchParams.get("filter") || "Nearby";
+  const activeSport       = searchParams.get("sport")  || "";
+  const sportOptions      = Data.subCategoryMap.Players;
   const firstName         = (session?.name || "Guest").split(" ")[0];
   const showSignIn        = authReady && !session;
   // Someone else's profile (/profile/[username]) is still a titled page, not a
@@ -94,15 +96,19 @@ const DashboardHeader = () => {
               Sign in
             </Button>
           )}
-          <Button
-            variant="primary"
-            size="sm"
-            className="rounded-xl bg-[var(--brand)] text-sm hover:bg-[var(--brand-hover)]"
-            onClick={() => router.push("/createpost")}
-          >
-            <PlusIcon className="h-4 w-4" />
-            New post
-          </Button>
+          {/* Brand CTA variant — overriding "primary" with bg classes was an
+              order-dependent conflict that left the white solid pill in dark.
+              Hidden on /createpost — you're already there. */}
+          {pathname !== "/createpost" && (
+            <Button
+              variant="yellow"
+              size="sm"
+              onClick={() => router.push("/createpost")}
+            >
+              <PlusIcon className="h-4 w-4" />
+              New post
+            </Button>
+          )}
           <NotificationBell variant="desktop" />
         </div>
       </header>
@@ -144,7 +150,7 @@ const DashboardHeader = () => {
         {isFeedPage && hasCategory && (
           <div className="flex items-center gap-2">
             <form onSubmit={handleSearchSubmit} className="min-w-0 flex-1">
-              <div className="flex h-12 items-center gap-2.5 rounded-full bg-[var(--bg-input)] px-4 shadow-[0_4px_18px_rgba(28,32,18,0.07)] transition-shadow duration-200 focus-within:shadow-[0_4px_20px_rgba(var(--brand-rgb),0.16)]">
+              <div className="flex h-12 items-center gap-2.5 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[var(--bg-input)] px-4 shadow-[0_4px_18px_rgba(28,32,18,0.07)] transition-shadow duration-200 focus-within:shadow-[0_4px_20px_rgba(var(--brand-rgb),0.16)]">
                 <MagnifyingGlassIcon className="shrink-0 h-[17px] w-[17px] text-[var(--text-faint)]" />
                 <input
                   type="search"
@@ -159,33 +165,43 @@ const DashboardHeader = () => {
           </div>
         )}
 
-        {/* Row 3 — filter chips */}
+        {/* Row 3 — filter chips + sport dropdown.
+            The scrolling pills stay in their own overflow-x container; the
+            dropdown sits outside it so its menu isn't clipped by overflow-y. */}
         {isFeedPage && hasCategory && (
-          <div className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 scrollbar-none">
-            {Data.quickFilters.map((filter) => {
-              const active = activeFilter === filter;
-              return (
-                <button
-                  key={filter}
-                  type="button"
-                  onClick={() => updateFeedParam("filter", filter)}
-                  className="relative shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold transition-transform duration-150 active:scale-95"
-                >
-                  {active ? (
-                    <m.span
-                      layoutId="filter-chip-active-pill"
-                      transition={springSnappy}
-                      className="absolute inset-0 rounded-full bg-[var(--brand)] shadow-[0_4px_12px_rgba(var(--brand-rgb),0.30)]"
-                    />
-                  ) : (
-                    <span className="absolute inset-0 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-card)]" />
-                  )}
-                  <span className={`relative z-10 ${active ? "text-[var(--on-brand)]" : "text-[var(--text-muted)]"}`}>
-                    {filter}
-                  </span>
-                </button>
-              );
-            })}
+          <div className="-mx-4 flex items-center gap-2 px-4">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+              {Data.quickFilters.map((filter) => {
+                const active = activeFilter === filter;
+                return (
+                  <button
+                    key={filter}
+                    type="button"
+                    onClick={() => updateFeedParam("filter", filter)}
+                    className="relative shrink-0 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md px-4 py-2 text-[13px] font-semibold transition-transform duration-150 active:scale-95"
+                  >
+                    {active ? (
+                      <m.span
+                        layoutId="filter-chip-active-pill"
+                        transition={springSnappy}
+                        className="absolute inset-0 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[var(--brand)] shadow-[0_4px_12px_rgba(var(--brand-rgb),0.30)]"
+                      />
+                    ) : (
+                      <span className="absolute inset-0 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md border border-[var(--border-subtle)] bg-[var(--bg-card)]" />
+                    )}
+                    <span className={`relative z-10 ${active ? "text-[var(--on-brand)]" : "text-[var(--text-muted)]"}`}>
+                      {filter}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <SportsFilterDropdown
+              sports={sportOptions}
+              value={activeSport}
+              onChange={(sport) => updateFeedParam("sport", sport)}
+              size="mobile"
+            />
           </div>
         )}
       </div>
@@ -231,7 +247,7 @@ const DashboardHeader = () => {
                     key={filter}
                     type="button"
                     onClick={() => updateFeedParam("filter", filter)}
-                    className={`shrink-0 rounded-full px-4 py-1.5 text-[12px] font-semibold transition-colors duration-150 ${
+                    className={`shrink-0 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md px-4 py-1.5 text-[12px] font-semibold transition-colors duration-150 ${
                       active
                         ? "bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_2px_8px_rgba(var(--brand-rgb),0.28)]"
                         : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--brand-border)] hover:text-[var(--brand)]"
@@ -243,6 +259,14 @@ const DashboardHeader = () => {
               })}
             </div>
 
+            {/* sport filter dropdown */}
+            <SportsFilterDropdown
+              sports={sportOptions}
+              value={activeSport}
+              onChange={(sport) => updateFeedParam("sport", sport)}
+              size="desktop"
+            />
+
             {/* divider */}
             <div className="mx-1 h-5 w-px shrink-0 bg-[var(--border-subtle)]" />
 
@@ -252,7 +276,7 @@ const DashboardHeader = () => {
                 onSubmit={handleSearchSubmit}
                 className="flex shrink-0 items-center gap-1.5"
               >
-                <div className="flex h-8 w-[200px] items-center gap-2 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 transition-shadow focus-within:border-[var(--brand)] focus-within:bg-[var(--bg-card)] focus-within:shadow-[0_0_0_3px_rgba(var(--brand-rgb),0.08)]">
+                <div className="flex h-8 w-[200px] items-center gap-2 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md border border-[var(--border-subtle)] bg-[var(--bg-input)] px-3 transition-shadow focus-within:border-[var(--brand)] focus-within:bg-[var(--bg-card)] focus-within:shadow-[0_0_0_3px_rgba(var(--brand-rgb),0.08)]">
                   <MagnifyingGlassIcon className="shrink-0 h-[13px] w-[13px] text-[var(--text-faint)]" />
                   <input
                     type="search"
@@ -265,7 +289,7 @@ const DashboardHeader = () => {
 
                 <button
                   type="submit"
-                  className="flex h-8 shrink-0 items-center rounded-full bg-[var(--brand)] px-4 text-[12px] font-semibold text-[var(--on-brand)] shadow-[0_2px_8px_rgba(var(--brand-rgb),0.28)] transition-colors hover:bg-[var(--brand-hover)] active:scale-95"
+                  className="flex h-8 shrink-0 items-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[var(--brand)] px-4 text-[12px] font-semibold text-[var(--on-brand)] shadow-[0_2px_8px_rgba(var(--brand-rgb),0.28)] transition-colors hover:bg-[var(--brand-hover)] active:scale-95"
                 >
                   Search
                 </button>
@@ -312,8 +336,8 @@ const NotificationBell = ({ variant = "desktop" }) => {
         onClick={() => setOpen((v) => !v)}
         className={
           isMobile
-            ? "relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-muted)] shadow-[0_4px_18px_rgba(28,32,18,0.07)] transition active:scale-95"
-            : "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[var(--brand-border)] bg-[var(--bg-card)] text-[var(--text-muted)] transition hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+            ? "relative flex h-12 w-12 shrink-0 items-center justify-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[var(--bg-input)] text-[var(--text-muted)] shadow-[0_4px_18px_rgba(28,32,18,0.07)] transition active:scale-95"
+            : "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md border border-[var(--brand-border)] bg-[var(--bg-card)] text-[var(--text-muted)] transition hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
         }
       >
         <BellIcon className={isMobile ? "h-[19px] w-[19px]" : "h-4 w-4"} />
@@ -378,6 +402,86 @@ const NotificationBell = ({ variant = "desktop" }) => {
   );
 };
 
+/* ── Sport filter — pill-styled dropdown that filters the feed by game ──
+   Options come from the same list the create-post form uses
+   (Data.subCategoryMap.Players), and "All sports" clears the filter. ── */
+const SportsFilterDropdown = ({ sports = [], value = "", onChange, size = "desktop" }) => {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef(null);
+  const isMobile = size === "mobile";
+  const active = Boolean(value);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClickAway = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) setOpen(false);
+    };
+    window.addEventListener("mousedown", handleClickAway);
+    return () => window.removeEventListener("mousedown", handleClickAway);
+  }, [open]);
+
+  const select = (sport) => {
+    onChange?.(sport);
+    setOpen(false);
+  };
+
+  const pillSize = isMobile ? "px-4 py-2 text-[13px]" : "px-4 py-1.5 text-[12px]";
+
+  return (
+    <div ref={containerRef} className="relative shrink-0">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className={`flex items-center gap-1 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md font-semibold transition-colors duration-150 ${pillSize} ${
+          active
+            ? "bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_2px_8px_rgba(var(--brand-rgb),0.28)]"
+            : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--brand-border)] hover:text-[var(--brand)]"
+        }`}
+      >
+        {value || "Sport"}
+        <ChevronDownIcon
+          className={`h-3.5 w-3.5 shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+          strokeWidth={2.5}
+        />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <m.div
+            {...popIn}
+            role="listbox"
+            aria-label="Filter by sport"
+            className="absolute right-0 top-full z-50 mt-2 w-44 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-1.5 shadow-[0_12px_32px_rgba(28,32,18,0.14)]"
+          >
+            {["", ...sports].map((sport) => {
+              const selected = value === sport;
+              return (
+                <button
+                  key={sport || "all"}
+                  type="button"
+                  role="option"
+                  aria-selected={selected}
+                  onClick={() => select(sport)}
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-[12.5px] font-semibold transition ${
+                    selected
+                      ? "bg-[var(--brand-soft)] text-[var(--brand)]"
+                      : "text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]"
+                  }`}
+                >
+                  {sport || "All sports"}
+                  {selected && <CheckIcon className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />}
+                </button>
+              );
+            })}
+          </m.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 /* ── Mobile sports-mode selector — premium pill w/ dropdown affordance ── */
 const MobileSportsChip = ({ category, onClick }) => {
   const Icon = CATEGORY_ICONS[category] || DEFAULT_CATEGORY_ICON;
@@ -386,7 +490,7 @@ const MobileSportsChip = ({ category, onClick }) => {
     <button
       type="button"
       onClick={onClick}
-      className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-[var(--bg-card)] py-1.5 pl-3 pr-2.5 text-[12.5px] font-semibold text-[var(--text-heading)] shadow-[0_4px_14px_rgba(28,32,18,0.08)] transition active:scale-95"
+      className="flex h-9 shrink-0 items-center gap-1.5 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[var(--bg-card)] py-1.5 pl-3 pr-2.5 text-[12.5px] font-semibold text-[var(--text-heading)] shadow-[0_4px_14px_rgba(28,32,18,0.08)] transition active:scale-95"
     >
       <Icon className="h-[15px] w-[15px] shrink-0 text-[var(--brand)]" strokeWidth={2.25} />
       <span className="max-w-[86px] truncate">{getCategoryLabel(category)}</span>

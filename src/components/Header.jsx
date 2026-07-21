@@ -117,7 +117,7 @@ const Header = () => {
                 <span className="hidden text-base font-bold tracking-tight text-[var(--text-heading)] sm:block">
                   Plays
                 </span>
-                <span className="inline-flex rounded-sm bg-[var(--text-heading)] px-2 py-1 text-sm font-black uppercase tracking-[0.2em] text-[var(--selected-fg)] shadow-sm">
+                <span className="inline-flex rounded-sm bg-[var(--text-heading)] px-2 py-1 text-sm font-black uppercase tracking-[0.2em] text-[var(--bg-card)] shadow-sm">
                   GO
                 </span>
             </span>
