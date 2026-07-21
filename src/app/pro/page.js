@@ -43,7 +43,7 @@ const ProPage = () => (
           key={plan.name}
           className={`relative overflow-hidden rounded-2xl border p-6 transition md:p-8 ${
             plan.highlighted
-              ? "border-[var(--text-heading)] bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-[0_8px_32px_rgba(28,32,18,0.18)]"
+              ? "border-[var(--selected-bg)] bg-[var(--selected-bg)] text-[var(--selected-fg)] shadow-[0_8px_32px_rgba(28,32,18,0.18)]"
               : "border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_2px_12px_rgba(28,32,18,0.06)]"
           }`}
         >

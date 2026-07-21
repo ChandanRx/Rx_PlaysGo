@@ -1,8 +1,10 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { conversations } from "../../shared/conversations";
+import { getAvatarForUserName } from "../../shared/dummyPosts";
 
 const ConversationList = ({ activeChatId }) => {
   const router = useRouter();
@@ -16,21 +18,33 @@ const ConversationList = ({ activeChatId }) => {
       <div className="min-h-0 flex-1 space-y-1 overflow-y-auto px-2 py-2 lg:px-3">
         {conversations.map((chat) => {
           const active = chat.id === activeChatId;
+          const avatar = getAvatarForUserName(chat.name);
           return (
             <button
               key={chat.id}
               type="button"
               onClick={() => router.push(`/messages/${chat.id}`)}
               className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors duration-200 ${
-                active ? "bg-[var(--text-heading)] text-[var(--selected-fg)]" : "hover:bg-[var(--bg-input)]"
+                active ? "bg-[var(--selected-bg)] text-[var(--selected-fg)]" : "hover:bg-[var(--bg-input)]"
               }`}
             >
               <div
-                className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                className={`relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-bold ${
                   active ? "bg-[var(--bg-card)] text-[var(--text-heading)]" : "bg-[var(--bg-input)] text-[var(--text-body)]"
                 }`}
               >
-                {chat.name[0]}
+                {avatar ? (
+                  <Image
+                    src={avatar}
+                    alt={chat.name}
+                    width={44}
+                    height={44}
+                    unoptimized
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  chat.name[0]
+                )}
                 {chat.online && (
                   <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[var(--bg-card)] bg-[#22C55E]" />
                 )}
@@ -44,7 +58,7 @@ const ConversationList = ({ activeChatId }) => {
                     {chat.time}
                   </span>
                 </div>
-                <p className={`truncate text-[12px] ${active ? "text-[var(--selected-fg)]/70" : "text-[var(--text-muted)]"}`}>
+                <p className={`truncate text-[12px] ${active ? "text-[var(--selected-fg)]/90" : "text-[var(--text-body)]"}`}>
                   {chat.preview}
                 </p>
               </div>

@@ -9,6 +9,9 @@ import { deletePost, getPosts, POST_STATUSES } from "../../shared/dummyPosts";
 import { featurePost, updatePostStatus } from "../../shared/adminStore";
 import ConfirmDialog from "../ui/ConfirmDialog";
 import Dropdown from "../ui/Dropdown";
+import Button from "../ui/Button";
+import { AdminEmpty, AdminLoading } from "./AdminTableState";
+import { categoryColor } from "./vizTheme";
 
 const CATEGORY_OPTIONS = ["All", "Players", "Local Help", "For Sale"];
 const STATUS_OPTIONS = ["All", ...POST_STATUSES];
@@ -17,11 +20,11 @@ const STATUS_STYLES = {
   Active: "bg-[#22C55E]/15 text-[#16A34A]",
   Draft: "bg-[var(--bg-input)] text-[var(--text-muted)]",
   Closed: "bg-[var(--text-heading)]/10 text-[var(--text-heading)]",
-  Expired: "bg-red-100 text-red-600",
+  Expired: "bg-[var(--danger-soft)] text-[var(--danger)]",
 };
 
 const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, onDataChange }) => {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState(null);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -32,7 +35,7 @@ const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, on
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return posts.filter((post) => {
+    return (posts || []).filter((post) => {
       if (authorEmail && post.email !== authorEmail) return false;
       if (categoryFilter !== "All" && post.category !== categoryFilter) return false;
       if (statusFilter !== "All" && (post.status || "Active") !== statusFilter) return false;
@@ -97,10 +100,39 @@ const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, on
         )}
       </div>
 
+      {/* results count */}
+      {posts !== null && filtered.length > 0 && (
+        <p className="mt-3 text-[11.5px] font-medium text-[var(--text-faint)]">
+          Showing {filtered.length} of {posts.length} post{posts.length === 1 ? "" : "s"}
+        </p>
+      )}
+
       {/* table */}
-      <div className="mt-4 overflow-x-auto">
-        {filtered.length === 0 ? (
-          <p className="py-8 text-center text-[13px] text-[var(--text-muted)]">No posts match these filters.</p>
+      <div className="mt-2 overflow-x-auto">
+        {posts === null ? (
+          <AdminLoading rows={5} />
+        ) : filtered.length === 0 ? (
+          <AdminEmpty
+            icon={MagnifyingGlassIcon}
+            title="No posts match"
+            message="Try a different search or loosen the filters."
+            action={
+              (search || categoryFilter !== "All" || statusFilter !== "All" || authorEmail) && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    setSearch("");
+                    setCategoryFilter("All");
+                    setStatusFilter("All");
+                    onClearAuthorFilter?.();
+                  }}
+                >
+                  Clear filters
+                </Button>
+              )
+            }
+          />
         ) : (
           <table className="w-full min-w-[720px] text-left text-[13px]">
             <thead>
@@ -116,14 +148,22 @@ const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, on
             </thead>
             <tbody>
               {filtered.map((post) => (
-                <tr key={post.id} className="border-b border-[var(--border-subtle)] last:border-0">
-                  <td className="max-w-[220px] truncate py-2.5 pr-4 font-semibold text-[var(--text-heading)]">
-                    {post.title}
-                    {post.featurePost && (
-                      <SparklesIcon className="ml-1.5 inline-block h-3 w-3 text-[var(--brand)]" strokeWidth={2.5} />
-                    )}
+                <tr key={post.id} className="border-b border-[var(--border-subtle)] transition-colors last:border-0 hover:bg-[var(--bg-secondary)]/60">
+                  <td className="max-w-[220px] py-2.5 pr-4">
+                    <p className="truncate font-semibold text-[var(--text-heading)]">
+                      {post.title}
+                      {post.featurePost && (
+                        <SparklesIcon className="ml-1.5 inline-block h-3 w-3 text-[var(--brand)]" strokeWidth={2.5} />
+                      )}
+                    </p>
+                    <p className="mt-0.5 truncate text-[11px] text-[var(--text-faint)]">{post.subCategory}</p>
                   </td>
-                  <td className="py-2.5 pr-4 text-[var(--text-muted)]">{post.category}</td>
+                  <td className="py-2.5 pr-4 text-[var(--text-muted)]">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span aria-hidden className="h-2 w-2 rounded-full" style={{ background: categoryColor(post.category) }} />
+                      {post.category}
+                    </span>
+                  </td>
                   <td className="max-w-[160px] truncate py-2.5 pr-4 text-[var(--text-body)]">{post.userName}</td>
                   <td className="max-w-[160px] truncate py-2.5 pr-4 text-[var(--text-muted)]">{post.location}</td>
                   <td className="py-2.5 pr-4">
@@ -164,7 +204,7 @@ const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, on
                         type="button"
                         aria-label="Delete post"
                         onClick={() => setConfirmingDelete(post)}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-red-200 bg-red-50 text-red-600 transition hover:bg-red-100"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--danger-border)] bg-[var(--danger-soft)] text-[var(--danger)] transition hover:bg-[var(--danger-border)]"
                       >
                         <TrashIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
                       </button>

@@ -38,14 +38,14 @@ const Tooltip = ({ label }) => (
 
 const NavButton = ({ label, active, onClick, children, variant = "default" }) => {
   const base =
-    "group relative flex h-11 w-11 items-center justify-center rounded-xl outline-none " +
+    "group relative flex h-11 w-11 items-center justify-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md outline-none " +
     "transition-colors duration-200 ease-out motion-reduce:transition-none " +
     "focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 " +
     "focus-visible:ring-offset-[var(--bg-card)]";
 
   const styles = {
     default: active
-      ? "bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-sm"
+      ? "bg-[var(--selected-bg)] text-[var(--selected-fg)] shadow-sm"
       : "text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]",
     brand: active
       ? "bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_6px_18px_rgba(var(--brand-rgb),0.35)]"
@@ -90,7 +90,7 @@ const LeftSidebar = () => {
   return (
     <aside className="fixed bottom-20 left-3 top-3 z-30 hidden w-[76px] lg:bottom-4 lg:left-4 lg:top-4 lg:flex">
       <div
-        className="flex h-full w-full flex-col items-center rounded-2xl border border-[var(--border-subtle)]
+        className="flex h-full w-full flex-col items-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md border border-[var(--border-subtle)]
                    bg-[var(--bg-card)] px-3 py-5
                    shadow-[0_1px_2px_rgba(28,32,18,0.04),0_12px_40px_rgba(28,32,18,0.06)]"
       >

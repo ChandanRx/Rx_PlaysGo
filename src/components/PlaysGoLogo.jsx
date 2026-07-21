@@ -9,7 +9,7 @@ const PlaysGoLogo = ({ variant = "dark", iconOnly = false, className = "" }) => 
     <div className={`flex items-center gap-2.5 ${className}`}>
       {/* Icon mark */}
       <div
-        className="flex h-10 w-10 items-center justify-center rounded-xl shadow-sm"
+        className="flex h-10 w-10 items-center justify-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md shadow-sm"
         style={{ background: "linear-gradient(135deg,var(--brand),var(--secondary))" }}
       >
         <svg width="24" height="24" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -10,11 +10,13 @@ import AdminPostsTable from "../../components/admin/AdminPostsTable";
 import AdminUsersTable from "../../components/admin/AdminUsersTable";
 import AdminReportsTable from "../../components/admin/AdminReportsTable";
 import AdminCategoryBreakdown from "../../components/admin/AdminCategoryBreakdown";
+import AdminActivityTrends from "../../components/admin/AdminActivityTrends";
+import { AdminVizStyles } from "../../components/admin/vizTheme";
 
-const TABS = ["Posts", "Users", "Reports", "Overview"];
+const TABS = ["Overview", "Activity", "Posts", "Users", "Reports"];
 
 const AdminDashboardPage = () => {
-  const [activeTab, setActiveTab] = useState("Posts");
+  const [activeTab, setActiveTab] = useState("Overview");
   const [authorFilter, setAuthorFilter] = useState("");
   const [selectedPost, setSelectedPost] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -27,13 +29,14 @@ const AdminDashboardPage = () => {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="admin-viz space-y-5">
+      <AdminVizStyles />
 
       {/* header */}
       <Card className="p-5 md:p-6" hover={false}>
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--brand)]">Admin</p>
-          <span className="inline-flex items-center gap-1 rounded-md bg-[var(--text-heading)] px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-[var(--selected-fg)]">
+          <span className="inline-flex items-center gap-1 rounded-md bg-[var(--text-heading)] px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-[var(--bg-card)]">
             <ShieldCheckIcon className="h-3 w-3" strokeWidth={2.5} />
             Admin
           </span>
@@ -54,7 +57,7 @@ const AdminDashboardPage = () => {
               onClick={() => setActiveTab(tab)}
               className={`shrink-0 rounded-full px-4 py-1.5 text-[12.5px] font-semibold transition-colors ${
                 activeTab === tab
-                  ? "bg-[var(--text-heading)] text-[var(--selected-fg)]"
+                  ? "bg-[var(--selected-bg)] text-[var(--selected-fg)]"
                   : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--text-heading)] hover:text-[var(--text-heading)]"
               }`}
             >
@@ -64,6 +67,8 @@ const AdminDashboardPage = () => {
         </div>
 
         <div className="mt-5">
+          {activeTab === "Overview" && <AdminCategoryBreakdown key={refreshKey} />}
+          {activeTab === "Activity" && <AdminActivityTrends key={refreshKey} />}
           {activeTab === "Posts" && (
             <AdminPostsTable
               authorEmail={authorFilter}
@@ -74,7 +79,6 @@ const AdminDashboardPage = () => {
           )}
           {activeTab === "Users" && <AdminUsersTable onSelectUser={handleSelectUser} />}
           {activeTab === "Reports" && <AdminReportsTable onDataChange={bumpRefresh} />}
-          {activeTab === "Overview" && <AdminCategoryBreakdown key={refreshKey} />}
         </div>
       </Card>
 

@@ -10,6 +10,7 @@ const PostsPageSection = () => {
   const searchParams = useSearchParams();
   const searchText = searchParams.get("q") || "";
   const filter = searchParams.get("filter") || "Nearby";
+  const sport = searchParams.get("sport") || "";
   const { category, hasCategory, isReady: categoryReady } = useStoredAppCategory();
 
   const { posts, isReady: postsReady } = useClientSearchPosts(
@@ -18,6 +19,12 @@ const PostsPageSection = () => {
     categoryReady && hasCategory,
   );
 
+  // Sport filter narrows the feed to a single game (post.subCategory), using
+  // the same values the create-post form writes.
+  const visiblePosts = sport
+    ? posts.filter((post) => (post.subCategory || "").toLowerCase() === sport.toLowerCase())
+    : posts;
+
   const isReady = categoryReady && postsReady;
 
   return (
@@ -25,10 +32,11 @@ const PostsPageSection = () => {
       <CategoryModePrompt />
       {hasCategory && (
         <Posts
-          posts={posts}
+          posts={visiblePosts}
           isReady={isReady}
           activeCategory={category}
           activeFilter={filter}
+          activeSport={sport}
           searchText={searchText}
         />
       )}

@@ -18,6 +18,7 @@ import {
   getUserById,
   updateUserProfile,
 } from "../../shared/dummyPosts";
+import { getStoredSession } from "../../shared/authSession";
 
 const STORAGE_KEY = "quibly_theme";
 const PREFS_KEY = "playsgo_prefs";
@@ -70,6 +71,7 @@ const SettingsPage = () => {
   const [theme, setTheme] = useState("light");
   const [prefs, setPrefs] = useState(DEFAULT_PREFS);
   const [avatar, setAvatar] = useState("");
+  const [gender, setGender] = useState("");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -87,6 +89,8 @@ const SettingsPage = () => {
 
     const me = getUserById(CURRENT_USER_ID) || getStoredUserProfile();
     setAvatar(me.image || "");
+    // Prefer the profile's gender; fall back to what sign-up stored.
+    setGender(me.gender || getStoredSession()?.gender || "");
 
     setMounted(true);
   }, []);
@@ -194,7 +198,7 @@ const SettingsPage = () => {
 
         {mounted && (
           <div className="mt-4">
-            <AvatarPicker value={avatar} onChange={handleSelectAvatar} />
+            <AvatarPicker gender={gender} value={avatar} onChange={handleSelectAvatar} />
           </div>
         )}
       </Card>

@@ -130,10 +130,14 @@ export const modalSheet = {
 };
 
 // Small anchored popovers — dropdown menus, notification panels.
+// `pointerEvents` is toggled with the open state so a closing (or, if an exit
+// animation ever fails to complete, a lingering) menu can never sit invisibly
+// over the page and swallow clicks — the bug that made whole forms feel dead
+// after a dropdown was opened once.
 export const popIn = {
-  initial: { opacity: 0, scale: 0.97, y: -4 },
-  animate: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.16, ease: easeOut } },
-  exit: { opacity: 0, scale: 0.98, y: -4, transition: { duration: 0.12, ease: "easeIn" } },
+  initial: { opacity: 0, scale: 0.97, y: -4, pointerEvents: "none" },
+  animate: { opacity: 1, scale: 1, y: 0, pointerEvents: "auto", transition: { duration: 0.16, ease: easeOut } },
+  exit: { opacity: 0, scale: 0.98, y: -4, pointerEvents: "none", transition: { duration: 0.12, ease: "easeIn" } },
 };
 
 /* ── Gesture presets (whileHover / whileTap) ── */

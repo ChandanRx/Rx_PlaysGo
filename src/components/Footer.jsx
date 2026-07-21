@@ -43,7 +43,7 @@ const Footer = () => {
                   href={href}
                   className={`rounded-full px-3 py-1.5 text-[12.5px] font-medium transition ${
                     active
-                      ? "bg-[var(--text-heading)] text-[var(--selected-fg)]"
+                      ? "bg-[var(--selected-bg)] text-[var(--selected-fg)]"
                       : "text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-heading)]"
                   }`}
                 >

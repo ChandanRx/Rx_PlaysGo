@@ -35,7 +35,7 @@ const actions = [
     title: "Join Match",
     subtitle: "Discover games",
     icon: TrophyIcon,
-    href: "/posts?filter=Featured",
+    href: "/posts",
     iconColor: "var(--success)",
     iconBg: "var(--success-soft)",
   },

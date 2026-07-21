@@ -145,7 +145,7 @@ const FollowListModal = ({ ownerId, type = "followers", onClose }) => {
                       className={`inline-flex h-8 shrink-0 items-center justify-center gap-1 rounded-full px-3.5 text-[12px] font-bold transition active:scale-[0.97] ${
                         following
                           ? "border border-[var(--border-subtle)] bg-[var(--bg-input)] text-[var(--text-body)] hover:border-[var(--brand)] hover:text-[var(--brand)]"
-                          : "bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-sm hover:opacity-90"
+                          : "bg-[var(--text-heading)] text-[var(--bg-card)] shadow-sm hover:opacity-90"
                       }`}
                     >
                       {following ? (

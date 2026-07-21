@@ -86,6 +86,7 @@
 
   --danger:       #F4586A;
   --danger-soft:  #FEEDEF;
+  --danger-border:#F6C9CF;
 
   /*==============================
     SHADOWS — soft, cool ink tones
@@ -97,10 +98,11 @@
   --shadow-lg: 0 30px 80px rgba(28,32,18,.10);
 
   /*==============================
-    SELECTED FOREGROUND
-    Text/icon on active dark pills
+    SELECTED PILL
+    Background + text/icon of active pills (tabs, nav, filters)
   ==============================*/
 
+  --selected-bg: var(--text-heading);   /* charcoal pill — light mode */
   --selected-fg: #FAFBF3;   /* warm white on charcoal-olive bg — light mode */
 
   /*==============================
@@ -172,19 +174,27 @@
   --accent-soft: rgba(255,163,60,.15);
   --accent-rgb:  255,163,60;
 
+  /* Danger surfaces — translucent washes instead of the light-mode pink */
+  --danger:       #F4707F;
+  --danger-soft:  rgba(244,88,106,.14);
+  --danger-border:rgba(244,88,106,.35);
+
   /*==============================
-    SELECTED FOREGROUND
-    Text/icon on active near-white pills
+    SELECTED PILL
+    Dark mode: active pills use the hover gray, not the white pill
   ==============================*/
 
-  --selected-fg: #121210;   /* black ink on white pills — dark mode */
+  --selected-bg: var(--bg-hover);   /* #31312D — same wash as hover states */
+  --selected-fg: #FAFAF7;   /* light ink on the gray pill — dark mode */
 
   --on-brand:    #131408;   /* black ink on vivid green — dark mode */
 
-  /* Keep the solid pill buttons as the near-white dashboard pill in dark mode */
+  /* Keep the solid pill buttons as the near-white dashboard pill in dark mode
+     (black ink stated literally — --selected-fg is light now that selected
+     pills are gray, so it can no longer serve as "ink on white pill") */
   --btn-solid-bg:    var(--text-heading);
   --btn-solid-hover: #E7E7E2;
-  --btn-solid-fg:    var(--selected-fg);
+  --btn-solid-fg:    #121210;
 
 }
 
@@ -240,6 +250,14 @@
 *{
   margin:0;
   padding:0;
+}
+
+/* Reserve scrollbar space only in real scroll panes. Putting
+   scrollbar-gutter:stable on * also reserved a phantom gutter inside every
+   overflow-hidden element (circular avatar frames, cards…), shoving their
+   content off-centre. */
+.overflow-auto,
+.overflow-y-auto{
   scrollbar-gutter:stable;
 }
 
@@ -629,4 +647,26 @@ HELPERS
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ═══════════════════════════════════════════
+   BRAND CORNER SHAPE — app-wide grouping style
+   Every grouped container (cards, panels, boxes, buttons, chips,
+   inputs, sidebars, feed toolbar…) shares one asymmetric corner
+   signature: top-right + bottom-left large, top-left + bottom-right
+   small. Redefined once here so the whole app stays consistent —
+   no need to hand-edit each element.
+
+   border-radius shorthand order = TL TR BR BL
+     TL = md (0.375rem)   TR = xl (0.75rem)
+     BR = md (0.375rem)   BL = xl (0.75rem)
+
+   rounded-full (avatars, dots, pings) and the small rounded / -sm /
+   -md tiers are intentionally left alone so circles stay circular.
+═══════════════════════════════════════════ */
+.rounded-lg,
+.rounded-xl,
+.rounded-2xl,
+.rounded-3xl {
+  border-radius: 0.375rem 0.75rem 0.375rem 0.75rem;
 }

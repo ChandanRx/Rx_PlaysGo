@@ -19,7 +19,7 @@ const CategoryData = [
   },
 ];
 
-const quickFilters = ["Nearby", "Latest", "Popular", "Featured"];
+const quickFilters = ["Nearby", "Latest", "Popular"];
 
 const subCategoryMap = {
   Players: [

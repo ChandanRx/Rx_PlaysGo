@@ -211,7 +211,7 @@ const ProfileHeader = ({
             <button
               type="button"
               onClick={onEditProfile}
-              className={`${actionBase} bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-sm hover:opacity-90`}
+              className={`${actionBase} bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_2px_10px_rgba(var(--brand-rgb),0.28)] hover:bg-[var(--brand-hover)]`}
             >
               <PencilIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
               Edit profile
@@ -225,7 +225,7 @@ const ProfileHeader = ({
                 className={`${actionBase} ${
                   following
                     ? "border border-[var(--border-subtle)] bg-[var(--bg-input)] text-[var(--text-body)] hover:border-[var(--brand)] hover:text-[var(--brand)]"
-                    : "bg-[var(--text-heading)] text-[var(--selected-fg)] shadow-sm hover:opacity-90"
+                    : "bg-[var(--text-heading)] text-[var(--bg-card)] shadow-sm hover:opacity-90"
                 }`}
               >
                 {following ? (

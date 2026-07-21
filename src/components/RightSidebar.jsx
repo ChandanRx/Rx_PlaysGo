@@ -24,7 +24,7 @@ const RightSidebar = () => {
 
   return (
     <aside className="fixed right-4 top-4 bottom-4 z-30 hidden w-[300px] lg:flex">
-      <div className="flex h-full w-full flex-col overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_1px_2px_rgba(28,32,18,0.04),0_12px_40px_rgba(28,32,18,0.06)]">
+      <div className="flex h-full w-full flex-col overflow-hidden rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_1px_2px_rgba(28,32,18,0.04),0_12px_40px_rgba(28,32,18,0.06)]">
 
         {/* ── Profile header ── */}
         <button
@@ -36,7 +36,9 @@ const RightSidebar = () => {
           <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[var(--border-subtle)] opacity-70" />
           <div className="absolute right-6 top-8 h-16 w-16 rounded-full bg-[var(--brand)]/10 opacity-80" />
 
-          <div className="relative mx-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-[3px] border-[var(--bg-card)] shadow-md">
+          {/* Plain block frame — flex centering here mis-sized the image, leaving
+              the avatar cropped off-centre inside the circle. */}
+          <div className="relative mx-auto h-16 w-16 overflow-hidden rounded-full border-[3px] border-[var(--bg-card)] shadow-md">
             <Image src={dummyUser.image} alt={dummyUser.name} width={64} height={64} unoptimized={dummyUser.image?.startsWith("data:")} className="h-full w-full object-cover" />
           </div>
           <h2 className="relative mt-3 text-center text-[15px] font-bold text-[var(--text-heading)]">{dummyUser.name}</h2>

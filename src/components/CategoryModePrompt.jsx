@@ -39,7 +39,7 @@ const CategoryModePrompt = () => {
       <button
         type="button"
         onClick={() => router.push("/settings")}
-        className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--text-heading)] px-6 py-2.5 text-[13px] font-semibold text-[var(--selected-fg)] shadow-sm transition hover:bg-[var(--text-heading)]/85"
+        className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--text-heading)] px-6 py-2.5 text-[13px] font-semibold text-[var(--bg-card)] shadow-sm transition hover:bg-[var(--text-heading)]/85"
       >
         Open Settings
         <ArrowRightIcon className="h-4 w-4" strokeWidth={2.25} />

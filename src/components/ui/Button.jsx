@@ -1,8 +1,9 @@
 import React from "react";
 
-/* Base — matches reference: tight letter spacing, rounded-full pill */
+/* Base — tight letter spacing, asymmetric corners (tr/bl xl, tl/br md) */
 const baseClasses =
   "inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold tracking-tight " +
+  "rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md " +
   "transition-[background-color,color,border-color,box-shadow,transform] duration-200 outline-none select-none " +
   "focus-visible:ring-2 focus-visible:ring-[rgba(var(--brand-rgb),0.4)] " +
   "disabled:pointer-events-none disabled:opacity-50 active:scale-[0.97]";
@@ -10,55 +11,55 @@ const baseClasses =
 const variantClasses = {
   /* ── Dark pill — EdTech "Dashboard" active nav style ── */
   primary:
-    "rounded-full bg-[var(--btn-solid-bg)] text-[var(--btn-solid-fg)] shadow-sm " +
+    "bg-[var(--btn-solid-bg)] text-[var(--btn-solid-fg)] shadow-sm " +
     "hover:bg-[var(--btn-solid-hover)] hover:shadow-md",
 
   /* ── Brand CTA ── */
   yellow:
-    "rounded-full bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.32)] " +
+    "bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.32)] " +
     "hover:bg-[var(--brand-hover)] hover:shadow-[0_6px_20px_rgba(var(--brand-rgb),0.42)]",
 
   /* ── Ghost outlined ── */
   secondary:
-    "rounded-full border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-body)] " +
+    "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-body)] " +
     "hover:border-[var(--brand)] hover:text-[var(--brand)] hover:bg-[var(--brand-soft)]",
 
   /* ── Transparent text ── */
   ghost:
-    "rounded-full bg-transparent text-[var(--text-muted)] " +
+    "bg-transparent text-[var(--text-muted)] " +
     "hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]",
 
   /* ── Danger ── */
   danger:
-    "rounded-full border border-red-200 bg-red-50 text-red-600 " +
-    "hover:bg-red-100",
+    "border border-[var(--danger-border)] bg-[var(--danger-soft)] text-[var(--danger)] " +
+    "hover:bg-[var(--danger-border)]",
 
   /* ── Dark (same as primary) ── */
   dark:
-    "rounded-full bg-[var(--btn-solid-bg)] text-[var(--btn-solid-fg)] shadow-sm hover:bg-[var(--btn-solid-hover)]",
+    "bg-[var(--btn-solid-bg)] text-[var(--btn-solid-fg)] shadow-sm hover:bg-[var(--btn-solid-hover)]",
 
   /* ── Light tinted ── */
   light:
-    "rounded-full bg-[var(--brand-soft)] text-[var(--brand)] border border-[var(--brand-border)] " +
+    "bg-[var(--brand-soft)] text-[var(--brand)] border border-[var(--brand-border)] " +
     "hover:bg-[var(--brand-border)]",
 
   /* ── Outlined yellow ── */
   outline:
-    "rounded-full border-2 border-[var(--brand)] bg-transparent text-[var(--brand)] " +
+    "border-2 border-[var(--brand)] bg-transparent text-[var(--brand)] " +
     "hover:bg-[var(--brand)] hover:text-[var(--on-brand)]",
 
   /* ── Success ── */
   success:
-    "rounded-full bg-[#22C55E] text-white hover:bg-[#16A34A]",
+    "bg-[#22C55E] text-white hover:bg-[#16A34A]",
 
   /* ── White surface ── */
   white:
-    "rounded-full bg-[var(--bg-card)] text-[var(--text-body)] border border-[var(--border-subtle)] shadow-sm " +
+    "bg-[var(--bg-card)] text-[var(--text-body)] border border-[var(--border-subtle)] shadow-sm " +
     "hover:border-[var(--brand)] hover:text-[var(--brand)]",
 
   /* Alias kept for legacy usage */
   lime:
-    "rounded-full bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.32)] " +
+    "bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.32)] " +
     "hover:bg-[var(--brand-hover)]",
 };
 
@@ -67,8 +68,8 @@ const sizeClasses = {
   md:     "h-9  px-5    text-[13px]",
   lg:     "h-11 px-6    text-[14px]",
   xl:     "h-12 px-8    text-[15px]",
-  icon:   "h-9  w-9  p-0 rounded-full",
-  iconLg: "h-11 w-11 p-0 rounded-full",
+  icon:   "h-9  w-9  p-0",
+  iconLg: "h-11 w-11 p-0",
 };
 
 const Button = ({

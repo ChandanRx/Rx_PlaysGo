@@ -40,11 +40,11 @@ const DashboardLayout = ({ children }) => {
     <div className="min-h-screen">
       {/* Admin console top bar — replaces the member app chrome */}
       <header className="sticky top-0 z-40 border-b border-[var(--border-subtle)] bg-[var(--bg-card)]/90 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
+        <div className="flex h-16 w-full items-center gap-3 px-4 md:px-6">
           <Link href="/" aria-label="PlaysGo home">
             <PlaysGoLogo iconOnly />
           </Link>
-          <span className="inline-flex items-center gap-1 rounded-md bg-[var(--text-heading)] px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-[var(--selected-fg)]">
+          <span className="inline-flex items-center gap-1 rounded-md bg-[var(--text-heading)] px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-[var(--bg-card)]">
             <ShieldCheckIcon className="h-3 w-3" strokeWidth={2.5} />
             Admin console
           </span>
@@ -65,7 +65,8 @@ const DashboardLayout = ({ children }) => {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-6">
+      {/* Full-bleed width, same as the member app shell (no max-w cap) */}
+      <main className="w-full px-4 py-6 md:px-6">
         {!isReady ? null : !session ? (
           <GateCard
             icon={LockClosedIcon}
