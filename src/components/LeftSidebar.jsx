@@ -4,7 +4,6 @@ import React from "react";
 import {
   ChatBubbleLeftRightIcon,
   Cog6ToothIcon,
-  EllipsisVerticalIcon,
   HomeIcon,
   SparklesIcon,
   UserIcon,
@@ -136,10 +135,6 @@ const LeftSidebar = () => {
             onClick={() => router.push("/settings")}
           >
             <Cog6ToothIcon className="h-[22px] w-[22px]" />
-          </NavButton>
-
-          <NavButton label="More">
-            <EllipsisVerticalIcon className="h-5 w-5" />
           </NavButton>
         </div>
       </div>

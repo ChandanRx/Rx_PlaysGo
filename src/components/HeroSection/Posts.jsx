@@ -7,6 +7,7 @@ import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon, SparklesIcon } 
 import PostItems from "../PostItems";
 import QuickActions from "./QuickActions";
 import PostModal from "../PostModal";
+import Button from "../ui/Button";
 import { easeOut } from "../../shared/motionPresets";
 
 const POSTS_PER_PAGE = 12;
@@ -82,13 +83,14 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSpor
           </div>
           <h4 className="text-[15px] font-bold text-[var(--text-heading)]">No posts found</h4>
           <p className="mt-1.5 max-w-xs text-[13px] text-[var(--text-muted)]">Try another keyword or switch filters.</p>
-          <button
-            type="button"
+          <Button
+            variant="yellow"
+            size="md"
             onClick={() => router.push("/createpost")}
-            className="mt-5 rounded-xl bg-[var(--brand)] px-5 py-2.5 text-[13px] font-bold text-[var(--on-brand)] shadow-[0_4px_12px_rgba(var(--brand-rgb),0.28)] transition hover:bg-[var(--brand-hover)]"
+            className="mt-5"
           >
             Create your first post
-          </button>
+          </Button>
         </div>
 
       /* grid */

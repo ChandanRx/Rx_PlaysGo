@@ -16,8 +16,9 @@ import { m } from "framer-motion";
 import { DEFAULT_CATEGORY_ICON, SUBCATEGORY_ICONS } from "../shared/lucideIcons";
 import { getUsernameForPost } from "../shared/dummyPosts";
 import {
-  fadeUp, hoverScale, hoverScaleIcon, tapScale, tapScaleSmall, tweenFast,
+  fadeUp, hoverScaleIcon, tapScaleSmall, tweenFast,
 } from "../shared/motionPresets";
+import Button from "./ui/Button";
 
 /* ── helpers ── */
 const getCategoryThemeClass = (c) => {
@@ -204,14 +205,15 @@ const PostItems = ({ post, onClick }) => {
             )}
           </div>
 
-          <m.button
-             whileHover={hoverScale} whileTap={tapScale}
+          <Button
+             variant="yellow"
+             size="sm"
              onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-             className="flex h-11 shrink-0 items-center gap-1.5 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-gradient-to-r from-[var(--brand)] to-[var(--brand-hover)] px-4 text-[12.5px] font-bold text-[var(--on-brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.30)] transition-[background-color] hover:bg-[var(--brand-hover)] lg:h-auto lg:bg-none lg:bg-[var(--brand)] lg:py-2 lg:shadow-none"
+             className="h-11 shrink-0 gap-1.5 px-4 text-[12.5px] lg:h-9"
            >
             <PrimaryIcon className="h-[13px] w-[13px]" />
             {primaryLabel}
-          </m.button>
+          </Button>
         </div>
       </div>
     </m.div>

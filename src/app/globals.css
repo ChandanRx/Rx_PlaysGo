@@ -8,6 +8,22 @@
 
 :root {
 
+  /* ═══════════════════════════════════════════════════════════
+     GLOBAL BUTTON COLOR   ★ SINGLE SOURCE OF TRUTH ★
+     Change the app's button color HERE and every <Button> updates.
+       • filled buttons (primary / yellow / dark …) use the gradient
+       • outline / ghost / secondary buttons use --btn-accent
+     To recolor: edit --btn-grad-from, --btn-grad-to and the matching
+     rgb triple --btn-grad-shadow (rgb of the "from" color).
+     ═══════════════════════════════════════════════════════════ */
+  --btn-grad-angle:  135deg;
+  --btn-grad-from:   #FE9272;           /* coral       */
+  --btn-grad-to:     #FBF283;           /* pale yellow */
+  --btn-grad-fg:     #2A1D0A;           /* text/icon on filled buttons */
+  --btn-grad-shadow: 254, 146, 114;     /* rgb of --btn-grad-from, for the glow */
+  --btn-accent:      var(--btn-grad-from);          /* outline / ghost / hover accent */
+  --btn-accent-soft: rgba(var(--btn-grad-shadow), 0.12);
+
   /* ── Backgrounds ── */
   --bg-page:      #E4E9DC;   /* soft sage */
   --bg-card:      #FAFBF5;   /* warm cream white */
@@ -36,28 +52,28 @@
     PRIMARY  — charcoal olive (dark pills / CTAs)
   ==============================*/
 
-  --brand:        #89F336;   /* vivid lime — light-mode buttons / CTAs */
-  --brand-hover:  #79E024;
-  --brand-soft:   #EAFBD4;
-  --brand-border: #C5EE8F;
-  --brand-rgb:    137,243,54;   /* for rgba() glows / shadows */
+  --brand:        #FE9272;   /* coral — replaces the old lime green */
+  --brand-hover:  #FD7C57;
+  --brand-soft:   #FFEAE2;
+  --brand-border: #FBC7B6;
+  --brand-rgb:    254,146,114;   /* for rgba() glows / shadows */
 
   /*==============================
     SECONDARY  — olive lime
   ==============================*/
 
-  --secondary:        #A9C93B;
-  --secondary-soft:   #F1F8D6;
-  --secondary-border: #D7E897;
-  --secondary-rgb:    169,201,59;
+  --secondary:        #F98A1F;   /* warm orange — replaces olive-lime */
+  --secondary-soft:   #FDECD9;
+  --secondary-border: #F9C88F;
+  --secondary-rgb:    249,138,31;
 
   /*==============================
     ACCENT  — chartreuse (icon tiles, highlights)
   ==============================*/
 
-  --accent:      #DDF247;
-  --accent-soft: #F4FACF;
-  --accent-rgb:  221,242,71;
+  --accent:      #FFB020;   /* warm amber — replaces chartreuse */
+  --accent-soft: #FFEFCC;
+  --accent-rgb:  255,176,32;
 
   /*==============================
     SUCCESS
@@ -159,11 +175,11 @@
   --text-muted:   #93938B;
   --text-faint:   #64645E;
 
-  --brand:        #A6E64B;   /* vivid green pills / CTAs */
-  --brand-hover:  #B7F25D;
-  --brand-soft:   rgba(166,230,75,.14);
-  --brand-border: rgba(166,230,75,.35);
-  --brand-rgb:    166,230,75;
+  --brand:        #FE9272;   /* coral — replaces the old vivid green */
+  --brand-hover:  #FFA98C;
+  --brand-soft:   rgba(254,146,114,.14);
+  --brand-border: rgba(254,146,114,.35);
+  --brand-rgb:    254,146,114;
 
   --secondary:        #F98A1F;   /* vivid orange */
   --secondary-soft:   rgba(249,138,31,.14);
@@ -288,15 +304,15 @@ body{
 
   background:
     radial-gradient(circle at top left,
-      rgba(221,242,71,.10),
+      rgba(254,146,114,.10),
       transparent 28%),
 
     radial-gradient(circle at top right,
-      rgba(126,154,64,.08),
+      rgba(249,138,31,.08),
       transparent 32%),
 
     radial-gradient(circle at bottom,
-      rgba(169,201,59,.05),
+      rgba(255,176,32,.05),
       transparent 40%),
 
     var(--bg-page);
@@ -318,7 +334,7 @@ body[data-theme="dark"]{
 
   background:
     radial-gradient(circle at top left,
-      rgba(166,230,75,.06),
+      rgba(254,146,114,.06),
       transparent 26%),
 
     radial-gradient(circle at top right,
@@ -327,6 +343,20 @@ body[data-theme="dark"]{
 
     var(--bg-page);
 }
+
+/*==========================================
+  THEME-SWITCH CIRCULAR REVEAL
+  Drives the View Transitions animation fired from <ThemeToggle>. We disable
+  the browser's default cross-fade so the new theme is revealed purely by the
+  expanding-circle clip-path animated in JS. The new snapshot sits on top.
+==========================================*/
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) { z-index: 1; }
+::view-transition-new(root) { z-index: 2147483646; }
 
 /*==========================================
 TYPOGRAPHY
