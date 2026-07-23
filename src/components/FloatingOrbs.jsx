@@ -81,13 +81,32 @@ const Orb = ({ orb, springX, springY, reduce }) => {
   const x = useTransform(springX, (v) => v * orb.parallax);
   const y = useTransform(springY, (v) => v * orb.parallax);
 
-  // Even under reduced motion we keep a gentle color cross-fade (no movement),
-  // so the panel still feels alive without any vestibular-triggering motion.
+  // `colors` is optional — orbs that tint via their className (e.g. the profile
+  // banner's BANNER_ORBS) omit it and just drift. Only animate backgroundColor
+  // when a colors array is provided.
+  const hasColors = Array.isArray(orb.colors) && orb.colors.length > 0;
+  const colorStyle = hasColors ? { backgroundColor: orb.colors[0] } : undefined;
+  const colorTransition = hasColors
+    ? {
+        backgroundColor: {
+          duration: orb.colorDuration ?? 9,
+          repeat: Infinity,
+          repeatType: "mirror",
+          ease: "easeInOut",
+        },
+      }
+    : {};
+
+  // Even under reduced motion we keep a gentle color cross-fade (no movement)
+  // when colors are present; otherwise render a fully static orb.
   if (reduce) {
+    if (!hasColors) {
+      return <div className={orb.className} />;
+    }
     return (
       <m.div
         className={orb.className}
-        style={{ backgroundColor: orb.colors[0] }}
+        style={colorStyle}
         animate={{ backgroundColor: orb.colors }}
         transition={{
           duration: orb.colorDuration ?? 9,
@@ -102,22 +121,19 @@ const Orb = ({ orb, springX, springY, reduce }) => {
   return (
     // Outer layer carries the spring-smoothed pointer parallax…
     <m.div className="absolute inset-0" style={{ x, y }}>
-      {/* …inner layer carries the endless organic drift + color cycle. The
-          color animates on its own faster clock so the hue visibly shifts. */}
+      {/* …inner layer carries the endless organic drift + optional color cycle. */}
       <m.div
         className={orb.className}
-        style={{ backgroundColor: orb.colors[0] }}
-        animate={{ ...orb.keyframes, backgroundColor: orb.colors }}
+        style={colorStyle}
+        animate={{
+          ...orb.keyframes,
+          ...(hasColors ? { backgroundColor: orb.colors } : {}),
+        }}
         transition={{
           x:     { duration: orb.duration, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" },
           y:     { duration: orb.duration, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" },
           scale: { duration: orb.duration, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" },
-          backgroundColor: {
-            duration: orb.colorDuration ?? 9,
-            repeat: Infinity,
-            repeatType: "mirror",
-            ease: "easeInOut",
-          },
+          ...colorTransition,
         }}
       />
     </m.div>
