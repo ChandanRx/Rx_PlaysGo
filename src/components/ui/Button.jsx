@@ -4,63 +4,60 @@ import React from "react";
 const baseClasses =
   "inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold tracking-tight " +
   "rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md " +
-  "transition-[background-color,color,border-color,box-shadow,transform] duration-200 outline-none select-none " +
-  "focus-visible:ring-2 focus-visible:ring-[rgba(var(--brand-rgb),0.4)] " +
+  "transition-[background-color,background-image,color,border-color,box-shadow,transform,filter] duration-200 outline-none select-none " +
+  "focus-visible:ring-2 focus-visible:ring-[rgba(var(--btn-grad-shadow),0.45)] " +
   "disabled:pointer-events-none disabled:opacity-50 active:scale-[0.97]";
 
+/* ── Global filled button — the coral→yellow gradient, driven entirely by
+   the --btn-* tokens in globals.css. Change those tokens to recolor every
+   filled button at once. ── */
+const FILLED =
+  "bg-[linear-gradient(var(--btn-grad-angle),var(--btn-grad-from),var(--btn-grad-to))] " +
+  "text-[var(--btn-grad-fg)] font-bold " +
+  "shadow-[0_4px_14px_rgba(var(--btn-grad-shadow),0.35)] " +
+  "hover:brightness-[1.04] hover:shadow-[0_6px_20px_rgba(var(--btn-grad-shadow),0.45)]";
+
 const variantClasses = {
-  /* ── Dark pill — EdTech "Dashboard" active nav style ── */
-  primary:
-    "bg-[var(--btn-solid-bg)] text-[var(--btn-solid-fg)] shadow-sm " +
-    "hover:bg-[var(--btn-solid-hover)] hover:shadow-md",
+  /* ── Filled action buttons — all share the one global gradient ── */
+  primary: FILLED,
+  yellow:  FILLED,
+  lime:    FILLED,   // legacy alias
+  dark:    FILLED,
 
-  /* ── Brand CTA ── */
-  yellow:
-    "bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.32)] " +
-    "hover:bg-[var(--brand-hover)] hover:shadow-[0_6px_20px_rgba(var(--brand-rgb),0.42)]",
-
-  /* ── Ghost outlined ── */
+  /* ── Ghost outlined — accent on hover ── */
   secondary:
     "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-body)] " +
-    "hover:border-[var(--brand)] hover:text-[var(--brand)] hover:bg-[var(--brand-soft)]",
+    "hover:border-[var(--btn-accent)] hover:text-[var(--btn-accent)] hover:bg-[var(--btn-accent-soft)]",
 
-  /* ── Transparent text ── */
+  /* ── Transparent text — accent wash on hover ── */
   ghost:
     "bg-transparent text-[var(--text-muted)] " +
-    "hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]",
+    "hover:bg-[var(--btn-accent-soft)] hover:text-[var(--text-heading)]",
 
-  /* ── Danger ── */
+  /* ── Danger — kept semantic red on purpose ── */
   danger:
     "border border-[var(--danger-border)] bg-[var(--danger-soft)] text-[var(--danger)] " +
     "hover:bg-[var(--danger-border)]",
 
-  /* ── Dark (same as primary) ── */
-  dark:
-    "bg-[var(--btn-solid-bg)] text-[var(--btn-solid-fg)] shadow-sm hover:bg-[var(--btn-solid-hover)]",
-
-  /* ── Light tinted ── */
+  /* ── Light tinted — accent tint ── */
   light:
-    "bg-[var(--brand-soft)] text-[var(--brand)] border border-[var(--brand-border)] " +
-    "hover:bg-[var(--brand-border)]",
+    "bg-[var(--btn-accent-soft)] text-[var(--btn-accent)] border border-[var(--btn-accent-soft)] " +
+    "hover:brightness-95",
 
-  /* ── Outlined yellow ── */
+  /* ── Outlined — fills with the gradient on hover ── */
   outline:
-    "border-2 border-[var(--brand)] bg-transparent text-[var(--brand)] " +
-    "hover:bg-[var(--brand)] hover:text-[var(--on-brand)]",
+    "border-2 border-[var(--btn-accent)] bg-transparent text-[var(--btn-accent)] " +
+    "hover:bg-[linear-gradient(var(--btn-grad-angle),var(--btn-grad-from),var(--btn-grad-to))] " +
+    "hover:border-transparent hover:text-[var(--btn-grad-fg)]",
 
-  /* ── Success ── */
+  /* ── Success — kept semantic green on purpose ── */
   success:
     "bg-[#22C55E] text-white hover:bg-[#16A34A]",
 
-  /* ── White surface ── */
+  /* ── White surface — accent border/text on hover ── */
   white:
     "bg-[var(--bg-card)] text-[var(--text-body)] border border-[var(--border-subtle)] shadow-sm " +
-    "hover:border-[var(--brand)] hover:text-[var(--brand)]",
-
-  /* Alias kept for legacy usage */
-  lime:
-    "bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.32)] " +
-    "hover:bg-[var(--brand-hover)]",
+    "hover:border-[var(--btn-accent)] hover:text-[var(--btn-accent)]",
 };
 
 const sizeClasses = {

@@ -15,8 +15,8 @@
   height: 340px;
   top: -80px;
   left: -60px;
-  background: radial-gradient(circle at center, rgba(137, 243, 54, 0.55), transparent 70%);
-  animation: float1 18s ease-in-out infinite;
+  background: radial-gradient(circle at center, rgba(254, 146, 114, 0.55), transparent 70%);
+  animation: float1 18s ease-in-out infinite, orbHue 9s ease-in-out infinite;
 }
 
 .orb2 {
@@ -24,8 +24,8 @@
   height: 300px;
   bottom: -70px;
   right: -50px;
-  background: radial-gradient(circle at center, rgba(221, 242, 71, 0.5), transparent 70%);
-  animation: float2 22s ease-in-out infinite;
+  background: radial-gradient(circle at center, rgba(251, 242, 131, 0.5), transparent 70%);
+  animation: float2 22s ease-in-out infinite, orbHue 11s ease-in-out infinite -3s;
 }
 
 .orb3 {
@@ -33,8 +33,8 @@
   height: 260px;
   top: 45%;
   right: 12%;
-  background: radial-gradient(circle at center, rgba(169, 201, 59, 0.42), transparent 70%);
-  animation: float3 26s ease-in-out infinite;
+  background: radial-gradient(circle at center, rgba(249, 138, 31, 0.42), transparent 70%);
+  animation: float3 26s ease-in-out infinite, orbHue 8s ease-in-out infinite -5s;
 }
 
 @keyframes float1 {
@@ -52,6 +52,14 @@
 @keyframes float3 {
   0%, 100% { transform: translate(0, 0) scale(1); }
   50%      { transform: translate(-45px, 35px) scale(1.15); }
+}
+
+/* Warm hue cycle — shifts each orb through coral → gold → rose while it drifts.
+   Blur is restated because animating `filter` replaces the static blur above. */
+@keyframes orbHue {
+  0%, 100% { filter: blur(60px) hue-rotate(0deg)   saturate(1.05); }
+  33%      { filter: blur(60px) hue-rotate(34deg)  saturate(1.18); }
+  66%      { filter: blur(60px) hue-rotate(-20deg) saturate(1.12); }
 }
 
 @media (prefers-reduced-motion: reduce) {

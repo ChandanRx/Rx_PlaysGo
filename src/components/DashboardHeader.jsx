@@ -184,12 +184,12 @@ const DashboardHeader = () => {
                       <m.span
                         layoutId="filter-chip-active-pill"
                         transition={springSnappy}
-                        className="absolute inset-0 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[var(--brand)] shadow-[0_4px_12px_rgba(var(--brand-rgb),0.30)]"
+                        className="absolute inset-0 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[linear-gradient(var(--btn-grad-angle),var(--btn-grad-from),var(--btn-grad-to))] shadow-[0_4px_12px_rgba(var(--btn-grad-shadow),0.30)]"
                       />
                     ) : (
                       <span className="absolute inset-0 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md border border-[var(--border-subtle)] bg-[var(--bg-card)]" />
                     )}
-                    <span className={`relative z-10 ${active ? "text-[var(--on-brand)]" : "text-[var(--text-muted)]"}`}>
+                    <span className={`relative z-10 ${active ? "text-[var(--btn-grad-fg)]" : "text-[var(--text-muted)]"}`}>
                       {filter}
                     </span>
                   </button>
@@ -243,18 +243,15 @@ const DashboardHeader = () => {
               {Data.quickFilters.map((filter) => {
                 const active = activeFilter === filter;
                 return (
-                  <button
+                  <Button
                     key={filter}
-                    type="button"
+                    variant={active ? "yellow" : "secondary"}
+                    size="sm"
                     onClick={() => updateFeedParam("filter", filter)}
-                    className={`shrink-0 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md px-4 py-1.5 text-[12px] font-semibold transition-colors duration-150 ${
-                      active
-                        ? "bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_2px_8px_rgba(var(--brand-rgb),0.28)]"
-                        : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--brand-border)] hover:text-[var(--brand)]"
-                    }`}
+                    className="shrink-0"
                   >
                     {filter}
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -287,12 +284,9 @@ const DashboardHeader = () => {
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  className="flex h-8 shrink-0 items-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[var(--brand)] px-4 text-[12px] font-semibold text-[var(--on-brand)] shadow-[0_2px_8px_rgba(var(--brand-rgb),0.28)] transition-colors hover:bg-[var(--brand-hover)] active:scale-95"
-                >
+                <Button type="submit" variant="yellow" size="sm" className="shrink-0">
                   Search
-                </button>
+                </Button>
               </form>
 
               {/* bell */}
@@ -425,27 +419,22 @@ const SportsFilterDropdown = ({ sports = [], value = "", onChange, size = "deskt
     setOpen(false);
   };
 
-  const pillSize = isMobile ? "px-4 py-2 text-[13px]" : "px-4 py-1.5 text-[12px]";
-
   return (
     <div ref={containerRef} className="relative shrink-0">
-      <button
-        type="button"
+      <Button
+        variant={active ? "yellow" : "secondary"}
+        size={isMobile ? "md" : "sm"}
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className={`flex items-center gap-1 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md font-semibold transition-colors duration-150 ${pillSize} ${
-          active
-            ? "bg-[var(--brand)] text-[var(--on-brand)] shadow-[0_2px_8px_rgba(var(--brand-rgb),0.28)]"
-            : "border border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--brand-border)] hover:text-[var(--brand)]"
-        }`}
+        className="gap-1"
       >
         {value || "Sport"}
         <ChevronDownIcon
           className={`h-3.5 w-3.5 shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
           strokeWidth={2.5}
         />
-      </button>
+      </Button>
 
       <AnimatePresence>
         {open && (
