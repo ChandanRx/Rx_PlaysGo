@@ -17,11 +17,11 @@
      rgb triple --btn-grad-shadow (rgb of the "from" color).
      ═══════════════════════════════════════════════════════════ */
   --btn-grad-angle:  135deg;
-  --btn-grad-from:   #FE9272;           /* coral       */
-  --btn-grad-to:     #FBF283;           /* pale yellow */
-  --btn-grad-fg:     #2A1D0A;           /* text/icon on filled buttons */
-  --btn-grad-shadow: 254, 146, 114;     /* rgb of --btn-grad-from, for the glow */
-  --btn-accent:      var(--btn-grad-from);          /* outline / ghost / hover accent */
+  --btn-grad-from:   var(--brand);       /* solid coral — matches Edit profile */
+  --btn-grad-to:     var(--brand);       /* same color → flat fill, no gradient */
+  --btn-grad-fg:     var(--on-brand);    /* text/icon on filled buttons */
+  --btn-grad-shadow: var(--brand-rgb);   /* rgb of --brand, for the glow */
+  --btn-accent:      var(--brand);                  /* outline / ghost / hover accent */
   --btn-accent-soft: rgba(var(--btn-grad-shadow), 0.12);
 
   /* ── Backgrounds ── */
@@ -166,9 +166,9 @@
   --bg-input:     #2A2A27;
   --bg-hover:     #31312D;
 
-  --border-subtle:#32322F;
-  --border-light: #3B3B37;
-  --border-strong:#4C4C47;
+  --border-subtle:transparent;
+  --border-light: transparent;
+  --border-strong:transparent;
 
   --text-heading: #FAFAF7;
   --text-body:    #CFCFC8;
@@ -661,6 +661,32 @@ HELPERS
   filter:blur(100px);
 
   pointer-events:none;
+}
+
+/* ── Animated hero gradient ──
+   Living, slowly-flowing warm gradient for the auth hero panels. Sits
+   BEHIND <FloatingOrbs /> and pans a large multi-stop coral→pink→orange→
+   amber gradient across the panel so the base color keeps shifting.
+   Reduced-motion is handled by the global guard below (animation frozen). */
+.hero-animated-gradient {
+  background:
+    linear-gradient(
+      120deg,
+      var(--brand)  0%,
+      #FB7185      18%,
+      #F43F5E      34%,
+      #F97316      50%,
+      #FBBF24      66%,
+      #FB7185      82%,
+      var(--brand) 100%
+    );
+  background-size: 400% 400%;
+  animation: hero-gradient-pan 6s linear infinite;
+}
+@keyframes hero-gradient-pan {
+  0%   { background-position:   0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position:   0% 50%; }
 }
 
 /* ── Reduced motion ──

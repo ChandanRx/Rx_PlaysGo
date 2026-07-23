@@ -2,8 +2,10 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { AnimatePresence } from "framer-motion";
 import { CheckBadgeIcon, BoltIcon } from "@heroicons/react/24/solid";
 import {
+  CameraIcon,
   CheckIcon,
   EnvelopeIcon,
   MapPinIcon,
@@ -12,56 +14,26 @@ import {
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import Card from "../ui/Card";
-import FloatingOrbs from "../FloatingOrbs";
+import CoverPicker from "./CoverPicker";
+import { coverForUser } from "../../shared/coverPhotos";
 
 const actionBase =
   "inline-flex h-10 items-center justify-center gap-1.5 rounded-full px-4 text-[13px] font-bold transition active:scale-[0.97] sm:px-5";
-
-// Soft, pastel color blobs for the banner — same drifting/parallax treatment as
-// the auth hero (<FloatingOrbs />), just lighter pink/purple/blue tints instead
-// of the brand green. Semi-transparent + blurred so they read on light or dark.
-const BANNER_ORBS = [
-  {
-    className:
-      "absolute -left-10 -top-14 h-52 w-52 rounded-full bg-[#f9a8d4]/70 blur-3xl",
-    keyframes: { x: [0, 24, -12, 0], y: [0, 16, -10, 0], scale: [1, 1.1, 0.95, 1] },
-    duration: 9,
-    parallax: 24,
-  },
-  {
-    className:
-      "absolute left-1/3 -top-20 h-60 w-60 rounded-full bg-[#c4b5fd]/70 blur-3xl",
-    keyframes: { x: [0, -20, 14, 0], y: [0, 12, -8, 0], scale: [1, 0.96, 1.08, 1] },
-    duration: 12,
-    parallax: 18,
-  },
-  {
-    className:
-      "absolute -right-12 -top-12 h-56 w-56 rounded-full bg-[#93c5fd]/70 blur-3xl",
-    keyframes: { x: [0, 18, -14, 0], y: [0, -14, 10, 0], scale: [1, 1.06, 0.94, 1] },
-    duration: 10,
-    parallax: 22,
-  },
-];
-
-// Tint cycle for the little circular count pills in the banner corner.
-const BADGE_TINTS = [
-  "border-[#f9a8d4]/60 bg-[#f9a8d4]/25 text-[#be185d]",
-  "border-[#c4b5fd]/60 bg-[#c4b5fd]/25 text-[#6d28d9]",
-  "border-[#93c5fd]/60 bg-[#93c5fd]/25 text-[#1d4ed8]",
-];
 
 const ProfileHeader = ({
   profile,
   stats = [],
   isOwnProfile = true,
   onEditProfile,
+  onChangeCover,
   following = false,
   onToggleFollow,
   onGetInTouch,
 }) => {
   const [shareCopied, setShareCopied] = useState(false);
+  const [pickingCover, setPickingCover] = useState(false);
   const location = [profile.city, profile.state].filter(Boolean).join(", ");
+  const cover = coverForUser(profile);
 
   const handleShare = async () => {
     const shareUrl = `${window.location.origin}/profile/${profile.username}`;
@@ -89,26 +61,29 @@ const ProfileHeader = ({
 
   return (
     <Card padding={false} hover={false} className="rounded-[28px]">
-      {/* ── Soft pastel gradient banner ── */}
+      {/* ── Cover photo banner ── */}
       <div className="relative h-28 overflow-hidden bg-[var(--bg-secondary)] sm:h-36">
-        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(249,168,212,.4),rgba(196,181,253,.4)_45%,rgba(147,197,253,.4))]" />
-        <FloatingOrbs orbs={BANNER_ORBS} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={cover}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
         {/* Fade the banner into the card so the avatar reads cleanly. */}
         <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[var(--bg-card)]/60 to-transparent" />
 
-        {/* Little colored count pills — secondary, playful stat glance. */}
-        {stats.length > 0 && (
-          <div className="absolute right-3 top-3 flex gap-1.5 sm:right-4 sm:top-4">
-            {stats.slice(0, 3).map((stat, i) => (
-              <span
-                key={stat.label}
-                title={stat.label}
-                className={`inline-flex h-7 min-w-7 items-center justify-center rounded-full border px-2 text-[11px] font-black backdrop-blur-sm ${BADGE_TINTS[i % BADGE_TINTS.length]}`}
-              >
-                {stat.value}
-              </span>
-            ))}
-          </div>
+        {/* Change-cover control — own profile only. */}
+        {isOwnProfile && (
+          <button
+            type="button"
+            onClick={() => setPickingCover(true)}
+            aria-label="Change cover photo"
+            className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/35 px-3 py-1.5 text-[12px] font-bold text-white backdrop-blur-sm transition hover:bg-black/50 active:scale-95 sm:right-4 sm:top-4"
+          >
+            <CameraIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
+            <span className="hidden sm:inline">Change cover</span>
+          </button>
         )}
       </div>
 
@@ -266,6 +241,16 @@ const ProfileHeader = ({
           </button>
         </div>
       </div>
+
+      <AnimatePresence>
+        {pickingCover && (
+          <CoverPicker
+            value={profile.coverImage}
+            onSelect={(url) => onChangeCover?.(url)}
+            onClose={() => setPickingCover(false)}
+          />
+        )}
+      </AnimatePresence>
     </Card>
   );
 };

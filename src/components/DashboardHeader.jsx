@@ -2,13 +2,12 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { BellIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { CheckIcon, ChevronDownIcon, HandRaisedIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, ChevronDownIcon, Cog6ToothIcon, HandRaisedIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { AnimatePresence, m } from "framer-motion";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CategoryModeBadge } from "./CategoryModePrompt";
 import { useAuthSession, useClientGreeting, useNotifications, useStoredAppCategory } from "../hooks/useClientData";
 import { getCategoryLabel } from "../shared/appPreferences";
-import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from "../shared/lucideIcons";
 import { markAllNotificationsRead, markNotificationRead } from "../shared/notifications";
 import Data from "../shared/data";
 import { popIn, springSnappy } from "../shared/motionPresets";
@@ -142,7 +141,7 @@ const DashboardHeader = () => {
               Sign in
             </Button>
           ) : (
-            hasCategory && <MobileSportsChip category={category} onClick={() => router.push("/settings")} />
+            <MobileSettingsButton onClick={() => router.push("/settings")} />
           )}
         </div>
 
@@ -471,21 +470,17 @@ const SportsFilterDropdown = ({ sports = [], value = "", onChange, size = "deskt
   );
 };
 
-/* ── Mobile sports-mode selector — premium pill w/ dropdown affordance ── */
-const MobileSportsChip = ({ category, onClick }) => {
-  const Icon = CATEGORY_ICONS[category] || DEFAULT_CATEGORY_ICON;
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex h-9 shrink-0 items-center gap-1.5 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[var(--bg-card)] py-1.5 pl-3 pr-2.5 text-[12.5px] font-semibold text-[var(--text-heading)] shadow-[0_4px_14px_rgba(28,32,18,0.08)] transition active:scale-95"
-    >
-      <Icon className="h-[15px] w-[15px] shrink-0 text-[var(--brand)]" strokeWidth={2.25} />
-      <span className="max-w-[86px] truncate">{getCategoryLabel(category)}</span>
-      <ChevronDownIcon className="h-3.5 w-3.5 shrink-0 text-[var(--text-faint)]" strokeWidth={2.5} />
-    </button>
-  );
-};
+/* ── Mobile settings shortcut — compact gear button, top-right of the header ── */
+const MobileSettingsButton = ({ onClick }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    aria-label="Settings"
+    title="Settings"
+    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[var(--bg-card)] text-[var(--text-muted)] shadow-[0_4px_14px_rgba(28,32,18,0.08)] transition active:scale-95 hover:text-[var(--brand)]"
+  >
+    <Cog6ToothIcon className="h-[19px] w-[19px]" strokeWidth={2} />
+  </button>
+);
 
 export default DashboardHeader;

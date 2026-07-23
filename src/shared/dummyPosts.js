@@ -567,7 +567,7 @@ export const updatePost = (id, patch = {}) => {
 };
 
 const USER_PROFILE_KEY = "quibly_user_profile";
-const EDITABLE_PROFILE_FIELDS = ["name", "username", "bio", "city", "state", "mobile", "gender", "image"];
+const EDITABLE_PROFILE_FIELDS = ["name", "username", "bio", "city", "state", "mobile", "gender", "image", "coverImage"];
 
 // The public dummyUser stays the static fallback/defaults; anything the user
 // edits on the Profile page is layered on top of it in localStorage.

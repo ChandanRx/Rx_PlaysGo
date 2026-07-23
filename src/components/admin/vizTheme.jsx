@@ -5,7 +5,7 @@ import { HandRaisedIcon, ShoppingBagIcon, TrophyIcon } from "@heroicons/react/24
 
 /* Chart series colors for the admin dashboard, scoped under `.admin-viz`.
  *
- * Hues are drawn from the app palette (brand lime, --info blue, the for-sale
+ * Hues are drawn from the app palette (brand coral, --info blue, the for-sale
  * category tint) but lightness-snapped so each mode passes the dataviz checks
  * (OKLCH lightness band, chroma floor, CVD ΔE ≥ 12, ≥ 3:1 contrast) against the
  * actual chart surface (--bg-card: #FAFBF5 light / #1D1D1B dark). Validated

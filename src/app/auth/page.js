@@ -214,7 +214,7 @@ const AuthPage = () => {
       {/* ── Hero Panel (right) ── */}
       <aside className={`relative hidden overflow-hidden p-12 text-white lg:flex lg:flex-col lg:justify-between ${
         isSignIn
-          ? "bg-[var(--brand)]"
+          ? "hero-animated-gradient"
           : "bg-gradient-to-br from-[var(--secondary)] via-[var(--brand-hover)] to-[var(--brand)]"
       }`}>
         <FloatingOrbs />

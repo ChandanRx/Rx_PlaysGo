@@ -72,6 +72,63 @@ const startOfWeek = (date) => {
 const shortDate = (date) =>
   date.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 
+// Week-over-week deltas for the four KPI tiles. There are no historical metric
+// snapshots in the mock data layer, so the post's `date` field (the same
+// activity stand-in getWeeklyActivity uses) is the only time signal available:
+// posts are bucketed into weeks and the two most-recent *populated* weeks are
+// compared (trailing empty weeks are skipped so a quiet current week can't read
+// as -100%). Reports carry only relative "N ago" strings, so their delta buckets
+// pending reports by a coarse age parse. Each metric returns { direction, pct }:
+//   direction: "up" | "down" | "flat" | "new" (prev week was empty) | null (no data)
+const pctDelta = (current, previous) => {
+  if (previous === 0 && current === 0) return null;
+  if (previous === 0) return { direction: "new", pct: null };
+  if (current === previous) return { direction: "flat", pct: 0 };
+  const pct = Math.round(((current - previous) / previous) * 100);
+  return { direction: pct > 0 ? "up" : "down", pct };
+};
+
+// "2 hours ago" → 0, "1 day ago" → 1, "3 weeks ago" → 21. Coarse; only used to
+// split reports into this-week / last-week buckets.
+const ageInDays = (label = "") => {
+  const match = String(label).match(/(\d+)\s*(hour|day|week|month)/i);
+  if (!match) return 0;
+  const n = Number(match[1]);
+  const unit = match[2].toLowerCase();
+  if (unit.startsWith("hour")) return 0;
+  if (unit.startsWith("day")) return n;
+  if (unit.startsWith("week")) return n * 7;
+  return n * 30;
+};
+
+export const getKpiDeltas = (posts = getPosts(), reports = []) => {
+  const byWeek = new Map();
+  posts.forEach((post) => {
+    const d = post.date ? new Date(post.date) : null;
+    if (!d || Number.isNaN(d.getTime())) return;
+    const key = startOfWeek(d).getTime();
+    if (!byWeek.has(key)) byWeek.set(key, []);
+    byWeek.get(key).push(post);
+  });
+
+  const weekKeys = Array.from(byWeek.keys()).sort((a, b) => a - b);
+  const last = weekKeys.length ? byWeek.get(weekKeys[weekKeys.length - 1]) : [];
+  const prev = weekKeys.length > 1 ? byWeek.get(weekKeys[weekKeys.length - 2]) : [];
+
+  const activeOf = (arr) => arr.filter((p) => (p.status || "Active") === "Active").length;
+  const usersOf = (arr) => new Set(arr.map((p) => p.email)).size;
+
+  const pendingInWindow = (lo, hi) =>
+    reports.filter((r) => r.status === "Pending" && ageInDays(r.reportedAt) >= lo && ageInDays(r.reportedAt) <= hi).length;
+
+  return {
+    totalPosts: pctDelta(last.length, prev.length),
+    activePosts: pctDelta(activeOf(last), activeOf(prev)),
+    uniqueUsers: pctDelta(usersOf(last), usersOf(prev)),
+    pendingReports: pctDelta(pendingInWindow(0, 6), pendingInWindow(7, 13)),
+  };
+};
+
 // Posts bucketed per week. NOTE: post records have no real created-at
 // timestamp, so the `date` field (the post's scheduled/event date) is used as
 // the activity signal — a stand-in until a real createdAt exists. Posts
@@ -107,4 +164,23 @@ export const getWeeklyActivity = (posts = getPosts()) => {
     });
   }
   return weeks;
+};
+
+// Per-category weekly counts over a shared week axis — one real series per
+// category for the overview performance chart. Uses the same `date` activity
+// stand-in as getWeeklyActivity (see its note).
+export const getWeeklyByCategory = (posts = getPosts()) => {
+  const weeks = getWeeklyActivity(posts).map((w) => ({ label: w.label, start: w.start }));
+  const series = CATEGORY_ORDER.map((category) => {
+    const counts = new Map(weeks.map((w) => [w.start.getTime(), 0]));
+    posts.forEach((post) => {
+      if (post.category !== category) return;
+      const d = post.date ? new Date(post.date) : null;
+      if (!d || Number.isNaN(d.getTime())) return;
+      const key = startOfWeek(d).getTime();
+      if (counts.has(key)) counts.set(key, counts.get(key) + 1);
+    });
+    return { key: category, values: weeks.map((w) => counts.get(w.start.getTime()) || 0) };
+  });
+  return { labels: weeks.map((w) => w.label), series };
 };

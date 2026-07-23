@@ -3,7 +3,7 @@
 import React, { Suspense, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, m } from "framer-motion";
-import { ChatBubbleLeftRightIcon, HomeIcon, MapPinIcon, UserIcon } from "@heroicons/react/24/solid";
+import { ChatBubbleLeftRightIcon, HomeIcon, SparklesIcon, UserIcon } from "@heroicons/react/24/solid";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 import DashboardHeader from "./DashboardHeader";
@@ -19,12 +19,12 @@ const SCROLL_KEY_PREFIX = "quibly_scroll_";
 // Auth pages and the admin dashboard render outside the member app chrome —
 // no sidebars, feed header, or floating bottom tabs. The dashboard brings its
 // own standalone layout (src/app/dashboard/layout.js).
-const STANDALONE_PATHS = ["/signin", "/signup", "/dashboard"];
+const STANDALONE_PATHS = ["/signin", "/signup", "/dashboard", "/learn"];
 
 // Admin dashboard is desktop/admin use only — deliberately not a mobile tab.
 const bottomNav = [
   { label: "Home", href: "/", icon: HomeIcon },
-  { label: "Explore", href: "/posts", icon: MapPinIcon },
+  { label: "Pro", href: "/pro", icon: SparklesIcon },
   { label: "Create", href: "/createpost", icon: PlusIcon },
   { label: "Chat", href: "/messages", icon: ChatBubbleLeftRightIcon },
   { label: "Profile", href: "/profile", icon: UserIcon },
@@ -86,7 +86,15 @@ const AppShell = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-page)]">
+    <div className="relative isolate min-h-screen bg-[var(--bg-page)]">
+
+      {/* Global ambient decoration — very light coral disc pinned to the
+         top-left corner, using the brand (button) color. Fixed so it stays
+         put on scroll; -z-10 keeps it behind all content. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed -left-40 -top-40 -z-10 h-[34rem] w-[34rem] rounded-full bg-[var(--brand)] opacity-[0.12] blur-3xl"
+      />
 
       {/* Desktop Sidebars */}
 

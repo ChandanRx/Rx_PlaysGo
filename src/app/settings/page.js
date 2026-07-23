@@ -281,8 +281,8 @@ const SettingsPage = () => {
       <Card className="p-5 md:p-6" hover={false}>
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--text-faint)]">Location</p>
         <div className="mt-2 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--brand-soft)] text-[var(--brand)]">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--brand-soft)] text-[var(--brand)]">
               <MapPinIcon className="h-5 w-5" strokeWidth={2} />
             </span>
             <div>
