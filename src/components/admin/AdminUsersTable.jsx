@@ -2,15 +2,45 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { AnimatePresence } from "framer-motion";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
-import { UsersIcon } from "@heroicons/react/24/outline";
+import { ArrowDownTrayIcon, UsersIcon } from "@heroicons/react/24/outline";
 import { getUniqueUsers } from "../../shared/adminStore";
+import { downloadCsv } from "../../shared/csv";
+import Button from "../ui/Button";
+import { useToast } from "../ui/Toast";
 import { AdminEmpty, AdminLoading } from "./AdminTableState";
+import AdminUserDrawer from "./AdminUserDrawer";
+import { SortHeader, useTableSort } from "./sortable";
 
 const AdminUsersTable = ({ onSelectUser }) => {
   const [users, setUsers] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const toast = useToast();
 
   useEffect(() => { setUsers(getUniqueUsers()); }, []);
+
+  const { sorted, sort, toggle } = useTableSort(users || [], { key: "postCount", dir: "desc" });
+
+  const handleExport = () => {
+    downloadCsv(
+      "users.csv",
+      [
+        { header: "Name", value: (u) => u.name },
+        { header: "Email", value: (u) => u.email },
+        { header: "City", value: (u) => u.city },
+        { header: "Posts", value: (u) => u.postCount },
+        { header: "Verified", value: (u) => (u.isVerified ? "Yes" : "No") },
+      ],
+      sorted,
+    );
+    toast.success(`Exported ${sorted.length} user${sorted.length === 1 ? "" : "s"}`);
+  };
+
+  const handleViewPosts = (email) => {
+    setSelectedUser(null);
+    onSelectUser(email);
+  };
 
   if (users === null) return <AdminLoading rows={5} />;
 
@@ -28,27 +58,39 @@ const AdminUsersTable = ({ onSelectUser }) => {
 
   return (
     <div>
-      <p className="text-[11.5px] font-medium text-[var(--text-faint)]">
-        {users.length} user{users.length === 1 ? "" : "s"} · click a name to see their posts
-      </p>
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-[11.5px] font-medium text-[var(--text-faint)]">
+          {users.length} user{users.length === 1 ? "" : "s"} · click a name for details
+        </p>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={handleExport}
+          disabled={sorted.length === 0}
+          className="shrink-0"
+        >
+          <ArrowDownTrayIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
+          Export CSV
+        </Button>
+      </div>
 
       <div className="mt-2 overflow-x-auto">
         <table className="w-full min-w-[560px] text-left text-[13px]">
           <thead>
             <tr className="border-b border-[var(--border-subtle)] text-[10.5px] font-semibold uppercase tracking-wide text-[var(--text-faint)]">
-              <th className="py-2.5 pr-4">User</th>
-              <th className="py-2.5 pr-4">City</th>
-              <th className="py-2.5 pr-4">Posts</th>
-              <th className="py-2.5 pr-4">Verified</th>
+              <SortHeader label="User" sortKey="name" sort={sort} onSort={toggle} />
+              <SortHeader label="City" sortKey="city" sort={sort} onSort={toggle} />
+              <SortHeader label="Posts" sortKey="postCount" sort={sort} onSort={toggle} />
+              <SortHeader label="Verified" sortKey="isVerified" sort={sort} onSort={toggle} />
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            {sorted.map((user) => (
               <tr key={user.email} className="border-b border-[var(--border-subtle)] transition-colors last:border-0 hover:bg-[var(--bg-secondary)]/60">
                 <td className="py-2.5 pr-4">
                   <button
                     type="button"
-                    onClick={() => onSelectUser(user.email)}
+                    onClick={() => setSelectedUser(user)}
                     className="flex items-center gap-2.5 text-left transition hover:text-[var(--brand)]"
                   >
                     <Image
@@ -94,6 +136,16 @@ const AdminUsersTable = ({ onSelectUser }) => {
           </tbody>
         </table>
       </div>
+
+      <AnimatePresence>
+        {selectedUser && (
+          <AdminUserDrawer
+            user={selectedUser}
+            onClose={() => setSelectedUser(null)}
+            onViewPosts={handleViewPosts}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

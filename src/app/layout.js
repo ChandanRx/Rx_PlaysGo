@@ -16,6 +16,11 @@ export const metadata = {
   title: "Plays Go",
   description:
     "Post, discover, and connect with local opportunities, services, events, and people nearby.",
+  icons: {
+    icon: "/LOGO.png",
+    shortcut: "/LOGO.png",
+    apple: "/LOGO.png",
+  },
 };
 
 export const viewport = {

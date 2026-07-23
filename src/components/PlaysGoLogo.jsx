@@ -8,26 +8,13 @@ const PlaysGoLogo = ({ variant = "dark", iconOnly = false, className = "" }) => 
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
       {/* Icon mark */}
-      <div
-        className="flex h-10 w-10 items-center justify-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md shadow-sm"
-        style={{ background: "linear-gradient(135deg,var(--brand),var(--secondary))" }}
-      >
-        <svg width="24" height="24" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <text
-            x="32"
-            y="34"
-            textAnchor="middle"
-            dominantBaseline="central"
-            fontFamily="inherit"
-            fontSize="34"
-            fontWeight="900"
-            letterSpacing="-2"
-            fill="white"
-          >
-            P<tspan opacity="0.75">G</tspan>
-          </text>
-        </svg>
-      </div>
+      <img
+        src="/LOGO.png"
+        alt="PlaysGo"
+        width={40}
+        height={40}
+        className="h-10 w-10 object-contain"
+      />
 
       {!iconOnly && (
         <div className="leading-none">

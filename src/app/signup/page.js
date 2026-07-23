@@ -18,7 +18,7 @@ const SignUpPage = () => {
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       {/* Hero panel (left) */}
-      <aside className="relative hidden overflow-hidden bg-[var(--brand)] p-12 text-white lg:flex lg:flex-col lg:justify-between">
+      <aside className="hero-animated-gradient relative hidden overflow-hidden p-12 text-white lg:flex lg:flex-col lg:justify-between">
         {/* Ambient, cursor-reactive background orbs */}
         <FloatingOrbs />
 

@@ -83,6 +83,11 @@ const Profile = () => {
     setEditing(false);
   };
 
+  const handleChangeCover = (coverImage) => {
+    updateUserProfile({ coverImage });
+    setProfile(getUserById(CURRENT_USER_ID) || getStoredUserProfile());
+  };
+
   const stats = [
     {
       label: "Followers",
@@ -111,6 +116,7 @@ const Profile = () => {
         profile={profile}
         stats={stats}
         onEditProfile={() => setEditing(true)}
+        onChangeCover={handleChangeCover}
       />
 
       <Card className="p-4 sm:p-5 md:p-6" hover={false} padding={false}>

@@ -3,21 +3,24 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import {
-  EyeIcon, MagnifyingGlassIcon, NoSymbolIcon, SparklesIcon, TrashIcon, XMarkIcon,
+  ArrowDownTrayIcon, EyeIcon, MagnifyingGlassIcon, NoSymbolIcon, SparklesIcon, TrashIcon, XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { deletePost, getPosts, POST_STATUSES } from "../../shared/dummyPosts";
 import { featurePost, updatePostStatus } from "../../shared/adminStore";
+import { downloadCsv } from "../../shared/csv";
 import ConfirmDialog from "../ui/ConfirmDialog";
 import Dropdown from "../ui/Dropdown";
 import Button from "../ui/Button";
+import { useToast } from "../ui/Toast";
 import { AdminEmpty, AdminLoading } from "./AdminTableState";
+import { SortHeader, useTableSort } from "./sortable";
 import { categoryColor } from "./vizTheme";
 
 const CATEGORY_OPTIONS = ["All", "Players", "Local Help", "For Sale"];
 const STATUS_OPTIONS = ["All", ...POST_STATUSES];
 
 const STATUS_STYLES = {
-  Active: "bg-[#22C55E]/15 text-[#16A34A]",
+  Active: "bg-[var(--success-soft)] text-[var(--success)]",
   Draft: "bg-[var(--bg-input)] text-[var(--text-muted)]",
   Closed: "bg-[var(--text-heading)]/10 text-[var(--text-heading)]",
   Expired: "bg-[var(--danger-soft)] text-[var(--danger)]",
@@ -29,6 +32,7 @@ const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, on
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
   const [confirmingDelete, setConfirmingDelete] = useState(null);
+  const toast = useToast();
 
   const refresh = () => setPosts(getPosts());
   useEffect(() => { refresh(); }, []);
@@ -44,18 +48,48 @@ const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, on
     });
   }, [posts, authorEmail, categoryFilter, statusFilter, search]);
 
+  const { sorted, sort, toggle } = useTableSort(filtered);
+
   const mutate = (fn) => {
     fn();
     refresh();
     onDataChange?.();
   };
 
-  const handleFeature = (id) => mutate(() => featurePost(id));
-  const handleClose = (id) => mutate(() => updatePostStatus(id, "Closed"));
-  const handleDelete = (id) => mutate(() => {
-    deletePost(id);
-    setConfirmingDelete(null);
-  });
+  const handleFeature = (id) => {
+    mutate(() => featurePost(id));
+    toast.success("Post featured");
+  };
+  const handleClose = (id) => {
+    mutate(() => updatePostStatus(id, "Closed"));
+    toast.info("Post closed");
+  };
+  const handleDelete = (id) => {
+    mutate(() => {
+      deletePost(id);
+      setConfirmingDelete(null);
+    });
+    toast.danger("Post deleted");
+  };
+
+  const handleExport = () => {
+    downloadCsv(
+      "posts.csv",
+      [
+        { header: "Title", value: (p) => p.title },
+        { header: "Category", value: (p) => p.category },
+        { header: "Subcategory", value: (p) => p.subCategory },
+        { header: "Author", value: (p) => p.userName },
+        { header: "Email", value: (p) => p.email },
+        { header: "Location", value: (p) => p.location },
+        { header: "Status", value: (p) => p.status || "Active" },
+        { header: "Posted", value: (p) => p.postedTime },
+        { header: "Featured", value: (p) => (p.featurePost ? "Yes" : "No") },
+      ],
+      sorted,
+    );
+    toast.success(`Exported ${sorted.length} post${sorted.length === 1 ? "" : "s"}`);
+  };
 
   return (
     <div>
@@ -98,6 +132,17 @@ const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, on
             </button>
           </span>
         )}
+
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={handleExport}
+          disabled={!posts || filtered.length === 0}
+          className="shrink-0 sm:ml-auto"
+        >
+          <ArrowDownTrayIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
+          Export CSV
+        </Button>
       </div>
 
       {/* results count */}
@@ -137,17 +182,17 @@ const AdminPostsTable = ({ authorEmail = "", onClearAuthorFilter, onOpenPost, on
           <table className="w-full min-w-[720px] text-left text-[13px]">
             <thead>
               <tr className="border-b border-[var(--border-subtle)] text-[10.5px] font-semibold uppercase tracking-wide text-[var(--text-faint)]">
-                <th className="py-2.5 pr-4">Title</th>
-                <th className="py-2.5 pr-4">Category</th>
-                <th className="py-2.5 pr-4">Author</th>
-                <th className="py-2.5 pr-4">Location</th>
-                <th className="py-2.5 pr-4">Status</th>
+                <SortHeader label="Title" sortKey="title" sort={sort} onSort={toggle} />
+                <SortHeader label="Category" sortKey="category" sort={sort} onSort={toggle} />
+                <SortHeader label="Author" sortKey="userName" sort={sort} onSort={toggle} />
+                <SortHeader label="Location" sortKey="location" sort={sort} onSort={toggle} />
+                <SortHeader label="Status" sortKey="status" sort={sort} onSort={toggle} />
                 <th className="py-2.5 pr-4">Posted</th>
                 <th className="py-2.5 pr-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map((post) => (
+              {sorted.map((post) => (
                 <tr key={post.id} className="border-b border-[var(--border-subtle)] transition-colors last:border-0 hover:bg-[var(--bg-secondary)]/60">
                   <td className="max-w-[220px] py-2.5 pr-4">
                     <p className="truncate font-semibold text-[var(--text-heading)]">
