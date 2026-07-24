@@ -19,7 +19,7 @@ const EMAIL_PATTERN = /^\S+@\S+\.\S+$/;
 // Lenient on purpose — demo auth. Digits with optional +, spaces, or dashes.
 const MOBILE_PATTERN = /^\+?[\d][\d\s-]{6,14}$/;
 
-const GENDERS = ["Female", "Male", "Non-binary", "Prefer not to say"];
+const GENDERS = ["Female", "Male", "Prefer not to say"];
 
 const Field = ({ label, error, children }) => (
   <label className="block">
