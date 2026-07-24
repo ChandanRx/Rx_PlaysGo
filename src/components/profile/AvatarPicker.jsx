@@ -112,7 +112,7 @@ const AvatarPicker = ({ value, onChange, avatars = DOODLE_AVATARS, compact = fal
             setQuery(e.target.value);
             setFocusIndex(0);
           }}
-          placeholder="Search avatars — glasses, afro, hat, beard…"
+          placeholder="Search avatars — hair, mustache, earrings…"
           aria-label="Search avatars"
           className="w-full rounded-xl border-0 bg-[var(--bg-secondary)] py-2.5 pl-10 pr-10 text-[13.5px] text-[var(--text-heading)] outline-none transition placeholder:text-[var(--text-faint)] focus:bg-[var(--bg-card)] focus:shadow-[0_0_0_2px_var(--brand)]"
         />
