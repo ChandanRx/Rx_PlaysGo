@@ -160,8 +160,10 @@
 
   /* True-black dashboard — charcoal cards, vivid green + orange accents */
 
-  --bg-page:      #0A0A09;
-  --bg-card:      #1D1D1B;
+  /* Inverted surfaces: sidebars / middle panel go black (--bg-card), while the
+     global page canvas takes the old charcoal card tone (--bg-page). */
+  --bg-page:      #1D1D1B;
+  --bg-card:      #0A0A09;
   --bg-secondary: #232321;
   --bg-input:     #2A2A27;
   --bg-hover:     #31312D;
@@ -327,21 +329,16 @@ body{
   -moz-osx-font-smoothing:grayscale;
 }
 
-/* Dark mode — flat near-black canvas with faint green / orange glows,
-   matching the black-dashboard reference */
+/* Dark mode — flat charcoal canvas, no colored corner glows */
 [data-theme="dark"] body,
 body[data-theme="dark"]{
+  background: var(--bg-page);
+}
 
-  background:
-    radial-gradient(circle at top left,
-      rgba(254,146,114,.06),
-      transparent 26%),
-
-    radial-gradient(circle at top right,
-      rgba(249,138,31,.05),
-      transparent 30%),
-
-    var(--bg-page);
+/* Drop the ambient coral corner disc in dark mode — the page canvas stays
+   a clean flat charcoal there. */
+[data-theme="dark"] .app-ambient-glow{
+  display: none;
 }
 
 /*==========================================

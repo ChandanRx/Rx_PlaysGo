@@ -19,7 +19,7 @@ const SCROLL_KEY_PREFIX = "quibly_scroll_";
 // Auth pages and the admin dashboard render outside the member app chrome —
 // no sidebars, feed header, or floating bottom tabs. The dashboard brings its
 // own standalone layout (src/app/dashboard/layout.js).
-const STANDALONE_PATHS = ["/signin", "/signup", "/dashboard", "/learn"];
+const STANDALONE_PATHS = ["/signin", "/signup", "/dashboard"];
 
 // Admin dashboard is desktop/admin use only — deliberately not a mobile tab.
 const bottomNav = [
@@ -93,7 +93,7 @@ const AppShell = ({ children }) => {
          put on scroll; -z-10 keeps it behind all content. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed -left-40 -top-40 -z-10 h-[34rem] w-[34rem] rounded-full bg-[var(--brand)] opacity-[0.12] blur-3xl"
+        className="app-ambient-glow pointer-events-none fixed -left-40 -top-40 -z-10 h-[34rem] w-[34rem] rounded-full bg-[var(--brand)] opacity-[0.12] blur-3xl"
       />
 
       {/* Desktop Sidebars */}
