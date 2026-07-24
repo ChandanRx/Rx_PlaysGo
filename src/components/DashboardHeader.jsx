@@ -87,8 +87,7 @@ const DashboardHeader = () => {
       <header className="mb-5 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-[var(--text-heading)]">{pageTitle}</h1>
-          <p className="text-xs text-[var(--text-muted)]">Manage your local community activity</p>
-        </div>
+          </div>
         <div className="flex items-center gap-2">
           {showSignIn && (
             <Button variant="secondary" size="sm" onClick={() => router.push("/signin")}>
