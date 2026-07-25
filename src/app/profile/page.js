@@ -12,6 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { springSnappy, staggerContainer, staggerItem } from "../../shared/motionPresets";
 import PostItems from "../../components/PostItems";
+import { PostCardSkeletonGrid } from "../../components/PostCardSkeleton";
 import PostModal from "../../components/PostModal";
 import ProfileHeader from "../../components/profile/ProfileHeader";
 import FollowListModal from "../../components/profile/FollowListModal";
@@ -47,12 +48,16 @@ const Profile = () => {
   const [editing, setEditing] = useState(false);
   const [confirmingDeleteId, setConfirmingDeleteId] = useState(null);
   const [followList, setFollowList] = useState(null);
+  // Posts come from localStorage, so the first paint has none — without this
+  // the empty state flashes before the real cards land.
+  const [postsReady, setPostsReady] = useState(false);
 
   useEffect(() => {
     const load = () => {
       const me = getUserById(CURRENT_USER_ID) || getStoredUserProfile();
       setProfile(me);
       setUserPosts(getUserPosts(me.email));
+      setPostsReady(true);
     };
 
     load();
@@ -167,7 +172,12 @@ const Profile = () => {
           </div>
         </div>
 
-        {filteredPosts.length === 0 ? (
+        {!postsReady ? (
+          <PostCardSkeletonGrid
+            count={3}
+            className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
+          />
+        ) : filteredPosts.length === 0 ? (
           <div className="mt-5 flex flex-col items-center rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--bg-secondary)]/60 px-5 py-12 text-center">
             <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--bg-card)] text-[var(--text-faint)] shadow-[var(--shadow-xs)]">
               <InboxIcon className="h-7 w-7" strokeWidth={1.75} />

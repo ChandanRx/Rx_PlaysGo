@@ -29,6 +29,21 @@ const seedReports = [
   },
 ];
 
+// Reasons offered to members on the post card. Kept here (not in the modal) so
+// the admin "reports by reason" breakdown groups on a fixed set of labels.
+export const REPORT_REASONS = [
+  "Spam or scam",
+  "Misleading or fake listing",
+  "Inappropriate content",
+  "Suspicious contact request",
+  "Duplicate post",
+  "Something else",
+];
+
+// Lets post cards re-check their "already reported" state when a report is
+// filed or dismissed anywhere, same pattern as FOLLOW_CHANGE_EVENT.
+export const REPORTS_CHANGE_EVENT = "quibly-reports-change";
+
 const isBrowser = () => typeof window !== "undefined";
 
 const readReports = () => {
@@ -50,10 +65,36 @@ const readReports = () => {
 const writeReports = (reports) => {
   if (isBrowser()) {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(reports));
+    window.dispatchEvent(new CustomEvent(REPORTS_CHANGE_EVENT));
   }
 };
 
 export const getReports = () => readReports();
+
+// A member flagged a post from the feed. New reports land at the top of the
+// admin queue as "Pending", same shape as the seeded ones.
+export const addReport = ({ postId, reason, details = "", reportedBy = "" }) => {
+  const report = {
+    id: `report-${Date.now()}`,
+    postId,
+    reason,
+    details: details.trim(),
+    reportedBy: reportedBy || "anonymous",
+    status: "Pending",
+    reportedAt: "just now",
+  };
+
+  writeReports([report, ...readReports()]);
+  return report;
+};
+
+// Used by the post card to show an already-reported state instead of letting
+// the same member file the same report twice.
+export const hasReportedPost = (postId, reportedBy = "") => {
+  if (!postId) return false;
+  const who = reportedBy || "anonymous";
+  return readReports().some((report) => report.postId === postId && report.reportedBy === who);
+};
 
 export const dismissReport = (id) => {
   const next = readReports().map((report) =>

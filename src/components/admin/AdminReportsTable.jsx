@@ -112,6 +112,11 @@ const AdminReportsTable = ({ onDataChange }) => {
                 <p className="mt-0.5 text-[12px] text-[var(--text-muted)]">
                   {report.reason} · reported by {report.reportedBy} · {report.reportedAt}
                 </p>
+                {report.details && (
+                  <p className="mt-1 line-clamp-2 text-[12px] italic text-[var(--text-faint)]">
+                    “{report.details}”
+                  </p>
+                )}
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 <span

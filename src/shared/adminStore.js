@@ -1,9 +1,9 @@
 // Admin data-layer: wraps dummyPosts.js (posts) and adminReports.js (flagged
 // posts) into the shape the /dashboard admin panel consumes.
 import { getPosts, updatePost } from "./dummyPosts";
-import { dismissReport, getReports } from "./adminReports";
+import { addReport, dismissReport, getReports, hasReportedPost } from "./adminReports";
 
-export { getReports, dismissReport };
+export { getReports, dismissReport, addReport, hasReportedPost };
 
 export const getAdminStats = () => {
   const posts = getPosts();

@@ -5,9 +5,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { m, AnimatePresence } from "framer-motion";
 import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import PostItems from "../PostItems";
+import { PostCardSkeletonGrid } from "../PostCardSkeleton";
 import QuickActions from "./QuickActions";
 import PostModal from "../PostModal";
+import ReportPostModal from "../ReportPostModal";
 import Button from "../ui/Button";
+import { useToast } from "../ui/Toast";
 import { easeOut } from "../../shared/motionPresets";
 
 const POSTS_PER_PAGE = 12;
@@ -15,8 +18,10 @@ const POSTS_PER_PAGE = 12;
 const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSport = "" }) => {
   const [page, setPage]         = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [reportingPost, setReportingPost] = useState(null);
   const router                  = useRouter();
   const pathname                = usePathname();
+  const toast                   = useToast();
 
   const openPost = (item) => { setSelectedPost(item); };
   useEffect(() => { setPage(1); }, [posts]);
@@ -69,11 +74,7 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSpor
 
       {/* skeleton */}
       {!isReady ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5 xl:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-[280px] animate-pulse rounded-2xl bg-[var(--bg-secondary)] lg:h-[400px]" />
-          ))}
-        </div>
+        <PostCardSkeletonGrid count={6} />
 
       /* empty */
       ) : posts.length === 0 ? (
@@ -108,7 +109,7 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSpor
                 transition={{ duration: 0.35, ease: easeOut, delay: i * 0.05 }}
                 className="flex h-full"
               >
-                <PostItems post={item} onClick={() => openPost(item)} />
+                <PostItems post={item} onClick={() => openPost(item)} onReport={setReportingPost} />
               </m.div>
             ))}
           </div>
@@ -140,6 +141,17 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSpor
       <AnimatePresence>
         {selectedPost && (
           <PostModal key={selectedPost.id} post={selectedPost} onClose={() => setSelectedPost(null)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {reportingPost && (
+          <ReportPostModal
+            key={`report-${reportingPost.id}`}
+            post={reportingPost}
+            onClose={() => setReportingPost(null)}
+            onReported={() => toast.success("Report submitted — our team will review it.")}
+          />
         )}
       </AnimatePresence>
     </section>
