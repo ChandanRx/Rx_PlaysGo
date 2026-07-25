@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import {
-  CheckBadgeIcon, ClockIcon, HeartIcon, MapPinIcon, TagIcon, UsersIcon,
+  BoltIcon, CheckBadgeIcon, ClockIcon, HeartIcon, MapPinIcon,
 } from "@heroicons/react/24/solid";
 import {
   CalendarIcon, ChatBubbleLeftRightIcon,
@@ -28,13 +28,6 @@ const getCategoryThemeClass = (c) => {
   return "";
 };
 
-const getMetaText = (post) => {
-  if (!post?.requiredPeople) return null;
-  if (post.category === "For Sale")   return `₹ ${post.requiredPeople}`;
-  if (post.category === "Local Help") return `${post.requiredPeople} Helpers`;
-  return `${post.requiredPeople} Players`;
-};
-
 const getPrimaryLabel = (category) => {
   if (category === "For Sale")   return "View Details";
   if (category === "Local Help") return "Request Help";
@@ -46,13 +39,42 @@ const getPrimaryIcon = (category) => {
   return UserPlusIcon;
 };
 
+const formatChipDate = (dateStr) => {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+};
+
+// Combines the post's date + time into a real Date so we can compute a
+// "starts in / started" countdown chip.
+const getEventDateTime = (post) => {
+  if (!post?.date) return null;
+  const d = new Date(`${post.date} ${post.time || ""}`.trim());
+  return Number.isNaN(d.getTime()) ? null : d;
+};
+
+const getRemainingLabel = (post) => {
+  const dt = getEventDateTime(post);
+  if (!dt) return null;
+  const diffMs = dt.getTime() - Date.now();
+  const past = diffMs < 0;
+  const abs = Math.abs(diffMs);
+  const minutes = Math.round(abs / 60000);
+  const hours = Math.round(abs / 3600000);
+  const days = Math.round(abs / 86400000);
+  const unit = minutes < 60 ? `${Math.max(minutes, 1)}m` : hours < 24 ? `${hours}h` : `${days}d`;
+  return past ? `${unit} ago` : `${unit} left`;
+};
+
 const getChips = (post) => {
   const chips = [];
-  if (post?.subCategory)    chips.push({ icon: TagIcon,            label: post.subCategory });
-  if (post?.requiredPeople) chips.push({ icon: UsersIcon,          label: getMetaText(post) });
-  if (post?.duration)       chips.push({ icon: ClockIcon,          label: post.duration });
-  if (post?.date)           chips.push({ icon: CalendarIcon, label: post.date });
-  return chips.slice(0, 3);
+  const dateLabel = formatChipDate(post?.date);
+  if (dateLabel)      chips.push({ icon: CalendarIcon, label: dateLabel });
+  if (post?.time)     chips.push({ icon: ClockIcon,    label: post.time });
+  const remaining = getRemainingLabel(post);
+  if (remaining)      chips.push({ icon: BoltIcon,     label: remaining });
+  return chips;
 };
 
 /* ── component ── */
@@ -72,7 +94,6 @@ const PostItems = ({ post, onClick }) => {
   const primaryLabel = getPrimaryLabel(post?.category);
   const PrimaryIcon  = getPrimaryIcon(post?.category);
   const chips        = getChips(post);
-  const metaText     = getMetaText(post);
   const authorUsername = getUsernameForPost(post);
 
   // avatar + name, shared between the linked and plain (unknown author) cases.
@@ -81,16 +102,16 @@ const PostItems = ({ post, onClick }) => {
       <span className="relative shrink-0">
         <Image
           src={post?.userImage || "/avatar-placeholder.svg"}
-          width={26} height={26}
+          width={40} height={40}
           unoptimized={post?.userImage?.startsWith("data:")}
           alt={post?.userName || "User"}
-          className="h-[22px] w-[22px] rounded-full border border-[var(--border-subtle)] object-cover lg:h-[26px] lg:w-[26px]"
+          className="h-[34px] w-[34px] rounded-full border border-[var(--border-subtle)] object-cover lg:h-[40px] lg:w-[40px]"
         />
         {post?.isVerified && (
-          <CheckBadgeIcon className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 text-[var(--brand)] drop-shadow-[0_0_2px_var(--bg-card)]" />
+          <CheckBadgeIcon className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 text-[var(--brand)] drop-shadow-[0_0_2px_var(--bg-card)]" />
         )}
       </span>
-      <span className="truncate text-[11px] font-semibold text-[var(--text-body)] lg:text-[11.5px]">{post?.userName}</span>
+      <span className="truncate text-[12.5px] font-semibold text-[var(--text-body)] lg:text-[13.5px]">{post?.userName}</span>
     </>
   );
 
@@ -156,22 +177,6 @@ const PostItems = ({ post, onClick }) => {
           <span className="truncate">{post?.location || "Location not set"}</span>
         </div>
 
-        {/* user row */}
-        <div className="mt-2.5 flex items-center gap-2 lg:mt-3">
-          {authorUsername ? (
-            <Link
-              href={`/profile/${authorUsername}`}
-              onClick={(e) => e.stopPropagation()}
-              className="flex min-w-0 items-center gap-2 hover:underline"
-            >
-              {authorInner}
-            </Link>
-          ) : (
-            <div className="flex min-w-0 items-center gap-2">{authorInner}</div>
-          )}
-          <span className="ml-auto shrink-0 text-[10px] text-[var(--text-faint)] lg:text-[10.5px]">{post?.postedTime}</span>
-        </div>
-
         {/* divider */}
         <div className="my-2 h-px bg-[var(--border-subtle)] lg:my-2.5" />
 
@@ -187,29 +192,25 @@ const PostItems = ({ post, onClick }) => {
           </div>
         )}
 
-        {/* footer: meta left + CTA right */}
+        {/* footer: who posted (left) + CTA right */}
         <div className="mt-auto flex items-center justify-between gap-3 pt-1">
-          <div>
-            {metaText ? (
-              <>
-                <p className="text-[17px] font-black leading-none text-[var(--text-heading)] lg:text-[18px]">{metaText}</p>
-                <p className="mt-0.5 text-[10px] text-[var(--text-faint)] lg:text-[10.5px]">
-                  {post?.category === "For Sale" ? "asking price" : "needed"}
-                </p>
-              </>
-            ) : (
-              <>
-                <p className="text-[13.5px] font-bold leading-none text-[var(--text-heading)] lg:text-[14px]">{post?.category}</p>
-                <p className="mt-0.5 text-[10px] text-[var(--text-faint)] lg:text-[10.5px]">post</p>
-              </>
-            )}
-          </div>
+          {authorUsername ? (
+            <Link
+              href={`/profile/${authorUsername}`}
+              onClick={(e) => e.stopPropagation()}
+              className="flex min-w-0 items-center gap-2 hover:underline"
+            >
+              {authorInner}
+            </Link>
+          ) : (
+            <div className="flex min-w-0 items-center gap-2">{authorInner}</div>
+          )}
 
           <Button
              variant="yellow"
              size="sm"
              onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-             className="h-11 shrink-0 gap-1.5 px-4 text-[12.5px] lg:h-9"
+             className="h-11 shrink-0 gap-1.5 px-4 text-[12.5px] lg:h-10"
            >
             <PrimaryIcon className="h-[13px] w-[13px]" />
             {primaryLabel}
