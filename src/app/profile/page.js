@@ -115,16 +115,24 @@ const Profile = () => {
   };
 
   const emptyCopy = EMPTY_STATE_COPY[activeTab];
+  const reveal = useMountReveal();
 
   return (
     <div className="space-y-5">
-      <ProfileHeader
-        profile={profile}
-        stats={stats}
-        onEditProfile={() => setEditing(true)}
-        onChangeCover={handleChangeCover}
-      />
+      <m.div initial={fadeUp.initial} animate={reveal === "show" ? fadeUp.animate : fadeUp.initial} transition={tweenFast}>
+        <ProfileHeader
+          profile={profile}
+          stats={stats}
+          onEditProfile={() => setEditing(true)}
+          onChangeCover={handleChangeCover}
+        />
+      </m.div>
 
+      <m.div
+        initial={fadeUp.initial}
+        animate={reveal === "show" ? fadeUp.animate : fadeUp.initial}
+        transition={{ ...tweenFast, delay: 0.08 }}
+      >
       <Card className="p-4 sm:p-5 md:p-6" hover={false} padding={false}>
         <div className="flex flex-col gap-3 border-b border-[var(--border-subtle)] pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -197,7 +205,7 @@ const Profile = () => {
             key={activeTab}
             variants={staggerContainer}
             initial="hidden"
-            animate="show"
+            animate={reveal}
             className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
           >
             {filteredPosts.map((item) => (
@@ -237,6 +245,7 @@ const Profile = () => {
           </m.div>
         )}
       </Card>
+      </m.div>
 
       <AnimatePresence>
         {selectedPost && <PostModal key={selectedPost.id} post={selectedPost} onClose={() => setSelectedPost(null)} />}
