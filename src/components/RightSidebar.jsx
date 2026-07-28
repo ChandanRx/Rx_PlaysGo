@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useMemo } from "react";
+import { m } from "framer-motion";
 import { BellIcon } from "@heroicons/react/24/solid";
 import {
   ArrowUturnLeftIcon, CheckBadgeIcon, ChatBubbleLeftIcon, SignalIcon,
@@ -10,12 +11,21 @@ import { useRouter } from "next/navigation";
 import { dummyUser } from "../shared/dummyPosts";
 import { useNotifications } from "../hooks/useClientData";
 import { markAllNotificationsRead, markNotificationRead } from "../shared/notifications";
+import { slideInRight, staggerContainer, staggerItem, tweenFast } from "../shared/motionPresets";
 
 const ICONS = { reply: ArrowUturnLeftIcon, message: ChatBubbleLeftIcon, live: SignalIcon, badge: CheckBadgeIcon };
 
 const RightSidebar = () => {
   const router = useRouter();
   const { notifications, unreadCount } = useNotifications();
+
+  /* Entrance stagger replays only when the list itself changes. The store hands
+     back a fresh array on every sync (including "mark read"), so the identity of
+     the array can't gate the animation — the id sequence can. */
+  const listKey = useMemo(
+    () => notifications.map((notification) => notification.id).join("|"),
+    [notifications],
+  );
 
   const handleSelect = (notification) => {
     markNotificationRead(notification.id);
@@ -27,9 +37,12 @@ const RightSidebar = () => {
       <div className="flex h-full w-full flex-col overflow-hidden rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_1px_2px_rgba(28,32,18,0.04),0_12px_40px_rgba(28,32,18,0.06)]">
 
         {/* ── Profile header ── */}
-        <button
+        <m.button
           type="button"
           onClick={() => router.push("/profile")}
+          initial={slideInRight.initial}
+          animate={slideInRight.animate}
+          transition={tweenFast}
           className="relative overflow-hidden border-b border-[var(--border-subtle)] bg-gradient-to-b from-[var(--bg-input)] to-[var(--bg-card)] px-5 pb-5 pt-5 text-left transition hover:bg-[var(--bg-input)]"
         >
           {/* decorative circles */}
@@ -43,7 +56,7 @@ const RightSidebar = () => {
           </div>
           <h2 className="relative mt-3 text-center text-[15px] font-bold text-[var(--text-heading)]">{dummyUser.name}</h2>
           <p className="relative text-center text-[12px] text-[var(--text-muted)]">@{dummyUser.username} · Mumbai</p>
-        </button>
+        </m.button>
 
         {/* ── Notifications ── */}
         <div className="flex min-h-0 flex-1 flex-col">
@@ -63,15 +76,22 @@ const RightSidebar = () => {
             </div>
           </div>
 
-          <div className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-2">
+          <m.div
+            key={listKey}
+            className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-2"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+          >
             {notifications.length === 0 ? (
               <p className="px-2 py-8 text-center text-[12.5px] text-[var(--text-muted)]">No notifications yet</p>
             ) : (
               notifications.map((notification) => {
                 const Icon = ICONS[notification.icon] || BellIcon;
                 return (
-                  <button
+                  <m.button
                     key={notification.id}
+                    variants={staggerItem}
                     type="button"
                     onClick={() => handleSelect(notification)}
                     className={`flex w-full items-start gap-2.5 rounded-xl px-3 py-2.5 text-left transition-colors duration-200 hover:bg-[var(--bg-input)] ${
@@ -88,11 +108,11 @@ const RightSidebar = () => {
                       <span className="mt-0.5 block text-[11px] text-[var(--text-faint)]">{notification.time}</span>
                     </span>
                     {!notification.read && <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand)]" />}
-                  </button>
+                  </m.button>
                 );
               })
             )}
-          </div>
+          </m.div>
         </div>
       </div>
     </aside>

@@ -10,9 +10,11 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { m } from "framer-motion";
 import Data from "../shared/data";
 import { isCategoryActive } from "../shared/appPreferences";
 import { signOut } from "../shared/authSession";
+import { staggerContainer, staggerItem } from "../shared/motionPresets";
 import { useAuthSession } from "../hooks/useClientData";
 import Button from "./ui/Button";
 import Dropdown from "./ui/Dropdown";
@@ -125,38 +127,46 @@ const Header = () => {
 
           <span className="hidden h-7 w-px shrink-0 bg-[var(--border-subtle)] md:block" />
 
-          <nav className="hidden items-center gap-1 md:flex">
+          <m.nav
+            className="hidden items-center gap-1 md:flex"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+          >
             {navItems.map(({ label, href, icon: Icon }) => {
               const isActive = pathname === href;
 
               return (
-                <Button
-                  key={href}
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => goTo(href)}
-                  className={`px-4 font-medium ${
-                    isActive
-                      ? "theme-accent-fill shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-                      : "text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]"
-                  }`}
-                >
-                  {Icon && <Icon className="text-[18px]" />}
-                  {label}
-                </Button>
+                <m.div key={href} variants={staggerItem}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => goTo(href)}
+                    className={`px-4 font-medium ${
+                      isActive
+                        ? "theme-accent-fill shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+                        : "text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]"
+                    }`}
+                  >
+                    {Icon && <Icon className="text-[18px]" />}
+                    {label}
+                  </Button>
+                </m.div>
               );
             })}
 
-            <Dropdown
-              label="Categories"
-              options={categoryOptions}
-              value={activeCategory}
-              onChange={goToCategory}
-              active={pathname === "/posts" && activeCategory !== "Nearby"}
-              getOptionLabel={(option) => option.name}
-              getOptionValue={(option) => option.value ?? option.name}
-            />
-          </nav>
+            <m.div variants={staggerItem}>
+              <Dropdown
+                label="Categories"
+                options={categoryOptions}
+                value={activeCategory}
+                onChange={goToCategory}
+                active={pathname === "/posts" && activeCategory !== "Nearby"}
+                getOptionLabel={(option) => option.name}
+                getOptionValue={(option) => option.value ?? option.name}
+              />
+            </m.div>
+          </m.nav>
         </div>
 
         <div className="flex w-full justify-center md:flex-1">

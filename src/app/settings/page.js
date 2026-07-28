@@ -7,8 +7,11 @@ import AvatarPicker from "../../components/profile/AvatarPicker";
 import {
   BellIcon,
   CheckBadgeIcon,
+  ChevronRightIcon,
+  InformationCircleIcon,
   MapPinIcon,
   MoonIcon,
+  ShieldCheckIcon,
   Squares2X2Icon,
   SunIcon,
 } from "@heroicons/react/24/outline";
@@ -49,6 +52,26 @@ const Switch = ({ checked, onChange, label }) => (
         checked ? "translate-x-5" : "translate-x-0"
       }`}
     />
+  </button>
+);
+
+// ── Tappable row that navigates to another page (About, Privacy, …) ──
+const LinkRow = ({ icon: Icon, title, description, onClick, last }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`flex w-full items-center gap-3 py-3.5 text-left transition-colors hover:text-[var(--brand)] ${
+      last ? "" : "border-b border-[var(--border-subtle)]"
+    }`}
+  >
+    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--brand-soft)] text-[var(--brand)]">
+      <Icon className="h-[18px] w-[18px]" strokeWidth={2} />
+    </span>
+    <div className="min-w-0 flex-1">
+      <p className="text-[14px] font-semibold text-[var(--text-heading)]">{title}</p>
+      <p className="mt-0.5 text-[12.5px] leading-relaxed text-[var(--text-muted)]">{description}</p>
+    </div>
+    <ChevronRightIcon className="h-4 w-4 shrink-0 text-[var(--text-faint)]" strokeWidth={2.25} />
   </button>
 );
 
@@ -294,6 +317,26 @@ const SettingsPage = () => {
             <span className="h-2 w-2 rounded-full bg-[#22C55E]" />
             Active
           </span>
+        </div>
+      </Card>
+
+      {/* ── About & Legal ── */}
+      <Card className="p-5 md:p-6" hover={false}>
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--text-faint)]">About &amp; Legal</p>
+        <div className="mt-2">
+          <LinkRow
+            icon={InformationCircleIcon}
+            title="About Us"
+            description="Learn what PlaysGo is and what the community is about."
+            onClick={() => router.push("/about")}
+          />
+          <LinkRow
+            icon={ShieldCheckIcon}
+            title="Privacy Policy"
+            description="How we handle your data and protect your privacy."
+            onClick={() => router.push("/privacy")}
+            last
+          />
         </div>
       </Card>
 

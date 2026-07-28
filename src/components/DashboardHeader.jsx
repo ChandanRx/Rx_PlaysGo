@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { BellIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { CheckIcon, ChevronDownIcon, Cog6ToothIcon, HandRaisedIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { AnimatePresence, m } from "framer-motion";
@@ -10,7 +10,7 @@ import { useAuthSession, useClientGreeting, useNotifications, useStoredAppCatego
 import { getCategoryLabel } from "../shared/appPreferences";
 import { markAllNotificationsRead, markNotificationRead } from "../shared/notifications";
 import Data from "../shared/data";
-import { popIn, springSnappy } from "../shared/motionPresets";
+import { loadSequence, makeSequencedContainer, popIn, springSnappy, staggerContainer, staggerItem } from "../shared/motionPresets";
 import Button from "./ui/Button";
 
 // "/dashboard" is absent on purpose — the admin console renders standalone
@@ -20,6 +20,7 @@ const pageTitles = {
   "/profile":    "My profile",
   "/settings":   "Settings",
   "/about":      "About",
+  "/privacy":    "Privacy Policy",
   "/pro":        "PlaysGo Pro",
 };
 
@@ -50,6 +51,16 @@ const DashboardHeader = () => {
   const greeting          = useClientGreeting();
   const isFeedPage        = pathname === "/" || pathname === "/posts";
   const searchPlaceholder = searchPlaceholders[category] || "Search players, tutors, services…";
+
+  // Region 2 of the load choreography — the feed toolbar. Keyed on the flag
+  // that gates it so the page-anchored delay is captured when it actually
+  // renders (the toolbar waits on the stored category), landing after the
+  // sidebar and before the cards.
+  const toolbarReady    = isFeedPage && hasCategory;
+  const toolbarContainer = useMemo(
+    () => makeSequencedContainer(loadSequence.header, 0.06),
+    [toolbarReady],
+  );
 
   useEffect(() => {
     setSearchValue(currentQuery);
@@ -167,13 +178,20 @@ const DashboardHeader = () => {
             The scrolling pills stay in their own overflow-x container; the
             dropdown sits outside it so its menu isn't clipped by overflow-y. */}
         {isFeedPage && hasCategory && (
-          <div className="-mx-4 flex items-center gap-2 px-4">
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+          <m.div
+            className="-mx-4 flex items-center gap-2 px-4"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+          >
+            {/* same overflow-y clip guard as the desktop pill row */}
+            <div className="-my-3 flex items-center gap-2 overflow-x-auto py-3 scrollbar-none">
               {Data.quickFilters.map((filter) => {
                 const active = activeFilter === filter;
                 return (
-                  <button
+                  <m.button
                     key={filter}
+                    variants={staggerItem}
                     type="button"
                     onClick={() => updateFeedParam("filter", filter)}
                     className="relative shrink-0 rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md px-4 py-2 text-[13px] font-semibold transition-transform duration-150 active:scale-95"
@@ -190,17 +208,19 @@ const DashboardHeader = () => {
                     <span className={`relative z-10 ${active ? "text-[var(--btn-grad-fg)]" : "text-[var(--text-muted)]"}`}>
                       {filter}
                     </span>
-                  </button>
+                  </m.button>
                 );
               })}
             </div>
-            <SportsFilterDropdown
-              sports={sportOptions}
-              value={activeSport}
-              onChange={(sport) => updateFeedParam("sport", sport)}
-              size="mobile"
-            />
-          </div>
+            <m.div variants={staggerItem} className="shrink-0">
+              <SportsFilterDropdown
+                sports={sportOptions}
+                value={activeSport}
+                onChange={(sport) => updateFeedParam("sport", sport)}
+                size="mobile"
+              />
+            </m.div>
+          </m.div>
         )}
       </div>
 
@@ -234,39 +254,52 @@ const DashboardHeader = () => {
 
         {/* ── Single toolbar: filters LEFT · search + bell RIGHT ── */}
         {isFeedPage && hasCategory && (
-          <div className="flex items-center gap-2 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2 shadow-[0_2px_10px_rgba(28,32,18,0.05)]">
+          <m.div
+            className="flex items-center gap-2 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2 shadow-[0_2px_10px_rgba(28,32,18,0.05)]"
+            variants={toolbarContainer}
+            initial="hidden"
+            animate="show"
+          >
 
-            {/* LEFT — quick filter pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+            {/* LEFT — quick filter pills. Variants reach them through the plain
+                scroll wrapper (framer propagates via context, not the DOM), so
+                the whole toolbar cascades left-to-right as one sequence.
+                -my-3/py-3 cancel out in layout but give the scroll box room for
+                staggerItem's 12px rise — `overflow-x:auto` forces overflow-y to
+                `auto`, which would otherwise clip the pills mid-entrance. */}
+            <div className="-my-3 flex items-center gap-1.5 overflow-x-auto py-3 scrollbar-none">
               {Data.quickFilters.map((filter) => {
                 const active = activeFilter === filter;
                 return (
-                  <Button
-                    key={filter}
-                    variant={active ? "yellow" : "secondary"}
-                    size="sm"
-                    onClick={() => updateFeedParam("filter", filter)}
-                    className="shrink-0"
-                  >
-                    {filter}
-                  </Button>
+                  <m.div key={filter} variants={staggerItem} className="shrink-0">
+                    <Button
+                      variant={active ? "yellow" : "secondary"}
+                      size="sm"
+                      onClick={() => updateFeedParam("filter", filter)}
+                      className="shrink-0"
+                    >
+                      {filter}
+                    </Button>
+                  </m.div>
                 );
               })}
             </div>
 
             {/* sport filter dropdown */}
-            <SportsFilterDropdown
-              sports={sportOptions}
-              value={activeSport}
-              onChange={(sport) => updateFeedParam("sport", sport)}
-              size="desktop"
-            />
+            <m.div variants={staggerItem} className="shrink-0">
+              <SportsFilterDropdown
+                sports={sportOptions}
+                value={activeSport}
+                onChange={(sport) => updateFeedParam("sport", sport)}
+                size="desktop"
+              />
+            </m.div>
 
             {/* divider */}
             <div className="mx-1 h-5 w-px shrink-0 bg-[var(--border-subtle)]" />
 
             {/* RIGHT — search form + bell */}
-            <div className="ml-auto flex items-center gap-1.5">
+            <m.div variants={staggerItem} className="ml-auto flex items-center gap-1.5">
               <form
                 onSubmit={handleSearchSubmit}
                 className="flex shrink-0 items-center gap-1.5"
@@ -289,8 +322,8 @@ const DashboardHeader = () => {
 
               {/* bell */}
               <NotificationBell variant="desktop" />
-            </div>
-          </div>
+            </m.div>
+          </m.div>
         )}
       </div>
     </header>

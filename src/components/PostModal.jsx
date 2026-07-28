@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { m } from "framer-motion";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
-  CheckBadgeIcon, ClockIcon, HeartIcon, MapPinIcon, UsersIcon,
+  BoltIcon, CheckBadgeIcon, ClockIcon, HeartIcon, MapPinIcon,
 } from "@heroicons/react/24/solid";
 import {
   CalendarIcon, ChatBubbleLeftRightIcon, ChatBubbleOvalLeftEllipsisIcon,
@@ -15,15 +15,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { getChatIdForUserName } from "../shared/conversations";
 import { getUsernameForPost } from "../shared/dummyPosts";
-import { backdropFade, modalDialog, modalSheet } from "../shared/motionPresets";
+import { backdropFade, modalDialog, modalSheet, modalStagger, modalStaggerItem } from "../shared/motionPresets";
 import Button from "./ui/Button";
-
-const getMetaText = (post) => {
-  if (!post?.requiredPeople) return null;
-  if (post.category === "For Sale")   return `₹ ${post.requiredPeople}`;
-  if (post.category === "Local Help") return `${post.requiredPeople} helpers`;
-  return `${post.requiredPeople} players`;
-};
 
 const getAccent = (category) => {
   if (category === "Local Help") return { text: "var(--secondary)", soft: "var(--secondary-soft)" };
@@ -31,14 +24,43 @@ const getAccent = (category) => {
   return { text: "var(--brand)", soft: "var(--brand-soft)" };
 };
 
+const formatChipDate = (dateStr) => {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+};
+
+// Combines the post's date + time into a real Date so we can compute a
+// "starts in / started" countdown chip.
+const getEventDateTime = (post) => {
+  if (!post?.date) return null;
+  const d = new Date(`${post.date} ${post.time || ""}`.trim());
+  return Number.isNaN(d.getTime()) ? null : d;
+};
+
+const getRemainingLabel = (post) => {
+  const dt = getEventDateTime(post);
+  if (!dt) return null;
+  const diffMs = dt.getTime() - Date.now();
+  const past = diffMs < 0;
+  const abs = Math.abs(diffMs);
+  const minutes = Math.round(abs / 60000);
+  const hours = Math.round(abs / 3600000);
+  const days = Math.round(abs / 86400000);
+  const unit = minutes < 60 ? `${Math.max(minutes, 1)}m` : hours < 24 ? `${hours}h` : `${days}d`;
+  return past ? `${unit} ago` : `${unit} left`;
+};
+
 const getChips = (post) => {
   const chips = [];
-  if (post?.location) chips.push({ icon: MapPinIcon, label: post.location });
-  if (post?.date)     chips.push({ icon: CalendarIcon, label: post.date });
-  if (post?.time)     chips.push({ icon: ClockIcon, label: post.time });
-  const metric = getMetaText(post);
-  if (metric)          chips.push({ icon: UsersIcon, label: metric });
-  return chips.slice(0, 4);
+  if (post?.location) chips.push({ icon: MapPinIcon,  label: post.location });
+  const dateLabel = formatChipDate(post?.date);
+  if (dateLabel)       chips.push({ icon: CalendarIcon, label: dateLabel });
+  if (post?.time)      chips.push({ icon: ClockIcon,    label: post.time });
+  const remaining = getRemainingLabel(post);
+  if (remaining)       chips.push({ icon: BoltIcon,     label: remaining });
+  return chips;
 };
 
 const waLink = (phone) => (phone ? `https://wa.me/${phone.replace(/\D/g, "")}` : null);
@@ -172,14 +194,14 @@ const PostModal = ({ post, onClose }) => {
               </span>
             </div>
 
-            <div className="space-y-3 p-4 sm:p-5">
+            <m.div variants={modalStagger} className="space-y-3 p-4 sm:p-5">
 
-              <h2 id="post-modal-title" className="text-[18px] font-extrabold leading-tight text-[var(--text-heading)] sm:text-[20px]">
+              <m.h2 variants={modalStaggerItem} id="post-modal-title" className="text-[18px] font-extrabold leading-tight text-[var(--text-heading)] sm:text-[20px]">
                 {post.title}
-              </h2>
+              </m.h2>
 
               {chips.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
+                <m.div variants={modalStaggerItem} className="flex flex-wrap gap-1.5">
                   {chips.map(({ icon: Icon, label }, i) => (
                     <span
                       key={i}
@@ -190,16 +212,17 @@ const PostModal = ({ post, onClose }) => {
                       {label}
                     </span>
                   ))}
-                </div>
+                </m.div>
               )}
 
               {post.desc && (
-                <p className="line-clamp-2 text-[12.5px] leading-relaxed text-[var(--text-body)]">
+                <m.p variants={modalStaggerItem} className="line-clamp-2 text-[12.5px] leading-relaxed text-[var(--text-body)]">
                   {post.desc}
-                </p>
+                </m.p>
               )}
 
               {/* poster row */}
+              <m.div variants={modalStaggerItem}>
               {(() => {
                 const posterInner = (
                   <>
@@ -234,7 +257,8 @@ const PostModal = ({ post, onClose }) => {
                   </div>
                 );
               })()}
-            </div>
+              </m.div>
+            </m.div>
           </div>
 
           {/* sticky footer */}

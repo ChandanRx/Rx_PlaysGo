@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { m } from "framer-motion";
 import { createPost } from "../../shared/dummyPosts";
 import Data from "../../shared/data";
 import { Input, Textarea } from "../../components/ui/FormControls";
@@ -9,6 +10,8 @@ import Dropdown from "../../components/ui/Dropdown";
 import DatePicker from "../../components/ui/DatePicker";
 import TimePicker from "../../components/ui/TimePicker";
 import { CheckIcon } from "@heroicons/react/24/outline";
+import { staggerContainer, staggerItem } from "../../shared/motionPresets";
+import { useMountReveal } from "../../hooks/useMountReveal";
 
 const labelClass = "mb-1.5 block text-[13px] font-semibold text-[var(--text-body)]";
 
@@ -16,6 +19,7 @@ const games = Data.subCategoryMap.Players;
 
 const CreatePost = () => {
   const router = useRouter();
+  const reveal = useMountReveal();
   const [input, setInput] = useState({
     game: "",
     title: "",
@@ -50,9 +54,14 @@ const CreatePost = () => {
       </div>
 
       <form onSubmit={onSubmit} className="px-1">
-        <div className="grid gap-4 md:grid-cols-2">
+        <m.div
+          className="grid gap-4 md:grid-cols-2"
+          variants={staggerContainer}
+          initial="hidden"
+          animate={reveal}
+        >
           {/* Game */}
-          <div className="md:col-span-2">
+          <m.div variants={staggerItem} className="md:col-span-2">
             <label className={labelClass}>Game <span className="text-[var(--brand)]">*</span></label>
             <Dropdown
               variant="field"
@@ -61,40 +70,40 @@ const CreatePost = () => {
               value={input.game}
               onChange={setField("game")}
             />
-          </div>
+          </m.div>
 
           {/* Title */}
-          <div className="md:col-span-2">
+          <m.div variants={staggerItem} className="md:col-span-2">
             <label className={labelClass}>Title <span className="text-[var(--brand)]">*</span></label>
             <Input name="title" value={input.title} placeholder="Need 4 players for Sunday match" onChange={onChange} required />
-          </div>
+          </m.div>
 
           {/* Description */}
-          <div className="md:col-span-2">
+          <m.div variants={staggerItem} className="md:col-span-2">
             <label className={labelClass}>Description <span className="text-[var(--brand)]">*</span></label>
             <Textarea name="desc" value={input.desc} placeholder="Add timing, expectations, location notes…" onChange={onChange} required />
-          </div>
+          </m.div>
 
           {/* Location */}
-          <div className="md:col-span-2">
+          <m.div variants={staggerItem} className="md:col-span-2">
             <label className={labelClass}>Location <span className="text-[var(--brand)]">*</span></label>
             <Input name="location" value={input.location} placeholder="Shivaji Park, Mumbai" onChange={onChange} required />
-          </div>
+          </m.div>
 
           {/* Date */}
-          <div>
+          <m.div variants={staggerItem}>
             <label className={labelClass}>Date <span className="text-[var(--brand)]">*</span></label>
             <DatePicker name="eventDate" value={input.eventDate} onChange={onChange} />
-          </div>
+          </m.div>
 
           {/* Time */}
-          <div>
+          <m.div variants={staggerItem}>
             <label className={labelClass}>Time <span className="text-[var(--brand)]">*</span></label>
             <TimePicker name="time" value={input.time} onChange={onChange} />
-          </div>
+          </m.div>
 
           {/* Image (optional) */}
-          <div className="md:col-span-2">
+          <m.div variants={staggerItem} className="md:col-span-2">
             <label className={labelClass}>Image <span className="text-[var(--text-faint)]">(optional)</span></label>
             <Input name="imageUrl" value={input.imageUrl} placeholder="Paste an image URL" onChange={onChange} />
             {input.imageUrl.trim() && (
@@ -103,8 +112,8 @@ const CreatePost = () => {
                 <img src={input.imageUrl} alt="Post preview" className="max-h-56 w-full object-cover" />
               </div>
             )}
-          </div>
-        </div>
+          </m.div>
+        </m.div>
 
         {/* actions */}
         <div className="mt-6 flex flex-col gap-3 border-t border-[var(--border-subtle)] pt-4 sm:flex-row sm:justify-between">

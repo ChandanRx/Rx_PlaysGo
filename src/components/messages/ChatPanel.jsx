@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid";
@@ -9,9 +9,46 @@ import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
 import { getAvatarForUserName, getUsernameForUserName } from "../../shared/dummyPosts";
 
+// Lightweight canned replies so a sent message feels answered in this demo.
+const AUTO_REPLIES = [
+  "Sounds good! 👍",
+  "Great, let's do it.",
+  "Sure, works for me.",
+  "Perfect — see you then!",
+  "Thanks for letting me know.",
+];
+
 const ChatPanel = ({ chat, post, showBack = false, onBack }) => {
   const authorUsername = chat ? getUsernameForUserName(chat.name) : null;
   const avatar = chat ? getAvatarForUserName(chat.name) : null;
+
+  // Local, editable copy of the thread so typing + sending actually works.
+  // Reset whenever we switch to a different conversation.
+  const [messages, setMessages] = useState(chat?.messages ?? []);
+  const scrollRef = useRef(null);
+  const replyTimer = useRef(null);
+
+  useEffect(() => {
+    setMessages(chat?.messages ?? []);
+  }, [chat?.id]);
+
+  // Keep the view pinned to the newest message.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [messages]);
+
+  // Clean up a pending auto-reply if the panel unmounts / chat changes.
+  useEffect(() => () => clearTimeout(replyTimer.current), [chat?.id]);
+
+  const handleSend = (text) => {
+    setMessages((prev) => [...prev, { from: "me", text }]);
+    clearTimeout(replyTimer.current);
+    replyTimer.current = setTimeout(() => {
+      const reply = AUTO_REPLIES[Math.floor(Math.random() * AUTO_REPLIES.length)];
+      setMessages((prev) => [...prev, { from: "them", text: reply }]);
+    }, 900);
+  };
 
   if (!chat) {
     return (
@@ -76,16 +113,16 @@ const ChatPanel = ({ chat, post, showBack = false, onBack }) => {
       </div>
 
       {/* messages */}
-      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
-        {chat.messages.length === 0 ? (
+      <div ref={scrollRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
+        {messages.length === 0 ? (
           <p className="text-[12.5px] text-[var(--text-faint)]">Say hello to start the conversation.</p>
         ) : (
-          chat.messages.map((msg, i) => <MessageBubble key={i} from={msg.from} text={msg.text} />)
+          messages.map((msg, i) => <MessageBubble key={i} from={msg.from} text={msg.text} />)
         )}
       </div>
 
       {/* input */}
-      <ChatInput />
+      <ChatInput onSend={handleSend} />
     </div>
   );
 };

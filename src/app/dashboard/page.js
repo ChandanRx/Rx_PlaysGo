@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, m } from "framer-motion";
 import { AdjustmentsHorizontalIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import PostModal from "../../components/PostModal";
-import { ToastProvider } from "../../components/ui/Toast";
 import { useAuthSession } from "../../hooks/useClientData";
 import { signOut } from "../../shared/authSession";
 import { getReports } from "../../shared/adminStore";
@@ -47,7 +46,7 @@ const AdminDashboardPage = () => {
   };
 
   return (
-    <ToastProvider>
+    <>
       <div className="admin-viz min-h-screen w-full bg-[var(--bg-card)]">
         <AdminVizStyles />
 
@@ -133,7 +132,7 @@ const AdminDashboardPage = () => {
           {selectedPost && <PostModal key={selectedPost.id} post={selectedPost} onClose={() => setSelectedPost(null)} />}
         </AnimatePresence>
       </div>
-    </ToastProvider>
+    </>
   );
 };
 

@@ -1,7 +1,14 @@
 import React from "react";
+import { m } from "framer-motion";
+import { chatBubbleIn } from "../../shared/motionPresets";
 
 const MessageBubble = ({ from, text }) => (
-  <div className={`flex ${from === "me" ? "justify-end" : "justify-start"}`}>
+  <m.div
+    variants={chatBubbleIn}
+    initial="hidden"
+    animate="show"
+    className={`flex ${from === "me" ? "justify-end" : "justify-start"}`}
+  >
     <div
       className={`max-w-[75%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed ${
         from === "me"
@@ -11,7 +18,7 @@ const MessageBubble = ({ from, text }) => (
     >
       {text}
     </div>
-  </div>
+  </m.div>
 );
 
 export default MessageBubble;

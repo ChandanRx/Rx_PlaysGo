@@ -10,8 +10,10 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { springSnappy, staggerContainer, staggerItem } from "../../shared/motionPresets";
+import { fadeUp, springSnappy, staggerContainer, staggerItem, tweenFast } from "../../shared/motionPresets";
+import { useMountReveal } from "../../hooks/useMountReveal";
 import PostItems from "../../components/PostItems";
+import { PostCardSkeletonGrid } from "../../components/PostCardSkeleton";
 import PostModal from "../../components/PostModal";
 import ProfileHeader from "../../components/profile/ProfileHeader";
 import FollowListModal from "../../components/profile/FollowListModal";
@@ -47,12 +49,16 @@ const Profile = () => {
   const [editing, setEditing] = useState(false);
   const [confirmingDeleteId, setConfirmingDeleteId] = useState(null);
   const [followList, setFollowList] = useState(null);
+  // Posts come from localStorage, so the first paint has none — without this
+  // the empty state flashes before the real cards land.
+  const [postsReady, setPostsReady] = useState(false);
 
   useEffect(() => {
     const load = () => {
       const me = getUserById(CURRENT_USER_ID) || getStoredUserProfile();
       setProfile(me);
       setUserPosts(getUserPosts(me.email));
+      setPostsReady(true);
     };
 
     load();
@@ -109,16 +115,24 @@ const Profile = () => {
   };
 
   const emptyCopy = EMPTY_STATE_COPY[activeTab];
+  const reveal = useMountReveal();
 
   return (
     <div className="space-y-5">
-      <ProfileHeader
-        profile={profile}
-        stats={stats}
-        onEditProfile={() => setEditing(true)}
-        onChangeCover={handleChangeCover}
-      />
+      <m.div initial={fadeUp.initial} animate={reveal === "show" ? fadeUp.animate : fadeUp.initial} transition={tweenFast}>
+        <ProfileHeader
+          profile={profile}
+          stats={stats}
+          onEditProfile={() => setEditing(true)}
+          onChangeCover={handleChangeCover}
+        />
+      </m.div>
 
+      <m.div
+        initial={fadeUp.initial}
+        animate={reveal === "show" ? fadeUp.animate : fadeUp.initial}
+        transition={{ ...tweenFast, delay: 0.08 }}
+      >
       <Card className="p-4 sm:p-5 md:p-6" hover={false} padding={false}>
         <div className="flex flex-col gap-3 border-b border-[var(--border-subtle)] pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -167,7 +181,12 @@ const Profile = () => {
           </div>
         </div>
 
-        {filteredPosts.length === 0 ? (
+        {!postsReady ? (
+          <PostCardSkeletonGrid
+            count={3}
+            className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
+          />
+        ) : filteredPosts.length === 0 ? (
           <div className="mt-5 flex flex-col items-center rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--bg-secondary)]/60 px-5 py-12 text-center">
             <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--bg-card)] text-[var(--text-faint)] shadow-[var(--shadow-xs)]">
               <InboxIcon className="h-7 w-7" strokeWidth={1.75} />
@@ -186,7 +205,7 @@ const Profile = () => {
             key={activeTab}
             variants={staggerContainer}
             initial="hidden"
-            animate="show"
+            animate={reveal}
             className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
           >
             {filteredPosts.map((item) => (
@@ -226,6 +245,7 @@ const Profile = () => {
           </m.div>
         )}
       </Card>
+      </m.div>
 
       <AnimatePresence>
         {selectedPost && <PostModal key={selectedPost.id} post={selectedPost} onClose={() => setSelectedPost(null)} />}

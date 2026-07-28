@@ -8,13 +8,17 @@ import {
 } from "@heroicons/react/24/solid";
 import {
   CalendarIcon, ChatBubbleLeftRightIcon,
+  FlagIcon as FlagOutlineIcon,
   HeartIcon as HeartOutlineIcon,
   MapPinIcon as MapPinOutlineIcon,
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
+import { FlagIcon } from "@heroicons/react/24/solid";
 import { m } from "framer-motion";
 import { DEFAULT_CATEGORY_ICON, SUBCATEGORY_ICONS } from "../shared/lucideIcons";
 import { getUsernameForPost } from "../shared/dummyPosts";
+import { REPORTS_CHANGE_EVENT, hasReportedPost } from "../shared/adminReports";
+import { getStoredSession } from "../shared/authSession";
 import {
   fadeUp, hoverScaleIcon, tapScaleSmall, tweenFast,
 } from "../shared/motionPresets";
@@ -78,11 +82,25 @@ const getChips = (post) => {
 };
 
 /* ── component ── */
-const PostItems = ({ post, onClick }) => {
+// `onReport` hands the post up to whichever list is rendering the card — the
+// report dialog is owned there, not here, so only one can ever be open and it
+// isn't trapped inside this card's transform (fixed positioning breaks under
+// an ancestor transform).
+const PostItems = ({ post, onClick, onReport }) => {
   const [imageSrc, setImageSrc] = useState(post?.imageUrl || "/placeholder-post.svg");
   const [saved, setSaved] = useState(false);
+  const [reported, setReported] = useState(false);
 
   useEffect(() => { setImageSrc(post?.imageUrl || "/placeholder-post.svg"); }, [post?.imageUrl]);
+
+  // localStorage-backed, so this has to run after mount to stay hydration-safe.
+  useEffect(() => {
+    const sync = () => setReported(hasReportedPost(post?.id, getStoredSession()?.email));
+
+    sync();
+    window.addEventListener(REPORTS_CHANGE_EVENT, sync);
+    return () => window.removeEventListener(REPORTS_CHANGE_EVENT, sync);
+  }, [post?.id]);
 
   const handleKeyDown = (e) => {
     if (!onClick) return;
@@ -142,17 +160,39 @@ const PostItems = ({ post, onClick }) => {
           {post?.subCategory || post?.category}
         </span>
 
-        {/* save — top right */}
-        <m.button
-          whileHover={hoverScaleIcon} whileTap={tapScaleSmall}
-          onClick={(e) => { e.stopPropagation(); setSaved((v) => !v); }}
-          aria-label={saved ? "Unsave" : "Save"}
-          className="absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[var(--bg-card)]/95 shadow-sm backdrop-blur-sm transition hover:bg-[var(--bg-card)] lg:right-3 lg:top-3"
-        >
-          {saved
-            ? <HeartIcon className="h-[15px] w-[15px] text-[var(--brand)]" />
-            : <HeartOutlineIcon className="h-[15px] w-[15px] text-[var(--text-muted)]" />}
-        </m.button>
+        {/* report + save — top right */}
+        <div className="absolute right-2.5 top-2.5 flex items-center gap-1.5 lg:right-3 lg:top-3">
+          {onReport && (
+            <m.button
+              whileHover={reported ? undefined : hoverScaleIcon}
+              whileTap={reported ? undefined : tapScaleSmall}
+              onClick={(e) => { e.stopPropagation(); if (!reported) onReport(post); }}
+              disabled={reported}
+              aria-label={reported ? "Already reported" : "Report post"}
+              title={reported ? "You reported this post" : "Report post"}
+              className={`flex h-8 w-8 items-center justify-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md shadow-sm backdrop-blur-sm transition ${
+                reported
+                  ? "cursor-default bg-[var(--danger-soft)]/95"
+                  : "bg-[var(--bg-card)]/95 hover:bg-[var(--bg-card)]"
+              }`}
+            >
+              {reported
+                ? <FlagIcon className="h-[15px] w-[15px] text-[var(--danger)]" />
+                : <FlagOutlineIcon className="h-[15px] w-[15px] text-[var(--text-muted)]" strokeWidth={2} />}
+            </m.button>
+          )}
+
+          <m.button
+            whileHover={hoverScaleIcon} whileTap={tapScaleSmall}
+            onClick={(e) => { e.stopPropagation(); setSaved((v) => !v); }}
+            aria-label={saved ? "Unsave" : "Save"}
+            className="flex h-8 w-8 items-center justify-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[var(--bg-card)]/95 shadow-sm backdrop-blur-sm transition hover:bg-[var(--bg-card)]"
+          >
+            {saved
+              ? <HeartIcon className="h-[15px] w-[15px] text-[var(--brand)]" />
+              : <HeartOutlineIcon className="h-[15px] w-[15px] text-[var(--text-muted)]" />}
+          </m.button>
+        </div>
 
         {/* distance — bottom right */}
         {post?.distance && (

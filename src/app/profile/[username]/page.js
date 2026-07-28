@@ -7,10 +7,12 @@ import { ArrowLeftIcon, InboxIcon } from "@heroicons/react/24/outline";
 import { staggerContainer, staggerItem } from "../../../shared/motionPresets";
 import PostItems from "../../../components/PostItems";
 import PostModal from "../../../components/PostModal";
+import ReportPostModal from "../../../components/ReportPostModal";
 import ProfileHeader from "../../../components/profile/ProfileHeader";
 import FollowListModal from "../../../components/profile/FollowListModal";
 import Button from "../../../components/ui/Button";
 import Card from "../../../components/ui/Card";
+import { useToast } from "../../../components/ui/Toast";
 import {
   CURRENT_USER_ID,
   FOLLOW_CHANGE_EVENT,
@@ -30,7 +32,9 @@ const UserProfile = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [following, setFollowing] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [reportingPost, setReportingPost] = useState(null);
   const [followList, setFollowList] = useState(null);
+  const toast = useToast();
 
   const isOwnProfile = profile?.id === CURRENT_USER_ID;
 
@@ -149,7 +153,12 @@ const UserProfile = () => {
           >
             {userPosts.map((item) => (
               <m.div key={item.id} variants={staggerItem} className="h-full">
-                <PostItems post={item} onClick={() => setSelectedPost(item)} />
+                <PostItems
+                  post={item}
+                  onClick={() => setSelectedPost(item)}
+                  /* No reporting your own listings. */
+                  onReport={isOwnProfile ? undefined : setReportingPost}
+                />
               </m.div>
             ))}
           </m.div>
@@ -159,6 +168,17 @@ const UserProfile = () => {
       <AnimatePresence>
         {selectedPost && (
           <PostModal key={selectedPost.id} post={selectedPost} onClose={() => setSelectedPost(null)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {reportingPost && (
+          <ReportPostModal
+            key={`report-${reportingPost.id}`}
+            post={reportingPost}
+            onClose={() => setReportingPost(null)}
+            onReported={() => toast.success("Report submitted — our team will review it.")}
+          />
         )}
       </AnimatePresence>
 

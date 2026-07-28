@@ -4,6 +4,7 @@ import "./globals.css";
 import AppShell from "../components/AppShell";
 import CategoryThemeSync from "../components/CategoryThemeSync";
 import MotionProvider from "../components/motion/MotionProvider";
+import { ToastProvider } from "../components/ui/Toast";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -34,10 +35,12 @@ export default function RootLayout({ children }) {
     <html lang="en" className={jakarta.variable}>
       <body className="min-h-screen flex flex-col font-sans antialiased">
         <MotionProvider>
-          <Suspense fallback={null}>
-            <CategoryThemeSync />
-            <AppShell>{children}</AppShell>
-          </Suspense>
+          <ToastProvider>
+            <Suspense fallback={null}>
+              <CategoryThemeSync />
+              <AppShell>{children}</AppShell>
+            </Suspense>
+          </ToastProvider>
         </MotionProvider>
       </body>
     </html>
