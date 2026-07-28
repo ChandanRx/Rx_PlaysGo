@@ -15,7 +15,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { getChatIdForUserName } from "../shared/conversations";
 import { getUsernameForPost } from "../shared/dummyPosts";
-import { backdropFade, modalDialog, modalSheet } from "../shared/motionPresets";
+import { backdropFade, modalDialog, modalSheet, modalStagger, modalStaggerItem } from "../shared/motionPresets";
 import Button from "./ui/Button";
 
 const getAccent = (category) => {
@@ -194,14 +194,14 @@ const PostModal = ({ post, onClose }) => {
               </span>
             </div>
 
-            <div className="space-y-3 p-4 sm:p-5">
+            <m.div variants={modalStagger} className="space-y-3 p-4 sm:p-5">
 
-              <h2 id="post-modal-title" className="text-[18px] font-extrabold leading-tight text-[var(--text-heading)] sm:text-[20px]">
+              <m.h2 variants={modalStaggerItem} id="post-modal-title" className="text-[18px] font-extrabold leading-tight text-[var(--text-heading)] sm:text-[20px]">
                 {post.title}
-              </h2>
+              </m.h2>
 
               {chips.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
+                <m.div variants={modalStaggerItem} className="flex flex-wrap gap-1.5">
                   {chips.map(({ icon: Icon, label }, i) => (
                     <span
                       key={i}
@@ -212,16 +212,17 @@ const PostModal = ({ post, onClose }) => {
                       {label}
                     </span>
                   ))}
-                </div>
+                </m.div>
               )}
 
               {post.desc && (
-                <p className="line-clamp-2 text-[12.5px] leading-relaxed text-[var(--text-body)]">
+                <m.p variants={modalStaggerItem} className="line-clamp-2 text-[12.5px] leading-relaxed text-[var(--text-body)]">
                   {post.desc}
-                </p>
+                </m.p>
               )}
 
               {/* poster row */}
+              <m.div variants={modalStaggerItem}>
               {(() => {
                 const posterInner = (
                   <>
@@ -256,7 +257,8 @@ const PostModal = ({ post, onClose }) => {
                   </div>
                 );
               })()}
-            </div>
+              </m.div>
+            </m.div>
           </div>
 
           {/* sticky footer */}

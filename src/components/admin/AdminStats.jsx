@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { m } from "framer-motion";
 import {
   ArrowDownRightIcon, ArrowUpRightIcon, CheckCircleIcon,
   ClipboardDocumentListIcon, FlagIcon, MinusSmallIcon, UsersIcon,
 } from "@heroicons/react/24/outline";
 import Card from "../ui/Card";
+import { staggerContainer, staggerItem } from "../../shared/motionPresets";
 import { getAdminStats, getReports } from "../../shared/adminStore";
 import { getPosts } from "../../shared/dummyPosts";
 import { getKpiDeltas, getWeeklyActivity } from "./adminAnalytics";
@@ -107,31 +109,38 @@ const AdminStats = () => {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <m.div
+      className="grid grid-cols-2 gap-3 lg:grid-cols-4"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
       {items.map(({ label, value, icon: Icon, detail, extra, delta, alert }) => (
-        <Card key={label} className="p-3.5 sm:p-4" hover={false}>
-          <div className="flex items-center justify-between">
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] sm:text-[11px] sm:tracking-[0.15em]">
-              {label}
-            </p>
-            <Icon
-              className={`h-[18px] w-[18px] shrink-0 sm:h-5 sm:w-5 ${alert ? "text-[var(--warning)]" : "text-[var(--brand)]"}`}
-              strokeWidth={2}
-            />
-          </div>
-          <div className="mt-2 flex items-center justify-between gap-2">
-            <p className={`text-[24px] font-black leading-none sm:text-[28px] ${stats === null ? "text-[var(--text-faint)]" : "text-[var(--text-heading)]"}`}>
-              {stats === null ? "–" : value}
-            </p>
-            {stats !== null && <DeltaBadge delta={delta} />}
-          </div>
-          {extra}
-          {detail && !extra && (
-            <p className="mt-1.5 text-[11px] font-medium text-[var(--text-faint)]">{stats === null ? " " : detail}</p>
-          )}
-        </Card>
+        <m.div key={label} variants={staggerItem} className="h-full">
+          <Card className="h-full p-3.5 sm:p-4" hover={false}>
+            <div className="flex items-center justify-between">
+              <p className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] sm:text-[11px] sm:tracking-[0.15em]">
+                {label}
+              </p>
+              <Icon
+                className={`h-[18px] w-[18px] shrink-0 sm:h-5 sm:w-5 ${alert ? "text-[var(--warning)]" : "text-[var(--brand)]"}`}
+                strokeWidth={2}
+              />
+            </div>
+            <div className="mt-2 flex items-center justify-between gap-2">
+              <p className={`text-[24px] font-black leading-none sm:text-[28px] ${stats === null ? "text-[var(--text-faint)]" : "text-[var(--text-heading)]"}`}>
+                {stats === null ? "–" : value}
+              </p>
+              {stats !== null && <DeltaBadge delta={delta} />}
+            </div>
+            {extra}
+            {detail && !extra && (
+              <p className="mt-1.5 text-[11px] font-medium text-[var(--text-faint)]">{stats === null ? " " : detail}</p>
+            )}
+          </Card>
+        </m.div>
       ))}
-    </div>
+    </m.div>
   );
 };
 

@@ -11,7 +11,7 @@ import PostModal from "../PostModal";
 import ReportPostModal from "../ReportPostModal";
 import Button from "../ui/Button";
 import { useToast } from "../ui/Toast";
-import { easeOut } from "../../shared/motionPresets";
+import { cardRevealUp, loadSequence, makeSequencedContainer } from "../../shared/motionPresets";
 
 const POSTS_PER_PAGE = 12;
 
@@ -26,8 +26,24 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSpor
   const openPost = (item) => { setSelectedPost(item); };
   useEffect(() => { setPage(1); }, [posts]);
 
+  // The card grid lives inside AppShell's <AnimatePresence initial={false}>,
+  // which suppresses enter animations on the very first app load — so cards only
+  // animated when navigating back to the page, never on a fresh load. Flipping
+  // this after mount turns the reveal into a post-mount state change, which is
+  // NOT gated by presence-initial, so cards animate on first load too.
+  const [cardsRevealed, setCardsRevealed] = useState(false);
+  useEffect(() => { setCardsRevealed(true); }, []);
+
   const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
   const paginated  = useMemo(() => posts.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE), [page, posts]);
+
+  // Region 3 of the load choreography — the card grid, last in sequence. Keyed
+  // on readiness + page so the page-anchored delay is captured when the grid
+  // first renders (after posts load) and re-runs immediately on page change.
+  const cardContainer = useMemo(
+    () => makeSequencedContainer(loadSequence.cards, 0.09),
+    [isReady, page],
+  );
   const pageStart  = posts.length === 0 ? 0 : (page - 1) * POSTS_PER_PAGE + 1;
   const pageEnd    = posts.length === 0 ? 0 : Math.min(page * POSTS_PER_PAGE, posts.length);
   const feedLabel  = activeSport
@@ -97,22 +113,22 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSpor
       /* grid */
       ) : (
         <>
-          <div
+          {/* Keyed by page so cards remount and the reveal replays on page
+              change, not on every parent re-render. Each card rises up with a
+              light bounce as it scrolls into view (whileInView, once). */}
+          <m.div
             key={`page-${page}`}
             className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5 xl:grid-cols-3"
+            variants={cardContainer}
+            initial="hidden"
+            animate={cardsRevealed ? "show" : "hidden"}
           >
-            {paginated.map((item, i) => (
-              <m.div
-                key={item.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, ease: easeOut, delay: i * 0.05 }}
-                className="flex h-full"
-              >
+            {paginated.map((item) => (
+              <m.div key={item.id} variants={cardRevealUp} className="flex h-full">
                 <PostItems post={item} onClick={() => openPost(item)} onReport={setReportingPost} />
               </m.div>
             ))}
-          </div>
+          </m.div>
 
           {/* pagination */}
           {totalPages > 1 && (

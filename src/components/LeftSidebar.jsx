@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import {
   ChatBubbleLeftRightIcon,
   Cog6ToothIcon,
@@ -11,8 +11,10 @@ import {
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 import { usePathname, useRouter } from "next/navigation";
+import { m } from "framer-motion";
 import ThemeToggle from "./ui/ThemeToggle";
 import PlaysGoLogo from "./PlaysGoLogo";
+import { loadSequence, makeSequencedContainer, staggerItemAlternate } from "../shared/motionPresets";
 
 const navItems = [
   { label: "Home", href: "/", icon: HomeIcon },
@@ -78,6 +80,10 @@ const LeftSidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
 
+  // Region 1 of the load choreography — mounts first (no data gate), so it
+  // sets the shared page-load clock the header and cards anchor to.
+  const navContainer = useMemo(() => makeSequencedContainer(loadSequence.sidebar, 0.06), []);
+
   const isActive = (href) => {
     if (href === "/") {
       return pathname === "/" || pathname === "/posts";
@@ -99,18 +105,25 @@ const LeftSidebar = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex flex-col items-center gap-1.5" aria-label="Main">
-          {navItems.map(({ label, href, icon: Icon }) => (
-            <NavButton
-              key={label}
-              label={label}
-              active={isActive(href)}
-              onClick={() => router.push(href)}
-            >
-              <Icon className="h-[22px] w-[22px]" />
-            </NavButton>
+        <m.nav
+          className="flex flex-col items-center gap-1.5"
+          aria-label="Main"
+          variants={navContainer}
+          initial="hidden"
+          animate="show"
+        >
+          {navItems.map(({ label, href, icon: Icon }, index) => (
+            <m.div key={label} custom={index} variants={staggerItemAlternate}>
+              <NavButton
+                label={label}
+                active={isActive(href)}
+                onClick={() => router.push(href)}
+              >
+                <Icon className="h-[22px] w-[22px]" />
+              </NavButton>
+            </m.div>
           ))}
-        </nav>
+        </m.nav>
 
         {/* Divider */}
         <div className="my-4 h-px w-8 bg-[var(--border-subtle)]" aria-hidden="true" />

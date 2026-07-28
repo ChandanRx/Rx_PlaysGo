@@ -10,7 +10,8 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { springSnappy, staggerContainer, staggerItem } from "../../shared/motionPresets";
+import { fadeUp, springSnappy, staggerContainer, staggerItem, tweenFast } from "../../shared/motionPresets";
+import { useMountReveal } from "../../hooks/useMountReveal";
 import PostItems from "../../components/PostItems";
 import { PostCardSkeletonGrid } from "../../components/PostCardSkeleton";
 import PostModal from "../../components/PostModal";
