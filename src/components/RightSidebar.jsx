@@ -55,7 +55,7 @@ const RightSidebar = () => {
             <Image src={dummyUser.image} alt={dummyUser.name} width={64} height={64} unoptimized={dummyUser.image?.startsWith("data:")} className="h-full w-full object-cover" />
           </div>
           <h2 className="relative mt-3 text-center text-[15px] font-bold text-[var(--text-heading)]">{dummyUser.name}</h2>
-          <p className="relative text-center text-[12px] text-[var(--text-muted)]">@{dummyUser.username} · Mumbai</p>
+          <p className="relative text-center text-[12px] text-[var(--text-muted)]">@{dummyUser.username} · Ahmedabad</p>
         </m.button>
 
         {/* ── Notifications ── */}

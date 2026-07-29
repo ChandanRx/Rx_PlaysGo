@@ -1,4 +1,5 @@
 import { getGenderAvatar, upgradeDoodleAvatarUrl } from "./doodleAvatars";
+import { getStoredUserCoords } from "./geo";
 
 const STORAGE_KEY = "quibly_dummy_posts";
 const LEGACY_STORAGE_KEY = "playsgo_dummy_posts";
@@ -7,6 +8,37 @@ const DEFAULT_POST_IMAGE = "/placeholder-post.svg";
 // Every seeded user gets a doodle avatar matching their gender; indexes are
 // spread so neighbouring users in lists look clearly different.
 const DEFAULT_AVATAR_IMAGE = getGenderAvatar("neutral", 0);
+
+// Approximate lat/lng for the Ahmedabad localities used by seeded posts. Used
+// to compute a live "X km away" label from the viewer's current location; new
+// posts created in-app pick up the poster's own coords instead (see createPost).
+const LOCATION_COORDS = {
+  "Sardar Patel Stadium, Navrangpura, Ahmedabad": { lat: 23.0376, lng: 72.559 },
+  "Vastrapur Sports Club, Ahmedabad": { lat: 23.0395, lng: 72.531 },
+  "Maninagar, Ahmedabad": { lat: 22.9967, lng: 72.6017 },
+  "Bodakdev, Ahmedabad": { lat: 23.04, lng: 72.51 },
+  "CG Road, Navrangpura, Ahmedabad": { lat: 23.0275, lng: 72.5615 },
+  "Satellite, Ahmedabad": { lat: 23.03, lng: 72.51 },
+  "Sabarmati Riverfront, Ahmedabad": { lat: 23.04, lng: 72.58 },
+  "Paldi, Ahmedabad": { lat: 23.01, lng: 72.568 },
+};
+
+// Bundled sport images used as a fallback when a post has no uploaded image.
+// Keyed by game so the fallback stays on-topic when we can; otherwise a random
+// one of these is picked.
+const SPORT_IMAGES = {
+  Cricket: "/posts/cricket.jpg",
+  Football: "/posts/football.jpg",
+  Badminton: "/posts/badminton.jpg",
+};
+const DEFAULT_SPORT_IMAGES = Object.values(SPORT_IMAGES);
+
+// Returns a default sport image: the one matching `game` when available, else a
+// random bundled sport image.
+export const pickSportImage = (game) => {
+  if (game && SPORT_IMAGES[game]) return SPORT_IMAGES[game];
+  return DEFAULT_SPORT_IMAGES[Math.floor(Math.random() * DEFAULT_SPORT_IMAGES.length)];
+};
 
 const legacyCategoryMap = {
   Sports: "Players",
@@ -48,8 +80,8 @@ export const dummyUser = {
   username: "chandan.pargi",
   email: "chandan@quibly.local",
   mobile: "+91 98765 43210",
-  city: "Mumbai",
-  state: "Maharashtra",
+  city: "Ahmedabad",
+  state: "Gujarat",
   bio: "Building local connections through opportunities, events, and trusted community posts.",
   verified: true,
   gender: "Male",
@@ -67,9 +99,9 @@ export const dummyUsers = [
     username: "riya.kapoor",
     email: "riya@quibly.local",
     mobile: "+91 91234 56780",
-    city: "Pune",
-    state: "Maharashtra",
-    bio: "Parent and weekend cricketer. Usually posting about tutors and Sunday matches.",
+    city: "Ahmedabad",
+    state: "Gujarat",
+    bio: "Parent and weekend cricketer in Maninagar. Usually posting about tutors and Sunday matches.",
     verified: true,
     image: getGenderAvatar("female", 4),
     followers: [],
@@ -81,9 +113,9 @@ export const dummyUsers = [
     username: "aman.verma",
     email: "aman@quibly.local",
     mobile: "+91 92345 67890",
-    city: "Bengaluru",
-    state: "Karnataka",
-    bio: "Software engineer in Koramangala. Looking for flatmates and football games.",
+    city: "Ahmedabad",
+    state: "Gujarat",
+    bio: "Software engineer in Bodakdev. Looking for flatmates and football games.",
     verified: false,
     image: getGenderAvatar("male", 9),
     followers: [],
@@ -95,8 +127,8 @@ export const dummyUsers = [
     username: "priya.nair",
     email: "priya@quibly.local",
     mobile: "+91 93456 78901",
-    city: "Mumbai",
-    state: "Maharashtra",
+    city: "Ahmedabad",
+    state: "Gujarat",
     bio: "Freelance designer helping local businesses with branding and social creatives.",
     verified: true,
     image: getGenderAvatar("female", 11),
@@ -109,9 +141,9 @@ export const dummyUsers = [
     username: "kabir.singh",
     email: "kabir@quibly.local",
     mobile: "+91 94567 89012",
-    city: "New Delhi",
-    state: "Delhi",
-    bio: "Budget traveller planning weekend trips out of Delhi. Always up for a road trip.",
+    city: "Ahmedabad",
+    state: "Gujarat",
+    bio: "Budget traveller planning weekend trips out of Ahmedabad. Always up for a road trip.",
     verified: false,
     image: getGenderAvatar("male", 16),
     followers: [],
@@ -123,8 +155,8 @@ export const dummyUsers = [
     username: "neha.joshi",
     email: "neha@quibly.local",
     mobile: "+91 95678 90123",
-    city: "Bengaluru",
-    state: "Karnataka",
+    city: "Ahmedabad",
+    state: "Gujarat",
     bio: "Decluttering one room at a time — furniture and home finds listed here first.",
     verified: true,
     image: getGenderAvatar("female", 19),
@@ -137,9 +169,9 @@ export const dummyUsers = [
     username: "rahul.mehta",
     email: "rahul@quibly.local",
     mobile: "+91 99001 23456",
-    city: "Mumbai",
-    state: "Maharashtra",
-    bio: "Organizing 7-a-side football at Juhu every Saturday. All skill levels welcome.",
+    city: "Ahmedabad",
+    state: "Gujarat",
+    bio: "Organizing 7-a-side football at the Riverfront every Saturday. All skill levels welcome.",
     verified: true,
     image: getGenderAvatar("male", 23),
     followers: [],
@@ -151,9 +183,9 @@ export const dummyUsers = [
     username: "sneha.iyer",
     email: "sneha@quibly.local",
     mobile: "+91 98112 34567",
-    city: "Mumbai",
-    state: "Maharashtra",
-    bio: "Badminton doubles regular at Kandivali Sports Club. Intermediate and improving.",
+    city: "Ahmedabad",
+    state: "Gujarat",
+    bio: "Badminton doubles regular at Vastrapur Sports Club. Intermediate and improving.",
     verified: false,
     image: getGenderAvatar("female", 26),
     followers: [],
@@ -171,7 +203,7 @@ const initialPosts = [
     date: "2026-06-22",
     time: "07:00 AM",
     duration: "2 hours",
-    location: "Shivaji Park, Mumbai",
+    location: "Sardar Patel Stadium, Navrangpura, Ahmedabad",
     radius: "10 KM",
     distance: "3.2 km away",
     postedTime: "18 min ago",
@@ -193,7 +225,7 @@ const initialPosts = [
     subCategory: "Maths",
     date: "2026-06-24",
     time: "06:30 PM",
-    location: "Baner, Pune",
+    location: "Maninagar, Ahmedabad",
     radius: "5 KM",
     distance: "1.4 km away",
     postedTime: "42 min ago",
@@ -208,11 +240,11 @@ const initialPosts = [
   },
   {
     id: "quibly-roommate-1",
-    title: "Need a roommate near Koramangala",
+    title: "Need a roommate near Bodakdev",
     desc: "Furnished 2BHK with internet, washing machine, and balcony. Looking for a clean and working professional flatmate from next month.",
     category: "Local Help",
     subCategory: "Shared Apartment",
-    location: "Koramangala, Bengaluru",
+    location: "Bodakdev, Ahmedabad",
     radius: "25 KM",
     distance: "6.8 km away",
     postedTime: "1 hr ago",
@@ -231,7 +263,7 @@ const initialPosts = [
     desc: "I help startups and local businesses with branding, social posts, and launch creatives. Fast delivery and flexible pricing.",
     category: "Local Help",
     subCategory: "Design",
-    location: "Andheri West, Mumbai",
+    location: "CG Road, Navrangpura, Ahmedabad",
     radius: "50 KM",
     distance: "9.5 km away",
     postedTime: "2 hrs ago",
@@ -246,13 +278,13 @@ const initialPosts = [
   },
   {
     id: "quibly-travel-1",
-    title: "Looking for a travel partner for a Jaipur weekend trip",
-    desc: "Planning a budget-friendly weekend itinerary from Delhi. Looking for one or two easy-going people to split cab and stay.",
+    title: "Looking for a travel partner for a Statue of Unity weekend trip",
+    desc: "Planning a budget-friendly weekend itinerary from Ahmedabad. Looking for one or two easy-going people to split cab and stay.",
     category: "Local Help",
     subCategory: "Travel Partner",
     date: "2026-06-28",
     time: "05:30 AM",
-    location: "South Delhi",
+    location: "Paldi, Ahmedabad",
     radius: "100 KM",
     distance: "12 km away",
     postedTime: "3 hrs ago",
@@ -271,7 +303,7 @@ const initialPosts = [
     desc: "Well-maintained setup, ideal for students or remote work. Pickup preferred this weekend.",
     category: "For Sale",
     subCategory: "Furniture",
-    location: "Indiranagar, Bengaluru",
+    location: "Satellite, Ahmedabad",
     radius: "10 KM",
     distance: "2.7 km away",
     postedTime: "5 hrs ago",
@@ -287,13 +319,13 @@ const initialPosts = [
   {
     id: "quibly-sports-2",
     title: "Football match this Saturday — need 5 more",
-    desc: "Casual 7-a-side football game at the ground near Juhu Beach. All skill levels welcome, just bring your boots.",
+    desc: "Casual 7-a-side football game at the ground near the Sabarmati Riverfront. All skill levels welcome, just bring your boots.",
     category: "Players",
     subCategory: "Football",
     date: "2026-06-28",
     time: "06:00 AM",
     duration: "1.5 hours",
-    location: "Juhu Beach Ground, Mumbai",
+    location: "Sabarmati Riverfront, Ahmedabad",
     radius: "10 KM",
     distance: "4.1 km away",
     postedTime: "30 min ago",
@@ -316,7 +348,7 @@ const initialPosts = [
     date: "2026-07-01",
     time: "07:30 PM",
     duration: "1 hour",
-    location: "Kandivali Sports Club, Mumbai",
+    location: "Vastrapur Sports Club, Ahmedabad",
     radius: "8 KM",
     distance: "2.0 km away",
     postedTime: "1 hr ago",
@@ -336,7 +368,7 @@ const initialPosts = [
     desc: "Working out the roster before posting publicly. Not visible to others yet.",
     category: "Players",
     subCategory: "Football",
-    location: "Shivaji Park, Mumbai",
+    location: "Sardar Patel Stadium, Navrangpura, Ahmedabad",
     radius: "10 KM",
     distance: "3.2 km away",
     postedTime: "Just now",
@@ -357,7 +389,7 @@ const initialPosts = [
     desc: "Thanks to everyone who reached out — we found our four players for this week.",
     category: "Players",
     subCategory: "Badminton",
-    location: "Kandivali Sports Club, Mumbai",
+    location: "Vastrapur Sports Club, Ahmedabad",
     radius: "8 KM",
     distance: "2.0 km away",
     postedTime: "1 day ago",
@@ -380,7 +412,7 @@ const initialPosts = [
     subCategory: "Cricket",
     date: "2026-05-10",
     time: "07:00 AM",
-    location: "Shivaji Park, Mumbai",
+    location: "Sardar Patel Stadium, Navrangpura, Ahmedabad",
     radius: "10 KM",
     distance: "3.2 km away",
     postedTime: "3 weeks ago",
@@ -431,6 +463,7 @@ const normalizePost = (post, index = 0) => {
     duration: post.duration || "",
     location,
     radius: post.radius || "10 KM",
+    coords: post.coords || LOCATION_COORDS[location] || null,
     distance: post.distance || `Within ${post.radius || "10 KM"}`,
     postedTime: post.postedTime || "Recently posted",
     imageUrl: post.imageUrl?.trim() || DEFAULT_POST_IMAGE,
@@ -451,7 +484,7 @@ const normalizePost = (post, index = 0) => {
 };
 
 // Bump this version string whenever initialPosts changes — forces a cache reset
-const DATA_VERSION = "v6-doodle-avatars";
+const DATA_VERSION = "v7-ahmedabad-geo";
 const VERSION_KEY  = "quibly_data_version";
 
 const readPosts = () => {
@@ -537,13 +570,14 @@ export const createPost = (post) => {
       post.location?.trim() ||
       "Location not added",
     date: post.eventDate || post.date || "",
-    imageUrl: post.imageUrl?.trim() || DEFAULT_POST_IMAGE,
+    imageUrl: post.imageUrl?.trim() || pickSportImage(post.game || post.subCategory),
     userName: dummyUser.name,
     userImage: dummyUser.image,
     email: post.email?.trim() || dummyUser.email,
     phone: post.phone?.trim() || dummyUser.mobile,
     whatsapp: post.whatsapp?.trim() || post.phone?.trim() || dummyUser.mobile,
     postedTime: "Just now",
+    coords: post.coords || getStoredUserCoords() || null,
     distance: `Within ${post.radius || "10 KM"}`,
     isVerified: dummyUser.verified,
   });
