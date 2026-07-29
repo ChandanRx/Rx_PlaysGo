@@ -10,8 +10,14 @@ import { useAuthSession, useClientGreeting, useNotifications, useStoredAppCatego
 import { getCategoryLabel } from "../shared/appPreferences";
 import { markAllNotificationsRead, markNotificationRead } from "../shared/notifications";
 import Data from "../shared/data";
+import { CATEGORY_ICONS, SUBCATEGORY_ICONS } from "../shared/lucideIcons";
 import { loadSequence, makeSequencedContainer, popIn, springSnappy, staggerContainer, staggerItem } from "../shared/motionPresets";
 import Button from "./ui/Button";
+
+// Fallback used on the "Sport" trigger and the "All sports" option when no
+// specific game is chosen — the Players category's trophy doubles as the
+// generic sports glyph.
+const DEFAULT_SPORT_ICON = CATEGORY_ICONS.Players;
 
 // "/dashboard" is absent on purpose — the admin console renders standalone
 // (src/app/dashboard/layout.js), outside AppShell and this header.
@@ -436,6 +442,9 @@ const SportsFilterDropdown = ({ sports = [], value = "", onChange, size = "deskt
   const containerRef = useRef(null);
   const isMobile = size === "mobile";
   const active = Boolean(value);
+  // On mobile the trigger is icon-only: show the picked sport's glyph, or the
+  // generic trophy when nothing is selected ("default sports icon").
+  const TriggerIcon = (value && SUBCATEGORY_ICONS[value]) || DEFAULT_SPORT_ICON;
 
   useEffect(() => {
     if (!open) return;
@@ -459,9 +468,15 @@ const SportsFilterDropdown = ({ sports = [], value = "", onChange, size = "deskt
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-label={isMobile ? (value ? `Sport: ${value}` : "Filter by sport") : undefined}
+        title={isMobile ? (value || "Sport") : undefined}
         className="gap-1"
       >
-        {value || "Sport"}
+        {isMobile ? (
+          <TriggerIcon className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
+        ) : (
+          value || "Sport"
+        )}
         <ChevronDownIcon
           className={`h-3.5 w-3.5 shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
           strokeWidth={2.5}
@@ -478,12 +493,15 @@ const SportsFilterDropdown = ({ sports = [], value = "", onChange, size = "deskt
           >
             {["", ...sports].map((sport) => {
               const selected = value === sport;
+              const OptionIcon = (sport && SUBCATEGORY_ICONS[sport]) || DEFAULT_SPORT_ICON;
               return (
                 <button
                   key={sport || "all"}
                   type="button"
                   role="option"
                   aria-selected={selected}
+                  aria-label={isMobile ? (sport || "All sports") : undefined}
+                  title={isMobile ? (sport || "All sports") : undefined}
                   onClick={() => select(sport)}
                   className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-[12.5px] font-semibold transition ${
                     selected
@@ -491,7 +509,11 @@ const SportsFilterDropdown = ({ sports = [], value = "", onChange, size = "deskt
                       : "text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]"
                   }`}
                 >
-                  {sport || "All sports"}
+                  {isMobile ? (
+                    <OptionIcon className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
+                  ) : (
+                    sport || "All sports"
+                  )}
                   {selected && <CheckIcon className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />}
                 </button>
               );

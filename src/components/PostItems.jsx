@@ -17,6 +17,8 @@ import { FlagIcon } from "@heroicons/react/24/solid";
 import { m } from "framer-motion";
 import { DEFAULT_CATEGORY_ICON, SUBCATEGORY_ICONS } from "../shared/lucideIcons";
 import { getUsernameForPost } from "../shared/dummyPosts";
+import { distanceLabel } from "../shared/geo";
+import { useCurrentLocation } from "../hooks/useCurrentLocation";
 import { REPORTS_CHANGE_EVENT, hasReportedPost } from "../shared/adminReports";
 import { getStoredSession } from "../shared/authSession";
 import {
@@ -90,6 +92,11 @@ const PostItems = ({ post, onClick, onReport }) => {
   const [imageSrc, setImageSrc] = useState(post?.imageUrl || "/placeholder-post.svg");
   const [saved, setSaved] = useState(false);
   const [reported, setReported] = useState(false);
+
+  // Live distance from the viewer's location to this post, falling back to the
+  // post's stored distance string when we can't compute one (no coords yet).
+  const { coords } = useCurrentLocation();
+  const distanceText = distanceLabel(coords, post) || post?.distance;
 
   useEffect(() => { setImageSrc(post?.imageUrl || "/placeholder-post.svg"); }, [post?.imageUrl]);
 
@@ -195,10 +202,10 @@ const PostItems = ({ post, onClick, onReport }) => {
         </div>
 
         {/* distance — bottom right */}
-        {post?.distance && (
+        {distanceText && (
           <span className="absolute bottom-2 right-2.5 inline-flex items-center gap-1 rounded-full bg-[var(--text-heading)]/45 px-2.5 py-0.5 text-[10px] font-semibold text-[var(--bg-card)] backdrop-blur-sm lg:bottom-2.5 lg:right-3">
             <MapPinOutlineIcon className="h-3 w-3 shrink-0" strokeWidth={2.25} />
-            {post.distance}
+            {distanceText}
           </span>
         )}
       </div>

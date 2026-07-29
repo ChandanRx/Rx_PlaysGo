@@ -15,6 +15,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { getChatIdForUserName } from "../shared/conversations";
 import { getUsernameForPost } from "../shared/dummyPosts";
+import { distanceLabel } from "../shared/geo";
+import { useCurrentLocation } from "../hooks/useCurrentLocation";
 import { backdropFade, modalDialog, modalSheet, modalStagger, modalStaggerItem } from "../shared/motionPresets";
 import Button from "./ui/Button";
 
@@ -83,6 +85,7 @@ const useIsMobile = () => {
 const PostModal = ({ post, onClose }) => {
   const isMobile = useIsMobile();
   const router = useRouter();
+  const { coords } = useCurrentLocation();
   const [shareCopied, setShareCopied] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -104,6 +107,7 @@ const PostModal = ({ post, onClose }) => {
   const chips          = getChips(post);
   const whatsappHref   = waLink(post.whatsapp);
   const authorUsername = getUsernameForPost(post);
+  const distanceText   = distanceLabel(coords, post) || post.distance;
 
   const handleChat = () => {
     onClose?.();
@@ -180,9 +184,9 @@ const PostModal = ({ post, onClose }) => {
                 <XMarkIcon className="h-4 w-4 text-[var(--text-heading)]" strokeWidth={2.25} />
               </button>
 
-              {post.distance && (
+              {distanceText && (
                 <span className="absolute bottom-2.5 right-2.5 rounded-full bg-[var(--text-heading)]/50 px-2.5 py-1 text-[10px] font-semibold text-[var(--bg-card)] backdrop-blur-sm">
-                  {post.distance}
+                  {distanceText}
                 </span>
               )}
 

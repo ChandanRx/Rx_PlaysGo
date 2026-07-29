@@ -1,5 +1,5 @@
 export const conversations = [
-  { id: "riya",  name: "Riya Kapoor",  preview: "Court is booked for 7:30.", time: "2m",  unread: 2, online: true,  messages: [{ from: "them", text: "Are you free for Sunday cricket?" }, { from: "me", text: "Yes! What time works?" }, { from: "them", text: "7:30 AM at Shivaji Park" }] },
+  { id: "riya",  name: "Riya Kapoor",  preview: "Court is booked for 7:30.", time: "2m",  unread: 2, online: true,  messages: [{ from: "them", text: "Are you free for Sunday cricket?" }, { from: "me", text: "Yes! What time works?" }, { from: "them", text: "7:30 AM at Sardar Patel Stadium" }] },
   { id: "priya", name: "Priya Nair",   preview: "Can you help on Saturday?",  time: "18m", unread: 1, online: true,  messages: [{ from: "them", text: "Can you help on Saturday?" }, { from: "me", text: "Sure, what do you need?" }] },
   { id: "kabir", name: "Kabir Singh",  preview: "Desk is still available.",   time: "1h",  unread: 0, online: false, messages: [{ from: "them", text: "Desk is still available for pickup." }] },
   { id: "neha",  name: "Neha Joshi",   preview: "Interested in the desk?",    time: "3h",  unread: 0, online: false, messages: [{ from: "them", text: "Interested in the study desk?" }] },

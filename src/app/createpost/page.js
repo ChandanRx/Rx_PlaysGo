@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { m } from "framer-motion";
 import { createPost } from "../../shared/dummyPosts";
 import Data from "../../shared/data";
@@ -9,9 +10,17 @@ import { Input, Textarea } from "../../components/ui/FormControls";
 import Dropdown from "../../components/ui/Dropdown";
 import DatePicker from "../../components/ui/DatePicker";
 import TimePicker from "../../components/ui/TimePicker";
-import { CheckIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, CheckIcon, PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { staggerContainer, staggerItem } from "../../shared/motionPresets";
 import { useMountReveal } from "../../hooks/useMountReveal";
+
+// Leaflet touches window on import, so the map picker is client-only.
+const LocationPicker = dynamic(() => import("../../components/LocationPicker"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-64 w-full animate-pulse rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-input)]" />
+  ),
+});
 
 const labelClass = "mb-1.5 block text-[13px] font-semibold text-[var(--text-body)]";
 
@@ -20,11 +29,13 @@ const games = Data.subCategoryMap.Players;
 const CreatePost = () => {
   const router = useRouter();
   const reveal = useMountReveal();
+  const fileInputRef = useRef(null);
   const [input, setInput] = useState({
     game: "",
     title: "",
     desc: "",
     location: "",
+    coords: null,
     eventDate: "",
     time: "",
     imageUrl: "",
@@ -36,6 +47,27 @@ const CreatePost = () => {
   };
 
   const setField = (name) => (value) => setInput((p) => ({ ...p, [name]: value }));
+
+  // Map pin → coords always; the address label arrives a moment later (best-
+  // effort reverse geocode) and fills the location field when present.
+  const handlePick = (coords, label) =>
+    setInput((p) => ({ ...p, coords, ...(label ? { location: label } : {}) }));
+
+  // Optional upload — read the file as a data URL so it previews and persists
+  // without a backend. Leaving this empty makes createPost pick a default
+  // sports image automatically.
+  const handleFile = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setInput((p) => ({ ...p, imageUrl: String(reader.result) }));
+    reader.readAsDataURL(file);
+  };
+
+  const clearImage = () => {
+    setInput((p) => ({ ...p, imageUrl: "" }));
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -87,7 +119,10 @@ const CreatePost = () => {
           {/* Location */}
           <m.div variants={staggerItem} className="md:col-span-2">
             <label className={labelClass}>Location <span className="text-[var(--brand)]">*</span></label>
-            <Input name="location" value={input.location} placeholder="Shivaji Park, Mumbai" onChange={onChange} required />
+            <Input name="location" value={input.location} placeholder="Sardar Patel Stadium, Navrangpura, Ahmedabad" onChange={onChange} required />
+            <div className="mt-2">
+              <LocationPicker value={input.coords} onPick={handlePick} />
+            </div>
           </m.div>
 
           {/* Date */}
@@ -105,12 +140,43 @@ const CreatePost = () => {
           {/* Image (optional) */}
           <m.div variants={staggerItem} className="md:col-span-2">
             <label className={labelClass}>Image <span className="text-[var(--text-faint)]">(optional)</span></label>
-            <Input name="imageUrl" value={input.imageUrl} placeholder="Paste an image URL" onChange={onChange} />
-            {input.imageUrl.trim() && (
-              <div className="mt-2 overflow-hidden rounded-xl border border-[var(--border-subtle)]">
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFile}
+              className="hidden"
+            />
+
+            {input.imageUrl ? (
+              <div className="relative mt-1 overflow-hidden rounded-xl border border-[var(--border-subtle)]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={input.imageUrl} alt="Post preview" className="max-h-56 w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={clearImage}
+                  aria-label="Remove image"
+                  className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-card)]/90 shadow-sm backdrop-blur-sm transition hover:bg-[var(--bg-card)]"
+                >
+                  <XMarkIcon className="h-4 w-4 text-[var(--text-heading)]" strokeWidth={2.25} />
+                </button>
               </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[var(--border-subtle)] bg-[var(--bg-input)] px-4 py-8 text-center transition hover:border-[var(--brand)] hover:bg-[var(--brand-soft)]/40"
+              >
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--brand-soft)] text-[var(--brand)]">
+                  <ArrowUpTrayIcon className="h-5 w-5" strokeWidth={2} />
+                </span>
+                <span className="text-[13px] font-semibold text-[var(--text-body)]">Upload an image</span>
+                <span className="flex items-center gap-1 text-[11.5px] text-[var(--text-muted)]">
+                  <PhotoIcon className="h-3.5 w-3.5" />
+                  Optional — we&apos;ll use a default sports image if you skip this
+                </span>
+              </button>
             )}
           </m.div>
         </m.div>

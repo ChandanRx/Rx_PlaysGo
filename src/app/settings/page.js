@@ -309,7 +309,7 @@ const SettingsPage = () => {
               <MapPinIcon className="h-5 w-5" strokeWidth={2} />
             </span>
             <div>
-              <p className="text-[14px] font-bold text-[var(--text-heading)]">Mumbai community</p>
+              <p className="text-[14px] font-bold text-[var(--text-heading)]">Ahmedabad community</p>
               <p className="text-[12.5px] text-[var(--text-muted)]">Your feed is centred on this area.</p>
             </div>
           </div>
