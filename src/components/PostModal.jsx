@@ -11,7 +11,7 @@ import {
 } from "@heroicons/react/24/solid";
 import {
   CalendarIcon, ChatBubbleLeftRightIcon, ChatBubbleOvalLeftEllipsisIcon,
-  HeartIcon as HeartOutlineIcon, PhoneIcon, ShareIcon,
+  HeartIcon as HeartOutlineIcon, PencilSquareIcon, PhoneIcon, ShareIcon,
 } from "@heroicons/react/24/outline";
 import { getChatIdForUserName } from "../shared/conversations";
 import { getUsernameForPost } from "../shared/dummyPosts";
@@ -82,7 +82,7 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-const PostModal = ({ post, onClose }) => {
+const PostModal = ({ post, onClose, onEdit }) => {
   const isMobile = useIsMobile();
   const router = useRouter();
   const { coords } = useCurrentLocation();
@@ -266,7 +266,7 @@ const PostModal = ({ post, onClose }) => {
           </div>
 
           {/* sticky footer */}
-          <div className="grid shrink-0 grid-cols-3 gap-2 border-t border-[var(--border-subtle)] bg-[var(--bg-card)] p-3 shadow-[0_-2px_12px_rgba(28,32,18,0.05)] sm:grid-cols-5">
+          <div className="grid shrink-0 grid-cols-3 gap-2 border-t border-[var(--border-subtle)] bg-[var(--bg-card)] p-3 shadow-[0_-2px_12px_rgba(28,32,18,0.05)] sm:grid-cols-6">
             <Button
               variant="ghost" size="sm" className="min-h-11 border border-[var(--border-subtle)] bg-[var(--bg-secondary)]"
               onClick={handleChat}
@@ -303,6 +303,14 @@ const PostModal = ({ post, onClose }) => {
             >
               <ShareIcon className="h-[14px] w-[14px]" /> {shareCopied ? "Copied!" : "Share"}
             </Button>
+            {onEdit && (
+              <Button
+                variant="ghost" size="sm" className="min-h-11 border border-[var(--border-subtle)] bg-[var(--bg-secondary)]"
+                onClick={() => { onClose?.(); onEdit(post); }}
+              >
+                <PencilSquareIcon className="h-[14px] w-[14px]" /> Edit
+              </Button>
+            )}
           </div>
         </m.div>
       </div>

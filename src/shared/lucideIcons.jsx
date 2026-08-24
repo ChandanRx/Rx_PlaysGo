@@ -35,6 +35,15 @@ export const FEATURE_ICONS = {
   "Find a roommate or travel partner": HomeModernIcon,
 };
 
+export const SPORT_EMOJI = {
+  Cricket: "🏏",
+  Football: "⚽",
+  Volleyball: "🏐",
+  Badminton: "🏸",
+  Tennis: "🎾",
+  Basketball: "🏀",
+};
+
 export const SUBCATEGORY_ICONS = {
   Cricket: TrophyIcon,
   Football: TrophyIcon,

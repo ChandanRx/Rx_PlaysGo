@@ -47,6 +47,7 @@
   --text-body:    #3C4132;
   --text-muted:   #6F7562;
   --text-faint:   #A2A992;
+  --text-preview: #8C9585;   /* message preview — lighter than muted, readable on light bg */
 
   /*==============================
     PRIMARY  — charcoal olive (dark pills / CTAs)
@@ -176,6 +177,7 @@
   --text-body:    #CFCFC8;
   --text-muted:   #93938B;
   --text-faint:   #64645E;
+  --text-preview: #A8A8A0;   /* message preview in dark mode */
 
   --brand:        #FE9272;   /* coral — replaces the old vivid green */
   --brand-hover:  #FFA98C;
@@ -444,12 +446,20 @@ IMAGES
 img,
 picture,
 video,
-canvas,
-svg{
+canvas{
 
   display:block;
 
   max-width:100%;
+}
+
+/* Icons keep their explicit Tailwind width/height — max-width:100% on svg
+   was shrinking glyphs inside flex buttons (e.g. mobile sports filter). */
+svg{
+
+  display:block;
+
+  flex-shrink:0;
 }
 
 /*==========================================
