@@ -58,7 +58,7 @@ const ConversationList = ({ activeChatId }) => {
                     {chat.time}
                   </span>
                 </div>
-                <p className={`truncate text-[12px] ${active ? "text-[var(--selected-fg)]/90" : "text-[var(--text-body)]"}`}>
+                <p className={`truncate text-[12px] ${active ? "text-[var(--selected-fg)]/90" : "text-[var(--text-preview)]"}`}>
                   {chat.preview}
                 </p>
               </div>

@@ -68,6 +68,11 @@ const UserProfile = () => {
     else followUser(CURRENT_USER_ID, profile.id);
   };
 
+  const handleEdit = (post) => {
+    setSelectedPost(null);
+    router.push(`/createpost?edit=${encodeURIComponent(post.id)}`);
+  };
+
   if (notFound) {
     return (
       <div className="mx-auto max-w-md">
@@ -156,7 +161,7 @@ const UserProfile = () => {
                 <PostItems
                   post={item}
                   onClick={() => setSelectedPost(item)}
-                  /* No reporting your own listings. */
+                  onEdit={isOwnProfile ? handleEdit : undefined}
                   onReport={isOwnProfile ? undefined : setReportingPost}
                 />
               </m.div>
@@ -167,7 +172,12 @@ const UserProfile = () => {
 
       <AnimatePresence>
         {selectedPost && (
-          <PostModal key={selectedPost.id} post={selectedPost} onClose={() => setSelectedPost(null)} />
+          <PostModal
+            key={selectedPost.id}
+            post={selectedPost}
+            onClose={() => setSelectedPost(null)}
+            onEdit={isOwnProfile ? handleEdit : undefined}
+          />
         )}
       </AnimatePresence>
 

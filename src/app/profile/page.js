@@ -114,6 +114,11 @@ const Profile = () => {
     setConfirmingDeleteId(null);
   };
 
+  const handleEdit = (post) => {
+    setSelectedPost(null);
+    router.push(`/createpost?edit=${encodeURIComponent(post.id)}`);
+  };
+
   const emptyCopy = EMPTY_STATE_COPY[activeTab];
   const reveal = useMountReveal();
 
@@ -211,7 +216,7 @@ const Profile = () => {
             {filteredPosts.map((item) => (
               <m.div key={item.id} variants={staggerItem} className="flex h-full flex-col gap-2">
                 <div className="flex-1">
-                  <PostItems post={item} onClick={() => setSelectedPost(item)} />
+                  <PostItems post={item} onClick={() => setSelectedPost(item)} onEdit={handleEdit} />
                 </div>
 
                 <div className="grid grid-cols-[1fr_1fr_auto] items-center gap-1.5 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-1">
@@ -225,7 +230,7 @@ const Profile = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => router.push(`/createpost?edit=${item.id}`)}
+                    onClick={() => handleEdit(item)}
                     className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--bg-card)] py-2 text-[12px] font-semibold text-[var(--text-body)] shadow-[var(--shadow-xs)] transition hover:text-[var(--brand)] active:scale-[0.97]"
                   >
                     <PencilSquareIcon className="h-3.5 w-3.5" strokeWidth={2} />
@@ -248,7 +253,9 @@ const Profile = () => {
       </m.div>
 
       <AnimatePresence>
-        {selectedPost && <PostModal key={selectedPost.id} post={selectedPost} onClose={() => setSelectedPost(null)} />}
+        {selectedPost && (
+          <PostModal key={selectedPost.id} post={selectedPost} onClose={() => setSelectedPost(null)} onEdit={handleEdit} />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>

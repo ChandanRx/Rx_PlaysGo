@@ -2,21 +2,23 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
-  BoltIcon, CheckBadgeIcon, ClockIcon, HeartIcon, MapPinIcon,
+  BoltIcon, CheckBadgeIcon, ClockIcon, MapPinIcon,
 } from "@heroicons/react/24/solid";
 import {
   CalendarIcon, ChatBubbleLeftRightIcon,
+  EllipsisVerticalIcon,
   FlagIcon as FlagOutlineIcon,
-  HeartIcon as HeartOutlineIcon,
   MapPinIcon as MapPinOutlineIcon,
+  PencilSquareIcon,
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import { FlagIcon } from "@heroicons/react/24/solid";
-import { m } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { DEFAULT_CATEGORY_ICON, SUBCATEGORY_ICONS } from "../shared/lucideIcons";
-import { getUsernameForPost } from "../shared/dummyPosts";
+import { dummyUser, getUsernameForPost } from "../shared/dummyPosts";
 import { distanceLabel } from "../shared/geo";
 import { useCurrentLocation } from "../hooks/useCurrentLocation";
 import { REPORTS_CHANGE_EVENT, hasReportedPost } from "../shared/adminReports";
@@ -88,10 +90,13 @@ const getChips = (post) => {
 // report dialog is owned there, not here, so only one can ever be open and it
 // isn't trapped inside this card's transform (fixed positioning breaks under
 // an ancestor transform).
-const PostItems = ({ post, onClick, onReport }) => {
+const PostItems = ({ post, onClick, onReport, onEdit }) => {
   const [imageSrc, setImageSrc] = useState(post?.imageUrl || "/placeholder-post.svg");
-  const [saved, setSaved] = useState(false);
   const [reported, setReported] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState(null);
+  const menuRef = useRef(null);
+  const menuButtonRef = useRef(null);
 
   // Live distance from the viewer's location to this post, falling back to the
   // post's stored distance string when we can't compute one (no coords yet).
@@ -109,6 +114,50 @@ const PostItems = ({ post, onClick, onReport }) => {
     return () => window.removeEventListener(REPORTS_CHANGE_EVENT, sync);
   }, [post?.id]);
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [menuOpen]);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+
+    const updateMenuPosition = () => {
+      if (!menuButtonRef.current) return;
+
+      const rect = menuButtonRef.current.getBoundingClientRect();
+      const menuWidth = 156;
+      const gap = 8;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      let left = rect.right + gap;
+      if (left + menuWidth > viewportWidth - 12) {
+        left = Math.max(12, viewportWidth - menuWidth - 12);
+      }
+
+      let top = rect.top;
+      if (top + 120 > viewportHeight - 12) {
+        top = Math.max(12, viewportHeight - 120 - 12);
+      }
+
+      setMenuPosition({ top, left });
+    };
+
+    updateMenuPosition();
+    window.addEventListener("resize", updateMenuPosition);
+    window.addEventListener("scroll", updateMenuPosition, true);
+    return () => {
+      window.removeEventListener("resize", updateMenuPosition);
+      window.removeEventListener("scroll", updateMenuPosition, true);
+    };
+  }, [menuOpen]);
+
   const handleKeyDown = (e) => {
     if (!onClick) return;
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); }
@@ -120,6 +169,7 @@ const PostItems = ({ post, onClick, onReport }) => {
   const PrimaryIcon  = getPrimaryIcon(post?.category);
   const chips        = getChips(post);
   const authorUsername = getUsernameForPost(post);
+  const isOwnPost = post?.email?.toLowerCase() === dummyUser.email.toLowerCase();
 
   // avatar + name, shared between the linked and plain (unknown author) cases.
   const authorInner = (
@@ -145,7 +195,7 @@ const PostItems = ({ post, onClick, onReport }) => {
       initial={fadeUp.initial}
       animate={fadeUp.animate}
       transition={tweenFast}
-      className={`group flex flex-col h-full w-full bg-[var(--bg-card)] rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md overflow-hidden border border-[var(--border-subtle)] shadow-[0_2px_12px_rgba(28,32,18,0.06)] lg:hover:shadow-[0_10px_32px_rgba(28,32,18,0.11)] lg:hover:-translate-y-1 active:scale-[0.98] lg:active:scale-100 transition-[transform,box-shadow] duration-200 cursor-pointer select-none transform-gpu will-change-transform ${themeClass}`}
+      className={`group relative flex flex-col h-full w-full bg-[var(--bg-card)] rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md overflow-hidden border border-[var(--border-subtle)] shadow-[0_2px_12px_rgba(28,32,18,0.06)] lg:hover:shadow-[0_10px_32px_rgba(28,32,18,0.11)] lg:hover:-translate-y-1 active:scale-[0.98] lg:active:scale-100 transition-[transform,box-shadow] duration-200 cursor-pointer select-none transform-gpu will-change-transform ${themeClass}`}
       onClick={onClick}
       onKeyDown={handleKeyDown}
       role={onClick ? "button" : undefined}
@@ -159,6 +209,7 @@ const PostItems = ({ post, onClick, onReport }) => {
           onError={() => setImageSrc("/placeholder-post.svg")}
           className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] transform-gpu will-change-transform"
         />
+        <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-[rgba(20,24,14,0.18)] to-transparent pointer-events-none" />
         <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--bg-card)]/20 to-transparent pointer-events-none" />
 
         {/* category pill — top left */}
@@ -167,38 +218,21 @@ const PostItems = ({ post, onClick, onReport }) => {
           {post?.subCategory || post?.category}
         </span>
 
-        {/* report + save — top right */}
-        <div className="absolute right-2.5 top-2.5 flex items-center gap-1.5 lg:right-3 lg:top-3">
-          {onReport && (
+        {/* 3-dot menu — top right */}
+        <div className="absolute right-2.5 top-2.5 lg:right-3 lg:top-3">
+          {/* ── 3-dot dropdown ── */}
+          <div ref={menuRef} className="relative">
             <m.button
-              whileHover={reported ? undefined : hoverScaleIcon}
-              whileTap={reported ? undefined : tapScaleSmall}
-              onClick={(e) => { e.stopPropagation(); if (!reported) onReport(post); }}
-              disabled={reported}
-              aria-label={reported ? "Already reported" : "Report post"}
-              title={reported ? "You reported this post" : "Report post"}
-              className={`flex h-8 w-8 items-center justify-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md shadow-sm backdrop-blur-sm transition ${
-                reported
-                  ? "cursor-default bg-[var(--danger-soft)]/95"
-                  : "bg-[var(--bg-card)]/95 hover:bg-[var(--bg-card)]"
-              }`}
+              ref={menuButtonRef}
+              whileHover={hoverScaleIcon}
+              whileTap={tapScaleSmall}
+              onClick={(e) => { e.stopPropagation(); setMenuOpen((v) => !v); }}
+              aria-label="More options"
+              className="flex h-8 w-8 items-center justify-center transition"
             >
-              {reported
-                ? <FlagIcon className="h-[15px] w-[15px] text-[var(--danger)]" />
-                : <FlagOutlineIcon className="h-[15px] w-[15px] text-[var(--text-muted)]" strokeWidth={2} />}
+              <EllipsisVerticalIcon className="h-[15px] w-[15px] text-[var(--text-muted)]" strokeWidth={2.2} />
             </m.button>
-          )}
-
-          <m.button
-            whileHover={hoverScaleIcon} whileTap={tapScaleSmall}
-            onClick={(e) => { e.stopPropagation(); setSaved((v) => !v); }}
-            aria-label={saved ? "Unsave" : "Save"}
-            className="flex h-8 w-8 items-center justify-center rounded-tr-xl rounded-bl-xl rounded-tl-md rounded-br-md bg-[var(--bg-card)]/95 shadow-sm backdrop-blur-sm transition hover:bg-[var(--bg-card)]"
-          >
-            {saved
-              ? <HeartIcon className="h-[15px] w-[15px] text-[var(--brand)]" />
-              : <HeartOutlineIcon className="h-[15px] w-[15px] text-[var(--text-muted)]" />}
-          </m.button>
+          </div>
         </div>
 
         {/* distance — bottom right */}
@@ -264,6 +298,59 @@ const PostItems = ({ post, onClick, onReport }) => {
           </Button>
         </div>
       </div>
+
+      {typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {menuOpen && menuPosition && (
+            <m.div
+              initial={{ opacity: 0, scale: 0.92, x: -6 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              exit={{ opacity: 0, scale: 0.92, x: -6 }}
+              transition={{ duration: 0.13 }}
+              onClick={(e) => e.stopPropagation()}
+              className="fixed z-[120] min-w-[140px] overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[0_12px_32px_rgba(28,32,18,0.2)]"
+              style={{ top: menuPosition.top, left: menuPosition.left }}
+            >
+              {isOwnPost && onEdit && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuOpen(false);
+                    onEdit(post);
+                  }}
+                  className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-[12.5px] font-semibold text-[var(--text-body)] transition hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]"
+                >
+                  <PencilSquareIcon className="h-4 w-4 shrink-0 text-[var(--text-muted)]" strokeWidth={2} />
+                  Edit post
+                </button>
+              )}
+              {!isOwnPost && onReport && (
+                <button
+                  type="button"
+                  disabled={reported}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuOpen(false);
+                    if (!reported) onReport(post);
+                  }}
+                  className={`flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-[12.5px] font-semibold transition ${
+                    reported
+                      ? "cursor-default text-[var(--danger)]/50"
+                      : "text-[var(--danger)] hover:bg-[var(--danger-soft)]"
+                  }`}
+                >
+                  {reported
+                    ? <FlagIcon className="h-4 w-4 shrink-0" />
+                    : <FlagOutlineIcon className="h-4 w-4 shrink-0" strokeWidth={2} />}
+                  {reported ? "Reported" : "Report"}
+                </button>
+              )}
+            </m.div>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </m.div>
   );
 };

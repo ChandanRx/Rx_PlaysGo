@@ -12,6 +12,7 @@ import ReportPostModal from "../ReportPostModal";
 import Button from "../ui/Button";
 import { useToast } from "../ui/Toast";
 import { cardRevealUp, loadSequence, makeSequencedContainer } from "../../shared/motionPresets";
+import { dummyUser } from "../../shared/dummyPosts";
 
 const POSTS_PER_PAGE = 12;
 
@@ -24,6 +25,11 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSpor
   const toast                   = useToast();
 
   const openPost = (item) => { setSelectedPost(item); };
+
+  const handleEdit = (item) => {
+    setSelectedPost(null);
+    router.push(`/createpost?edit=${encodeURIComponent(item.id)}`);
+  };
   useEffect(() => { setPage(1); }, [posts]);
 
   // The card grid lives inside AppShell's <AnimatePresence initial={false}>,
@@ -125,7 +131,7 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSpor
           >
             {paginated.map((item) => (
               <m.div key={item.id} variants={cardRevealUp} className="flex h-full">
-                <PostItems post={item} onClick={() => openPost(item)} onReport={setReportingPost} />
+                <PostItems post={item} onClick={() => openPost(item)} onReport={setReportingPost} onEdit={handleEdit} />
               </m.div>
             ))}
           </m.div>
@@ -156,7 +162,12 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSpor
 
       <AnimatePresence>
         {selectedPost && (
-          <PostModal key={selectedPost.id} post={selectedPost} onClose={() => setSelectedPost(null)} />
+          <PostModal
+            key={selectedPost.id}
+            post={selectedPost}
+            onClose={() => setSelectedPost(null)}
+            onEdit={selectedPost.email?.toLowerCase() === dummyUser.email.toLowerCase() ? handleEdit : undefined}
+          />
         )}
       </AnimatePresence>
 

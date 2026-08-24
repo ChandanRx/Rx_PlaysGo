@@ -10,7 +10,7 @@ import { useAuthSession, useClientGreeting, useNotifications, useStoredAppCatego
 import { getCategoryLabel } from "../shared/appPreferences";
 import { markAllNotificationsRead, markNotificationRead } from "../shared/notifications";
 import Data from "../shared/data";
-import { CATEGORY_ICONS, SUBCATEGORY_ICONS } from "../shared/lucideIcons";
+import { CATEGORY_ICONS, SPORT_EMOJI } from "../shared/lucideIcons";
 import { loadSequence, makeSequencedContainer, popIn, springSnappy, staggerContainer, staggerItem } from "../shared/motionPresets";
 import Button from "./ui/Button";
 
@@ -437,14 +437,29 @@ const NotificationBell = ({ variant = "desktop" }) => {
 /* ── Sport filter — pill-styled dropdown that filters the feed by game ──
    Options come from the same list the create-post form uses
    (Data.subCategoryMap.Players), and "All sports" clears the filter. ── */
+const sportIconClass = "h-[18px] w-[18px] max-w-none shrink-0";
+
+const SportGlyph = ({ sport, className = sportIconClass }) => {
+  const emoji = sport ? SPORT_EMOJI[sport] : null;
+  if (emoji) {
+    return (
+      <span
+        className={`inline-flex items-center justify-center text-[17px] leading-none ${className}`}
+        aria-hidden="true"
+      >
+        {emoji}
+      </span>
+    );
+  }
+
+  const Icon = DEFAULT_SPORT_ICON;
+  return <Icon className={className} strokeWidth={2} />;
+};
+
 const SportsFilterDropdown = ({ sports = [], value = "", onChange, size = "desktop" }) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef(null);
   const isMobile = size === "mobile";
-  const active = Boolean(value);
-  // On mobile the trigger is icon-only: show the picked sport's glyph, or the
-  // generic trophy when nothing is selected ("default sports icon").
-  const TriggerIcon = (value && SUBCATEGORY_ICONS[value]) || DEFAULT_SPORT_ICON;
 
   useEffect(() => {
     if (!open) return;
@@ -463,22 +478,19 @@ const SportsFilterDropdown = ({ sports = [], value = "", onChange, size = "deskt
   return (
     <div ref={containerRef} className="relative shrink-0">
       <Button
-        variant={active ? "yellow" : "secondary"}
-        size={isMobile ? "md" : "sm"}
+        variant={value ? "yellow" : "secondary"}
+        size={isMobile ? "sm" : "sm"}
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={isMobile ? (value ? `Sport: ${value}` : "Filter by sport") : undefined}
         title={isMobile ? (value || "Sport") : undefined}
-        className="gap-1"
+        className={`gap-1.5 ${isMobile ? "px-3" : ""}`}
       >
-        {isMobile ? (
-          <TriggerIcon className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
-        ) : (
-          value || "Sport"
-        )}
+        <SportGlyph sport={value} />
+        <span className={isMobile ? "max-w-[5rem] truncate" : ""}>{value || "Sport"}</span>
         <ChevronDownIcon
-          className={`h-3.5 w-3.5 shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`h-3.5 w-3.5 max-w-none shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
           strokeWidth={2.5}
         />
       </Button>
@@ -489,32 +501,26 @@ const SportsFilterDropdown = ({ sports = [], value = "", onChange, size = "deskt
             {...popIn}
             role="listbox"
             aria-label="Filter by sport"
-            className="absolute right-0 top-full z-50 mt-2 w-44 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-1.5 shadow-[0_12px_32px_rgba(28,32,18,0.14)]"
+            className="absolute right-0 top-full z-50 mt-2 w-48 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-1.5 shadow-[0_12px_32px_rgba(28,32,18,0.14)]"
           >
             {["", ...sports].map((sport) => {
               const selected = value === sport;
-              const OptionIcon = (sport && SUBCATEGORY_ICONS[sport]) || DEFAULT_SPORT_ICON;
               return (
                 <button
                   key={sport || "all"}
                   type="button"
                   role="option"
                   aria-selected={selected}
-                  aria-label={isMobile ? (sport || "All sports") : undefined}
-                  title={isMobile ? (sport || "All sports") : undefined}
                   onClick={() => select(sport)}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-[12.5px] font-semibold transition ${
+                  className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[12.5px] font-semibold transition ${
                     selected
                       ? "bg-[var(--brand-soft)] text-[var(--brand)]"
                       : "text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-heading)]"
                   }`}
                 >
-                  {isMobile ? (
-                    <OptionIcon className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
-                  ) : (
-                    sport || "All sports"
-                  )}
-                  {selected && <CheckIcon className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />}
+                  <SportGlyph sport={sport} />
+                  <span className="min-w-0 flex-1 truncate">{sport || "All sports"}</span>
+                  {selected && <CheckIcon className="h-3.5 w-3.5 max-w-none shrink-0" strokeWidth={2.5} />}
                 </button>
               );
             })}

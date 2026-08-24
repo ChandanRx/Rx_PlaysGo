@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { m } from "framer-motion";
-import { createPost } from "../../shared/dummyPosts";
+import { createPost, getPosts, updatePost } from "../../shared/dummyPosts";
 import Data from "../../shared/data";
 import { Input, Textarea } from "../../components/ui/FormControls";
 import Dropdown from "../../components/ui/Dropdown";
 import DatePicker from "../../components/ui/DatePicker";
 import TimePicker from "../../components/ui/TimePicker";
-import { ArrowUpTrayIcon, CheckIcon, PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, CheckIcon, PencilSquareIcon, PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { staggerContainer, staggerItem } from "../../shared/motionPresets";
 import { useMountReveal } from "../../hooks/useMountReveal";
 
@@ -28,6 +28,10 @@ const games = Data.subCategoryMap.Players;
 
 const CreatePost = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit") || "";
+  const isEditing = Boolean(editId);
+
   const reveal = useMountReveal();
   const fileInputRef = useRef(null);
   const [input, setInput] = useState({
@@ -40,6 +44,24 @@ const CreatePost = () => {
     time: "",
     imageUrl: "",
   });
+
+  // Pre-fill form when editing an existing post
+  useEffect(() => {
+    if (!editId) return;
+    const all = getPosts();
+    const found = all.find((p) => String(p.id) === String(editId));
+    if (!found) return;
+    setInput({
+      game:      found.subCategory || "",
+      title:     found.title       || "",
+      desc:      found.desc        || "",
+      location:  found.location    || "",
+      coords:    found.coords      || null,
+      eventDate: found.date        || "",
+      time:      found.time        || "",
+      imageUrl:  found.imageUrl    || "",
+    });
+  }, [editId]);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -71,8 +93,22 @@ const CreatePost = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    createPost({ ...input, category: "Players" });
-    alert("Post created!");
+    if (isEditing) {
+      updatePost(editId, {
+        subCategory: input.game,
+        title:       input.title,
+        desc:        input.desc,
+        location:    input.location,
+        coords:      input.coords,
+        date:        input.eventDate,
+        time:        input.time,
+        imageUrl:    input.imageUrl,
+      });
+      alert("Post updated!");
+    } else {
+      createPost({ ...input, category: "Players" });
+      alert("Post created!");
+    }
     router.push("/profile");
   };
 
@@ -80,9 +116,17 @@ const CreatePost = () => {
     <div className="rounded-2xl bg-[var(--bg-card)]">
       {/* header */}
       <div className="px-1 pb-5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] category-accent-text">Create post</p>
-        <h1 className="mt-1 text-[20px] font-black text-[var(--text-heading)]">Find players nearby</h1>
-        <p className="mt-0.5 text-[13px] text-[var(--text-muted)]">Fill in the details and publish your game request.</p>
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] category-accent-text">
+          {isEditing ? "Edit post" : "Create post"}
+        </p>
+        <h1 className="mt-1 text-[20px] font-black text-[var(--text-heading)]">
+          {isEditing ? "Update your post" : "Find players nearby"}
+        </h1>
+        <p className="mt-0.5 text-[13px] text-[var(--text-muted)]">
+          {isEditing
+            ? "Make your changes and save them below."
+            : "Fill in the details and publish your game request."}
+        </p>
       </div>
 
       <form onSubmit={onSubmit} className="px-1">
@@ -185,8 +229,9 @@ const CreatePost = () => {
         <div className="mt-6 flex flex-col gap-3 border-t border-[var(--border-subtle)] pt-4 sm:flex-row sm:justify-between">
           <button type="button" onClick={() => router.push("/")} className="text-[13px] font-semibold text-[var(--text-muted)] transition hover:text-[var(--text-heading)]">Cancel</button>
           <button type="submit" className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[var(--brand)] px-6 py-2 text-[13px] font-bold text-[var(--on-brand)] shadow-[0_4px_12px_rgba(var(--brand-rgb),0.28)] transition hover:bg-[var(--brand-hover)]">
-            <CheckIcon className="h-4 w-4" strokeWidth={2.5} />
-            Publish
+            {isEditing
+              ? <><PencilSquareIcon className="h-4 w-4" strokeWidth={2.5} /> Save Changes</>
+              : <><CheckIcon className="h-4 w-4" strokeWidth={2.5} /> Publish</>}
           </button>
         </div>
       </form>
