@@ -5,7 +5,7 @@ import {
   ChatBubbleLeftRightIcon,
   Cog6ToothIcon,
   HomeIcon,
-  SparklesIcon,
+  TrophyIcon,
   UserIcon,
 } from "@heroicons/react/24/solid";
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -20,7 +20,7 @@ const navItems = [
   { label: "Home", href: "/", icon: HomeIcon },
   { label: "Messages", href: "/messages", icon: ChatBubbleLeftRightIcon },
   { label: "Profile", href: "/profile", icon: UserIcon },
-  { label: "Pro", href: "/pro", icon: SparklesIcon },
+  { label: "Scores & Stories", href: "/scores", icon: TrophyIcon },
 ];
 
 /* Floating tooltip shown to the right of each icon (replaces native title) */

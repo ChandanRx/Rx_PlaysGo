@@ -28,6 +28,7 @@ const pageTitles = {
   "/about":      "About",
   "/privacy":    "Privacy Policy",
   "/pro":        "PlaysGo Pro",
+  "/scores":     "Scores & Stories",
 };
 
 const searchPlaceholders = {
