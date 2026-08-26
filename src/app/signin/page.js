@@ -77,7 +77,6 @@ const SignInPage = () => {
   };
 
   const handleGoogleSignIn = () => {
-    // Demo mode — no real OAuth yet; mock a Google-authenticated member.
     signIn({ email: "member@gmail.com", name: "Google Member" });
     router.push(searchParams.get("next") || "/");
   };

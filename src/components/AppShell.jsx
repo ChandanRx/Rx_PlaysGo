@@ -3,7 +3,7 @@
 import React, { Suspense, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, m } from "framer-motion";
-import { ChatBubbleLeftRightIcon, HomeIcon, SparklesIcon, UserIcon } from "@heroicons/react/24/solid";
+import { ChatBubbleLeftRightIcon, HomeIcon, TrophyIcon, UserIcon } from "@heroicons/react/24/solid";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 import DashboardHeader from "./DashboardHeader";
@@ -24,7 +24,7 @@ const STANDALONE_PATHS = ["/signin", "/signup", "/dashboard"];
 // Admin dashboard is desktop/admin use only — deliberately not a mobile tab.
 const bottomNav = [
   { label: "Home", href: "/", icon: HomeIcon },
-  { label: "Pro", href: "/pro", icon: SparklesIcon },
+  { label: "Scores", href: "/scores", icon: TrophyIcon },
   { label: "Create", href: "/createpost", icon: PlusIcon },
   { label: "Chat", href: "/messages", icon: ChatBubbleLeftRightIcon },
   { label: "Profile", href: "/profile", icon: UserIcon },
