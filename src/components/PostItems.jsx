@@ -170,6 +170,7 @@ const PostItems = ({ post, onClick, onReport, onEdit }) => {
   const chips        = getChips(post);
   const authorUsername = getUsernameForPost(post);
   const isOwnPost = post?.email?.toLowerCase() === dummyUser.email.toLowerCase();
+  const cricketPreview = post?.cricketScorePreview;
 
   // avatar + name, shared between the linked and plain (unknown author) cases.
   const authorInner = (
@@ -260,6 +261,32 @@ const PostItems = ({ post, onClick, onReport, onEdit }) => {
 
         {/* divider */}
         <div className="my-2 h-px bg-[var(--border-subtle)] lg:my-2.5" />
+
+        {cricketPreview && (
+          <div className="mb-2.5 rounded-xl border border-[var(--brand-border)] bg-[var(--brand-soft)] p-3">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--brand)]">
+                Match scorecard
+              </span>
+              <span className="text-[10px] font-bold text-[var(--text-muted)]">
+                {cricketPreview.score?.matchType || "Cricket"}
+              </span>
+            </div>
+            <div className="mt-2 space-y-1.5">
+              {[cricketPreview.score?.teamA, cricketPreview.score?.teamB].filter(Boolean).map((team) => (
+                <div key={team.name} className="flex items-center justify-between gap-3 text-[12px]">
+                  <span className="min-w-0 truncate font-bold text-[var(--text-heading)]">{team.name}</span>
+                  <span className="shrink-0 font-black text-[var(--text-heading)]">{team.score}</span>
+                </div>
+              ))}
+            </div>
+            {cricketPreview.result && (
+              <p className="mt-2 line-clamp-1 text-[11px] font-semibold text-[var(--text-body)]">
+                {cricketPreview.result}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* chips */}
         {chips.length > 0 && (

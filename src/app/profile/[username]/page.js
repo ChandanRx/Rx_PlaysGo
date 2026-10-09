@@ -59,7 +59,9 @@ const UserProfile = () => {
 
     load();
     window.addEventListener(FOLLOW_CHANGE_EVENT, load);
-    return () => window.removeEventListener(FOLLOW_CHANGE_EVENT, load);
+    return () => {
+      window.removeEventListener(FOLLOW_CHANGE_EVENT, load);
+    };
   }, [username]);
 
   const handleToggleFollow = () => {
@@ -128,6 +130,48 @@ const UserProfile = () => {
         onToggleFollow={handleToggleFollow}
         onGetInTouch={() => router.push("/messages")}
       />
+
+      <Card className="p-4 sm:p-5 md:p-6" hover={false} padding={false}>
+        <div className="flex flex-col gap-1 border-b border-[var(--border-subtle)] pb-4">
+          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+            Matches
+          </p>
+          <h2 className="text-[18px] font-black text-[var(--text-heading)]">
+            Cricket record
+          </h2>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            ["Matches", matchStats?.matchesPlayed || 0],
+            ["Runs", matchStats?.totalRuns || 0],
+            ["Wickets", matchStats?.totalWickets || 0],
+            ["Strike rate", matchStats?.strikeRate || 0],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-xl bg-[var(--bg-input)] p-3 text-center">
+              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-[var(--text-muted)]">{label}</p>
+              <strong className="mt-1 block text-lg text-[var(--text-heading)]">{value}</strong>
+            </div>
+          ))}
+        </div>
+
+        {matchStats?.recentMatches?.length > 0 && (
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {matchStats.recentMatches.slice(0, 4).map((match) => {
+              const innings = match.innings?.find((inn) =>
+                inn.battingCard?.some((b) => b.playerId === profile.id) ||
+                inn.bowlingCard?.some((b) => b.playerId === profile.id),
+              );
+              return (
+                <div key={match.matchId} className="rounded-xl border border-[var(--border-subtle)] p-3">
+                  <p className="truncate text-sm font-black text-[var(--text-heading)]">{match.teams?.teamA?.name || match.teamA?.name || "Team A"} vs {match.teams?.teamB?.name || match.teamB?.name || "Team B"}</p>
+                  <p className="mt-1 text-xs font-semibold text-[var(--text-muted)]">{innings ? formatInningsScore(innings) : match.result?.summary || match.status}</p>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </Card>
 
       <Card className="p-4 sm:p-5 md:p-6" hover={false} padding={false}>
         <div className="flex flex-col gap-1 border-b border-[var(--border-subtle)] pb-4">

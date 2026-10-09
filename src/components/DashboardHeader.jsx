@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { BellIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { CheckIcon, ChevronDownIcon, Cog6ToothIcon, HandRaisedIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, ChevronDownIcon, Cog6ToothIcon, HandRaisedIcon, PlusIcon, TrophyIcon } from "@heroicons/react/24/outline";
 import { AnimatePresence, m } from "framer-motion";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CategoryModeBadge } from "./CategoryModePrompt";
@@ -27,8 +27,8 @@ const pageTitles = {
   "/settings":   "Settings",
   "/about":      "About",
   "/privacy":    "Privacy Policy",
-  "/pro":        "PlaysGo Pro",
-  "/scores":     "Scores & Stories",
+"/pro":        "PlaysGo Pro",
+  "/feed":       "Feed",
 };
 
 const searchPlaceholders = {
@@ -116,7 +116,7 @@ const DashboardHeader = () => {
           {/* Brand CTA variant — overriding "primary" with bg classes was an
               order-dependent conflict that left the white solid pill in dark.
               Hidden on /createpost — you're already there. */}
-          {pathname !== "/createpost" && (
+{pathname !== "/createpost" && (
             <Button
               variant="yellow"
               size="sm"

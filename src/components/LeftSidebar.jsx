@@ -20,7 +20,7 @@ const navItems = [
   { label: "Home", href: "/", icon: HomeIcon },
   { label: "Messages", href: "/messages", icon: ChatBubbleLeftRightIcon },
   { label: "Profile", href: "/profile", icon: UserIcon },
-  { label: "Scores & Stories", href: "/scores", icon: TrophyIcon },
+  { label: "Feed", href: "/feed", icon: TrophyIcon },
 ];
 
 /* Floating tooltip shown to the right of each icon (replaces native title) */
@@ -79,9 +79,6 @@ const NavButton = ({ label, active, onClick, children, variant = "default" }) =>
 const LeftSidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
-
-  // Region 1 of the load choreography — mounts first (no data gate), so it
-  // sets the shared page-load clock the header and cards anchor to.
   const navContainer = useMemo(() => makeSequencedContainer(loadSequence.sidebar, 0.06), []);
 
   const isActive = (href) => {

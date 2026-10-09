@@ -16,7 +16,7 @@ import { dummyUser } from "../../shared/dummyPosts";
 
 const POSTS_PER_PAGE = 12;
 
-const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSport = "" }) => {
+const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSport = "", emptyMessage = "" }) => {
   const [page, setPage]         = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
   const [reportingPost, setReportingPost] = useState(null);
@@ -105,7 +105,7 @@ const Posts = ({ posts = [], isReady = true, activeFilter = "Nearby", activeSpor
             <MagnifyingGlassIcon className="h-7 w-7" strokeWidth={1.9} />
           </div>
           <h4 className="text-[15px] font-bold text-[var(--text-heading)]">No posts found</h4>
-          <p className="mt-1.5 max-w-xs text-[13px] text-[var(--text-muted)]">Try another keyword or switch filters.</p>
+          <p className="mt-1.5 max-w-xs text-[13px] text-[var(--text-muted)]">{emptyMessage || "Try another keyword or switch filters."}</p>
           <Button
             variant="yellow"
             size="md"
