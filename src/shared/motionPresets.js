@@ -17,7 +17,8 @@
 export const springSnappy = {
   type: "spring",
   stiffness: 400,
-  damping: 30,
+  damping: 38,
+  mass: 0.8,
 };
 
 // Softer spring — dialogs, sheets, larger surfaces.

@@ -10,7 +10,7 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { fadeUp, springSnappy, staggerContainer, staggerItem, tweenFast } from "../../shared/motionPresets";
+import { tweenFast } from "../../shared/motionPresets";
 import { useMountReveal } from "../../hooks/useMountReveal";
 import PostItems from "../../components/PostItems";
 import { PostCardSkeletonGrid } from "../../components/PostCardSkeleton";
@@ -124,7 +124,7 @@ const Profile = () => {
 
   return (
     <div className="space-y-5">
-      <m.div initial={fadeUp.initial} animate={reveal === "show" ? fadeUp.animate : fadeUp.initial} transition={tweenFast}>
+      <m.div initial={{ opacity: 0 }} animate={reveal === "show" ? { opacity: 1 } : { opacity: 0 }} transition={tweenFast}>
         <ProfileHeader
           profile={profile}
           stats={stats}
@@ -134,8 +134,8 @@ const Profile = () => {
       </m.div>
 
       <m.div
-        initial={fadeUp.initial}
-        animate={reveal === "show" ? fadeUp.animate : fadeUp.initial}
+        initial={{ opacity: 0 }}
+        animate={reveal === "show" ? { opacity: 1 } : { opacity: 0 }}
         transition={{ ...tweenFast, delay: 0.08 }}
       >
       <Card className="p-4 sm:p-5 md:p-6" hover={false} padding={false}>
@@ -169,7 +169,7 @@ const Profile = () => {
                 {activeTab === tab && (
                   <m.span
                     layoutId="profile-tab-pill"
-                    transition={springSnappy}
+                    transition={{ type: "tween", duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                     className="absolute inset-0 rounded-xl bg-[var(--bg-card)] shadow-[var(--shadow-xs)]"
                   />
                 )}
@@ -207,14 +207,13 @@ const Profile = () => {
           </div>
         ) : (
           <m.div
-            key={activeTab}
-            variants={staggerContainer}
-            initial="hidden"
-            animate={reveal}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.18 }}
             className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
           >
             {filteredPosts.map((item) => (
-              <m.div key={item.id} variants={staggerItem} className="flex h-full flex-col gap-2">
+              <div key={item.id} className="flex h-full flex-col gap-2">
                 <div className="flex-1">
                   <PostItems post={item} onClick={() => setSelectedPost(item)} onEdit={handleEdit} />
                 </div>
@@ -245,7 +244,7 @@ const Profile = () => {
                     <TrashIcon className="h-3.5 w-3.5" strokeWidth={2} />
                   </button>
                 </div>
-              </m.div>
+              </div>
             ))}
           </m.div>
         )}
