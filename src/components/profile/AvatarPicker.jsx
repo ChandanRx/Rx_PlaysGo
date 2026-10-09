@@ -6,27 +6,20 @@ import { CheckIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/s
 import { springSnappy } from "../../shared/motionPresets";
 import { DOODLE_AVATARS } from "../../shared/doodleAvatars";
 
-/**
- * Accent backgrounds revealed when an avatar is selected. Warm, editorial
- * tones (coral / orange / yellow / pink / beige) — each avatar gets a stable
- * accent by index so the picker feels intentional rather than random. The
- * illustrations stay monochrome, so every accent reads cleanly behind them in
- * both light and dark mode.
- */
 const ACCENTS = [
-  "#F59E7D", // coral
-  "#F5A94A", // orange
-  "#F3C84E", // yellow
-  "#EBA9C0", // muted pink
-  "#E7D3AC", // beige
-  "#D8DCCF", // light gray
+  "#F59E7D",
+  "#F5A94A",
+  "#F3C84E",
+  "#EBA9C0",
+  "#E7D3AC",
+  "#D8DCCF",
 ];
 const accentFor = (index) => ACCENTS[index % ACCENTS.length];
 
 /**
  * `compact` renders a fixed 5-column grid inside a scrollable area — for
  * narrow surfaces like the sign-up form and the edit-profile modal. The
- * default layout is the full-width responsive 4→8 column grid.
+ * search bar is hidden in compact mode.
  *
  * `gender` ("Male"/"Female", any casing) narrows the set to that presentation
  * plus the neutral avatars; any other value shows everything.
@@ -43,14 +36,14 @@ const AvatarPicker = ({ value, onChange, avatars = DOODLE_AVATARS, compact = fal
     return avatars;
   }, [avatars, gender]);
 
+  // In compact mode there is no search input, so always show the full pool.
   const filtered = useMemo(() => {
+    if (compact) return pool;
     const q = query.trim().toLowerCase();
     if (!q) return pool;
     return pool.filter((a) => a.tags.some((t) => t.includes(q)) || a.id.includes(q));
-  }, [pool, query]);
+  }, [pool, query, compact]);
 
-  // Resolve the current column count from the rendered grid itself, so arrow
-  // keys move by whatever the layout is actually showing.
   const gridRef = useRef(null);
   const colsAtWidth = () => {
     if (!gridRef.current) return 1;
@@ -66,71 +59,49 @@ const AvatarPicker = ({ value, onChange, avatars = DOODLE_AVATARS, compact = fal
   const handleKeyDown = (e, index) => {
     const cols = colsAtWidth();
     switch (e.key) {
-      case "ArrowRight":
-        e.preventDefault();
-        focusItem(index + 1);
-        break;
-      case "ArrowLeft":
-        e.preventDefault();
-        focusItem(index - 1);
-        break;
-      case "ArrowDown":
-        e.preventDefault();
-        focusItem(index + cols);
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        focusItem(index - cols);
-        break;
-      case "Home":
-        e.preventDefault();
-        focusItem(0);
-        break;
-      case "End":
-        e.preventDefault();
-        focusItem(filtered.length - 1);
-        break;
+      case "ArrowRight": e.preventDefault(); focusItem(index + 1); break;
+      case "ArrowLeft":  e.preventDefault(); focusItem(index - 1); break;
+      case "ArrowDown":  e.preventDefault(); focusItem(index + cols); break;
+      case "ArrowUp":    e.preventDefault(); focusItem(index - cols); break;
+      case "Home":       e.preventDefault(); focusItem(0); break;
+      case "End":        e.preventDefault(); focusItem(filtered.length - 1); break;
       case " ":
-      case "Enter":
-        e.preventDefault();
-        onChange?.(filtered[index]);
-        break;
-      default:
-        break;
+      case "Enter":      e.preventDefault(); onChange?.(filtered[index]); break;
+      default: break;
     }
   };
 
   return (
     <div>
-      {/* Search / filter */}
-      <div className="relative mb-4">
-        <MagnifyingGlassIcon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-faint)]" />
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setFocusIndex(0);
-          }}
-          placeholder="Search avatars — hair, mustache, earrings…"
-          aria-label="Search avatars"
-          className="w-full rounded-xl border-0 bg-[var(--bg-secondary)] py-2.5 pl-10 pr-10 text-[13.5px] text-[var(--text-heading)] outline-none transition placeholder:text-[var(--text-faint)] focus:bg-[var(--bg-card)] focus:shadow-[0_0_0_2px_var(--brand)]"
-        />
-        {query && (
-          <button
-            type="button"
-            onClick={() => setQuery("")}
-            aria-label="Clear search"
-            className="absolute right-3 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--bg-hover)] text-[var(--text-muted)] transition hover:text-[var(--text-heading)]"
-          >
-            <XMarkIcon className="h-3 w-3" />
-          </button>
-        )}
-      </div>
+      {/* Search bar — only shown in full (non-compact) mode */}
+      {!compact && (
+        <div className="relative mb-4">
+          <MagnifyingGlassIcon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-faint)]" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => { setQuery(e.target.value); setFocusIndex(0); }}
+            placeholder="Search avatars — hair, mustache, earrings…"
+            aria-label="Search avatars"
+            className="w-full rounded-xl border-0 bg-[var(--bg-secondary)] py-2.5 pl-10 pr-10 text-[13.5px] text-[var(--text-heading)] outline-none transition placeholder:text-[var(--text-faint)] focus:bg-[var(--bg-card)] focus:shadow-[0_0_0_2px_var(--brand)]"
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              aria-label="Clear search"
+              className="absolute right-3 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--bg-hover)] text-[var(--text-muted)] transition hover:text-[var(--text-heading)]"
+            >
+              <XMarkIcon className="h-3 w-3" />
+            </button>
+          )}
+        </div>
+      )}
 
-      {filtered.length === 0 ? (
+      {/* Empty state — only possible in full mode when a search yields nothing */}
+      {!compact && filtered.length === 0 ? (
         <p className="py-10 text-center text-[13px] text-[var(--text-muted)]">
-          No avatars match “{query}”.
+          No avatars match &ldquo;{query}&rdquo;.
         </p>
       ) : (
         <div
@@ -179,7 +150,6 @@ const AvatarPicker = ({ value, onChange, avatars = DOODLE_AVATARS, compact = fal
                   className="h-full w-full select-none"
                 />
 
-                {/* Checkmark indicator in the corner when selected */}
                 {selected && (
                   <m.span
                     initial={{ scale: 0, opacity: 0 }}

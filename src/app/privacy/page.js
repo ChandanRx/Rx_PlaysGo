@@ -1,4 +1,6 @@
-import Card from "../../components/ui/Card";
+"use client";
+
+import { useRouter } from "next/navigation";
 import {
   ShieldCheckIcon,
   InformationCircleIcon,
@@ -7,6 +9,7 @@ import {
   ClockIcon,
   AdjustmentsHorizontalIcon,
   EnvelopeIcon,
+  ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
 
 const LAST_UPDATED = "July 29, 2026";
@@ -67,70 +70,124 @@ const sections = [
   },
 ];
 
-const Privacy = () => (
-  <div className="space-y-5">
+export default function PrivacyPage() {
+  const router = useRouter();
 
-    {/* Hero */}
-    <Card className="p-6 md:p-8" hover={false}>
-      <div className="flex items-center gap-2.5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--brand-soft)] text-[var(--brand)]">
-          <ShieldCheckIcon className="h-5 w-5" strokeWidth={2} />
-        </span>
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--brand)]">Privacy Policy</p>
-      </div>
-      <h1 className="mt-3 text-[24px] font-black leading-tight text-[var(--text-heading)] md:text-[30px]">
-        Your privacy matters to us
-      </h1>
-      <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-[var(--text-body)]">
-        This policy explains what information PlaysGo collects, how we use it, and the choices you have.
-        We keep things simple and only collect what we need to run your local community feed.
-      </p>
-      <p className="mt-4 text-[12.5px] font-semibold text-[var(--text-muted)]">Last updated: {LAST_UPDATED}</p>
-    </Card>
+  return (
+    <div className="min-h-screen bg-[var(--bg-page)]">
 
-    {/* Sections */}
-    <div className="grid gap-5 sm:grid-cols-2">
-      {sections.map(({ icon: Icon, title, points }) => (
-        <Card key={title} className="p-5 md:p-6" hover={false}>
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--brand-soft)] text-[var(--brand)]">
-              <Icon className="h-[18px] w-[18px]" strokeWidth={2} />
+      {/* ── Header ── */}
+      <header className="sticky top-0 z-40 border-b border-[var(--border-subtle)] bg-[var(--bg-card)]/90 backdrop-blur-md">
+        <div className="mx-auto flex h-14 max-w-[1400px] items-center px-5 sm:px-8">
+
+          {/* Back button */}
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="flex items-center gap-1.5 text-[13px] font-semibold text-[var(--text-muted)] transition hover:text-[var(--text-heading)]"
+          >
+            <ArrowLeftIcon className="h-[15px] w-[15px]" strokeWidth={2.3} />
+            Back
+          </button>
+
+          {/* Centred brand */}
+          <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--brand-soft)]">
+              <ShieldCheckIcon className="h-3.5 w-3.5 text-[var(--brand)]" strokeWidth={2.2} />
             </span>
-            <h2 className="text-[16px] font-black text-[var(--text-heading)]">{title}</h2>
+            <span className="text-[14px] font-black tracking-tight text-[var(--text-heading)]">PlaysGo</span>
           </div>
-          <ul className="mt-4 space-y-2.5">
-            {points.map((point) => (
-              <li key={point} className="flex gap-2.5 text-[13px] leading-relaxed text-[var(--text-body)]">
-                <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand)]" />
-                <span>{point}</span>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      ))}
-    </div>
+        </div>
+      </header>
 
-    {/* Changes + contact */}
-    <Card className="p-5 md:p-6" hover={false}>
-      <h2 className="text-[17px] font-black text-[var(--text-heading)]">Changes to this policy</h2>
-      <p className="mt-2 max-w-3xl text-[13.5px] leading-relaxed text-[var(--text-body)]">
-        We may update this policy as PlaysGo grows. When we make significant changes, we'll update the
-        date above and, where appropriate, let you know in the app.
-      </p>
+      {/* ── Main content ── */}
+      <main className="mx-auto max-w-[1400px] px-5 pb-14 pt-8 sm:px-8 sm:pt-10 lg:px-8">
 
-      <div className="mt-5 flex items-center gap-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3.5">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--brand-soft)] text-[var(--brand)]">
-          <EnvelopeIcon className="h-[18px] w-[18px]" strokeWidth={2} />
-        </span>
-        <div className="min-w-0">
-          <p className="text-[13px] font-bold text-[var(--text-heading)]">Questions about your privacy?</p>
-          <p className="text-[12.5px] text-[var(--text-muted)]">
-            Reach us at <span className="font-semibold text-[var(--brand)]">privacy@playsgo.app</span>
+        {/* Hero card */}
+        <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-7 py-8 sm:px-10 sm:py-10">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--brand-soft)]">
+              <ShieldCheckIcon className="h-[18px] w-[18px] text-[var(--brand)]" strokeWidth={2} />
+            </span>
+            <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--brand)]">
+              Privacy Policy
+            </span>
+          </div>
+
+          <h1 className="mt-4 text-[26px] font-black leading-tight text-[var(--text-heading)] sm:text-[32px]">
+            Your privacy matters to us
+          </h1>
+
+          <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-[var(--text-body)]">
+            This policy explains what information PlaysGo collects, how we use it, and the choices you
+            have. We keep things simple and only collect what we need to run your local community feed.
+          </p>
+
+          <p className="mt-5 text-[12.5px] font-semibold text-[var(--text-muted)]">
+            Last updated: {LAST_UPDATED}
           </p>
         </div>
-      </div>
-    </Card>
-  </div>
-);
 
-export default Privacy;
+        {/* Sections grid */}
+        <div className="mt-6 grid gap-5 sm:grid-cols-2">
+          {sections.map(({ icon: Icon, title, points }) => (
+            <div
+              key={title}
+              className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-6 py-6 sm:px-7 sm:py-7"
+            >
+              <div className="flex items-center gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--brand-soft)]">
+                  <Icon className="h-[17px] w-[17px] text-[var(--brand)]" strokeWidth={2} />
+                </span>
+                <h2 className="text-[15px] font-black text-[var(--text-heading)]">{title}</h2>
+              </div>
+
+              <ul className="mt-4 space-y-3">
+                {points.map((point) => (
+                  <li key={point} className="flex gap-3 text-[13.5px] leading-relaxed text-[var(--text-body)]">
+                    <span className="mt-[8px] h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand)]" />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Changes + contact */}
+        <div className="mt-5 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] px-7 py-7 sm:px-10 sm:py-8">
+          <h2 className="text-[17px] font-black text-[var(--text-heading)]">Changes to this policy</h2>
+          <p className="mt-2.5 max-w-3xl text-[13.5px] leading-relaxed text-[var(--text-body)]">
+            We may update this policy as PlaysGo grows. When we make significant changes, we&apos;ll
+            update the date above and, where appropriate, let you know in the app.
+          </p>
+
+          <div className="mt-5 flex items-center gap-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-5 py-4">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--brand-soft)]">
+              <EnvelopeIcon className="h-[18px] w-[18px] text-[var(--brand)]" strokeWidth={2} />
+            </span>
+            <div className="min-w-0">
+              <p className="text-[13.5px] font-bold text-[var(--text-heading)]">
+                Questions about your privacy?
+              </p>
+              <p className="mt-0.5 text-[12.5px] text-[var(--text-muted)]">
+                Reach us at{" "}
+                <a
+                  href="mailto:privacy@playsgo.app"
+                  className="font-semibold text-[var(--brand)] hover:underline"
+                >
+                  privacy@playsgo.app
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <p className="mt-8 text-center text-[12px] text-[var(--text-faint)]">
+          © {new Date().getFullYear()} PlaysGo. All rights reserved.
+        </p>
+      </main>
+    </div>
+  );
+}

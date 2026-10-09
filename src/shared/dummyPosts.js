@@ -480,6 +480,9 @@ const normalizePost = (post, index = 0) => {
     pinPost: Boolean(post.pinPost),
     boostVisibility: Boolean(post.boostVisibility),
     status: post.status || "Active",
+    cricketMatchId: post.cricketMatchId || "",
+    cricketScorePreview: post.cricketScorePreview || null,
+    visibility: post.visibility || "public",
   };
 };
 

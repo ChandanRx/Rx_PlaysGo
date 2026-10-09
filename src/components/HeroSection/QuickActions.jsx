@@ -31,11 +31,11 @@ const actions = [
     iconColor: "var(--accent)",
     iconBg: "var(--accent-soft)",
   },
-  {
-    title: "Join Match",
-    subtitle: "Discover games",
+{
+    title: "View Feed",
+    subtitle: "Browse all posts",
     icon: TrophyIcon,
-    href: "/posts",
+    href: "/feed",
     iconColor: "var(--success)",
     iconBg: "var(--success-soft)",
   },

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ShieldCheckIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import Button from "../../components/ui/Button";
 import { Input } from "../../components/ui/FormControls";
 import PlaysGoLogo from "../../components/PlaysGoLogo";
@@ -55,7 +55,6 @@ const SignInPage = () => {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [asAdmin, setAsAdmin] = useState(false);
   const [errors, setErrors] = useState({});
 
   const handleSubmit = (event) => {
@@ -72,8 +71,8 @@ const SignInPage = () => {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    signIn({ email, asAdmin });
-    router.push(searchParams.get("next") || (asAdmin ? "/dashboard" : "/"));
+    signIn({ email });
+    router.push(searchParams.get("next") || "/");
   };
 
   const handleGoogleSignIn = () => {
@@ -162,19 +161,6 @@ const SignInPage = () => {
                 autoComplete="current-password"
               />
             </Field>
-
-            <label className="flex cursor-pointer items-center gap-2.5 rounded-xl bg-[var(--bg-secondary)] px-3.5 py-2.5">
-              <input
-                type="checkbox"
-                checked={asAdmin}
-                onChange={(e) => setAsAdmin(e.target.checked)}
-                className="h-4 w-4 accent-[var(--brand)]"
-              />
-              <span className="flex items-center gap-1.5 text-[12.5px] font-semibold text-[var(--text-body)]">
-                <ShieldCheckIcon className="h-4 w-4 text-[var(--text-muted)]" strokeWidth={2} />
-                Sign in as admin (demo)
-              </span>
-            </label>
 
             <Button type="submit" variant="yellow" size="lg" className="w-full">
               Sign in

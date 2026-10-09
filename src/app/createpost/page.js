@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { m } from "framer-motion";
@@ -15,12 +15,17 @@ import { staggerContainer, staggerItem } from "../../shared/motionPresets";
 import { useMountReveal } from "../../hooks/useMountReveal";
 
 // Leaflet touches window on import, so the map picker is client-only.
-const LocationPicker = dynamic(() => import("../../components/LocationPicker"), {
-  ssr: false,
-  loading: () => (
-    <div className="h-64 w-full animate-pulse rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-input)]" />
-  ),
-});
+// The webpackChunkName comment gives the chunk a stable, predictable filename
+// so hot-reload and production builds never emit `/_next/undefined`.
+const LocationPicker = dynamic(
+  () => import(/* webpackChunkName: "location-picker" */ "../../components/LocationPicker"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-64 w-full animate-pulse rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-input)]" />
+    ),
+  },
+);
 
 const labelClass = "mb-1.5 block text-[13px] font-semibold text-[var(--text-body)]";
 
@@ -239,4 +244,10 @@ const CreatePost = () => {
   );
 };
 
-export default CreatePost;
+export default function CreatePostWrapper() {
+  return (
+    <Suspense fallback={<div className="mx-auto max-w-2xl p-8 text-center text-sm font-semibold text-[var(--text-muted)]">Loading...</div>}>
+      <CreatePost />
+    </Suspense>
+  );
+}

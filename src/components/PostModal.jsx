@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { m } from "framer-motion";
+import { m, useMotionValue, useTransform } from "framer-motion";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
   BoltIcon, CheckBadgeIcon, ClockIcon, HeartIcon, MapPinIcon,
@@ -88,6 +88,14 @@ const PostModal = ({ post, onClose, onEdit }) => {
   const { coords } = useCurrentLocation();
   const [shareCopied, setShareCopied] = useState(false);
   const [saved, setSaved] = useState(false);
+  const y = useMotionValue(0);
+  const bgOpacity = useTransform(y, [0, 300], [1, 0]);
+
+  const handleDragEnd = (e, info) => {
+    if (info.offset.y > 100 || info.velocity.y > 400) {
+      onClose?.();
+    }
+  };
 
   useEffect(() => {
     const prevOverflow = document.body.style.overflow;
@@ -140,8 +148,7 @@ const PostModal = ({ post, onClose, onEdit }) => {
   return (
     <>
       {/* backdrop — visual only, the click-catcher below handles closing */}
-      <m.div
-        {...backdropFade}
+      <m.div {...backdropFade} style={isMobile ? { opacity: bgOpacity } : {}}
         className="fixed inset-0 z-[100] bg-[var(--text-heading)]/40 backdrop-blur-sm"
       />
 
@@ -156,6 +163,11 @@ const PostModal = ({ post, onClose, onEdit }) => {
           variants={isMobile ? modalSheet : modalDialog}
           initial="hidden" animate="visible" exit="exit"
           onClick={(e) => e.stopPropagation()}
+          style={isMobile ? { y } : {}}
+          drag={isMobile ? "y" : false}
+          dragConstraints={{ top: 0, bottom: 0 }}
+          dragElastic={{ top: 0, bottom: 0.9 }}
+          onDragEnd={isMobile ? handleDragEnd : undefined}
           className="flex max-h-[85vh] w-full flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl bg-[var(--bg-card)] shadow-[0_-8px_40px_rgba(28,32,18,0.18)] sm:max-w-lg sm:max-h-[85vh] sm:shadow-[0_20px_60px_rgba(28,32,18,0.18)]"
         >
 

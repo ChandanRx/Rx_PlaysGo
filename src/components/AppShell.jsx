@@ -19,7 +19,7 @@ const SCROLL_KEY_PREFIX = "quibly_scroll_";
 // Auth pages and the admin dashboard render outside the member app chrome —
 // no sidebars, feed header, or floating bottom tabs. The dashboard brings its
 // own standalone layout (src/app/dashboard/layout.js).
-const STANDALONE_PATHS = ["/signin", "/signup", "/dashboard"];
+const STANDALONE_PATHS = ["/signin", "/signup", "/dashboard", "/privacy"];
 
 // Admin dashboard is desktop/admin use only — deliberately not a mobile tab.
 const bottomNav = [
