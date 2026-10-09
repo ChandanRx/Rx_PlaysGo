@@ -9,7 +9,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import DashboardHeader from "./DashboardHeader";
 import LeftSidebar from "./LeftSidebar";
 import RightSidebar from "./RightSidebar";
-import { pageTransition, springSnappy } from "../shared/motionPresets";
+import { pageTransition } from "../shared/motionPresets";
 
 // Only the feed pages need their scroll position remembered across a
 // details-view visit; every other route always starts at the top.
@@ -165,14 +165,14 @@ const AppShell = ({ children }) => {
                   {active && (
                     <m.span
                       layoutId="bottom-nav-active-pill"
-                      transition={springSnappy}
+                      transition={{ type: "tween", duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                       className="absolute inset-0 rounded-full bg-[var(--brand)] shadow-[0_4px_14px_rgba(var(--brand-rgb),0.35)]"
                     />
                   )}
 
                   <m.span
                     animate={{ scale: active ? 1.08 : 1 }}
-                    transition={springSnappy}
+                    transition={{ type: "tween", duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                     className={`relative z-10 flex flex-col items-center gap-0.5 transition-colors duration-200 ${
                       active ? "text-[var(--on-brand)]" : "text-[var(--text-muted)]"
                     }`}
